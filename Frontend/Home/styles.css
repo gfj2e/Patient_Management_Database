@@ -14,7 +14,7 @@ body {
   display:flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #0097a7ff;
+  background-color: rgb(130, 63, 156);
   padding: 20px 20px;
   color: #fff
 }
@@ -87,7 +87,7 @@ body {
 .home-img p{
    font-size: 16px;
   margin: 8px 0;
-  color: #555;
+  color: purple;
 }
 
 .home-img img{
@@ -96,9 +96,7 @@ body {
   border-radius: 10px;
 }
 
-.home-img p{
-  color: purple
-}
+
 
 .features {
   display: grid;
@@ -139,4 +137,89 @@ footer {
 
 .intro p{
   color:black
+}
+
+.about-img{
+  max-width: 100%;
+  margin-top: 10px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+
+#about-paragraph{
+  font-size: 16px;
+  margin: 20px 0;
+  color:#424242;
+  margin-top: 30px;
+  padding: 20px;
+}
+
+#dr-mike{
+  width: 50% ;
+  
+}
+
+#about-header{
+  text-align: center;
+  padding: 10px 10px;
+  padding-bottom: 20px;
+}
+
+.about-img h3{
+  padding-top: 20px;
+  color: #420868;
+} 
+
+#benefit-title{
+  padding-top: 20px;
+  color: #540581;
+  padding-left: 15px;
+  text-align: center;
+}
+
+.benefits{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 30px;
+  margin-top: 30px;
+  text-align: center;
+  margin-left: 30px;
+  margin-right: 30px;
+  
+}
+
+.benefit {
+  background: #ffffffee;
+  padding: 30px 40px;
+  box-shadow: 2px 2px 8px #c9c9c9;
+  margin: 10px;
+  color:#000000;
+  border: #833a3a;
+}
+
+.benefit p{
+  font-size: 13px;
+}
+.benefit h3{
+  font-size: 15px;
+  padding-bottom: 10px;
+}
+
+.feature{
+  background: #f5f4f4;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 2px 2px 8px #e0e0e0;
+  margin: 0;
+}
+
+#contact-title{
+  padding: 30px 10px;
+  text-align: center;
+}
+
+.lab-icon{
+  width: 15%;
+
 }
