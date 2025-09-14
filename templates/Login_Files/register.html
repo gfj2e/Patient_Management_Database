@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='login_styles.css') }}">
+</head>
+
+<body>
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="logo">Logo Here</div>
+    <div class="nav-buttons">
+      <a  href="{{ url_for('register') }}"><button class="login-btn">Register</button></a>
+      <a  href="{{ url_for('login') }}"><button class="login-btn">Login</button></a>
+    </div>
+  </header>
+
+  <div class="container">
+  <!-- Sidebar -->
+        <div class="side-menu">
+            <ul>
+            <li><a href="{{ url_for('index') }}">Home</a></li>
+            <li><a href="{{ url_for('contact') }}">Contact Us</a></li>
+            <li><a href="{{ url_for('about') }}">About us</a></li>
+            <li><a href="{{ url_for('services') }}">Services</a></li>
+            </ul>
+        </div>
+
+        <!-- Register Content -->
+        <div class="content">
+           <div class="register-page">
+            <h2 id="Registration-title">Patient Registration</h2>
+            <img class="register-profile-icon" src="{{ url_for('static', filename='images/user.png') }}" alt="registration profile icon">
+
+        <!--Registration Input-->
+        <form action="#" method="post">
+          <div class="form-grid">
+            <div class="form-row">
+              <label>First Name</label>
+              <input class="register-box" type="text" name="First-Name" placeholder="Enter first name" required>
+            </div>
+            
+            <div class="form-row">
+              <label>Last Name</label>
+              <input class="register-box" type="text" name="Last-Name" placeholder="Enter Last Name" required>
+            </div>
+            
+            <div class="form-row">
+              <label>Email</label>
+              <input class="register-box" type="text" name="Email" placeholder="Enter your preferred email" required>
+            </div>
+            
+            <div class="form-row">
+              <label>Username</label>
+              <input class="register-box" type="text" name="Username" placeholder="Enter your Username" required>
+            </div>
+            
+            <div class="form-row">
+              <label>Password</label>
+              <input class="register-box" type="password" name="Password" placeholder="Enter your password" required>
+            </div>
+            
+            <div class="form-row">
+              <label>Phone #</label>
+              <input class="register-box" type="text" name="Phone-Number" placeholder="Enter your phone number" required>
+            </div>
+            
+            <div class="form-row">
+              <label>Address</label>
+              <input class="register-box" type="text" name="Address" placeholder="Enter your current Address" required>
+            </div>
+            
+            <div class="form-row">
+              <label>Zip Code</label>
+              <input class="register-box" type="text" name="Zip-code" placeholder="Enter your Zip Code" required>
+            </div>
+            
+            <div class="form-row">
+              <label>City</label>
+              <input class="register-box" type="text" name="City" placeholder="Enter your city" required>
+            </div>
+            
+            <div class="form-row">
+              <label>DOB mm/dd/yyyy</label>
+              <input class="register-box" type="text" name="DateOfBirth" placeholder="Enter your Date of Birth" required>
+            </div>
+            
+            <div class="form-row">
+              <label>Sex assigned at birth</label>
+              <input class="register-box" type="text" name="Sex" placeholder="Enter your Sex" required>
+            </div>
+          </div>
+
+          <!--Submit button-->
+          <button type="submit">Register</button>
+            </form>
+            <br><br>
+            <!--If user already has an account, links them to login-->
+            <p>Already have an account? 
+                <a href="{{ url_for('login') }}">Login here</a>
+            </p>
+            </div>
+        </div>
+    </div>
+  <footer>
+    <p>Powered by Coin Flippers</p>
+  </footer>
+</body>
+</html>

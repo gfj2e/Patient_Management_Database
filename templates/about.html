@@ -13,8 +13,8 @@
   <header class="top-nav">
     <div class="logo">Logo Here</div>
     <div class="login-buttons">
-      <button class="btn">Register</button>
-      <button class="btn">Login</button>
+      <a href="{{ url_for('register') }}"><button class="btn">Register</button></a>
+      <a href="{{ url_for('login') }}"><button class="btn">Login</button></a>
     </div>
   </header>
 
@@ -38,6 +38,7 @@
 
               <!--Image and description-->
               <div class="about-img">
+                <!--About paragraph-->
                   <img id="dr-mike" src="{{ url_for('static', filename='images/dr-mike.png') }}" alt="Doctor Mike" />
                  <h3>Why you should choose insert name here</h3>
                   <p id="about-paragraph">Bacon ipsum dolor amet chuck kielbasa biltong, swine drumstick sausage pork loin shankle cupim picanha jerky frankfurter. Doner meatball turducken cupim jerky ham ball tip, kielbasa buffalo leberkas drumstick pork chop. Jerky picanha ham, pork loin short loin
@@ -46,24 +47,27 @@
               loin pork belly turkey hamburger porchetta leberkas buffalo.</p>
               </div>
               <hr style="width: 75%; margin: 30px auto; border-top: 1px dotted purple" >
+
               <!--Why they should work with us-->
               <h3 id="benefit-title">Benefits of using a healthcare portal</h3>
               <div class="benefits">
                     <div class="benefit">
-                      <img class="lab-icon" src="{{ url_for('static', filename='images/chemical.png') }}" alt="Lab icon"/>
+                      <img class="benefit-icon" src="{{ url_for('static', filename='images/chemical.png') }}" alt="Lab icon"/>
                         <h3>chuck kielbasa biltong</h3>
                         <P>Bacon ipsum dolor amet chuck kielbasa biltong, swine drumstick sausage pork loin shankle cupim picanha</P>
                     </div>
                     <div class="benefit">
-                      <img class="lab-icon" src="{{ url_for('static', filename='images/cardiogram.png') }}" alt="Lab icon"/>
+                      <img class="benefit-icon" src="{{ url_for('static', filename='images/cardiogram.png') }}" alt="Lab icon"/>
                         <h3>chuck kielbasa biltong</h3>
                         <P>Bacon ipsum dolor amet chuck kielbasa biltong, swine drumstick sausage pork loin shankle cupim picanha</P>
                     </div>
                     <div class="benefit">
+                      <img class="benefit-icon" src="{{ url_for('static', filename='images/muscle.png') }}" alt="Lab icon"/>
                       <h3>chuck kielbasa biltong</h3>
                       <P>Bacon ipsum dolor amet chuck kielbasa biltong, swine drumstick sausage pork loin shankle cupim picanha</P>
                     </div>
                     <div class="benefit">
+                      <img class="benefit-icon" src="{{ url_for('static', filename='images/convenience.png') }}" alt="Lab icon"/>
                       <h3>chuck kielbasa biltong</h3>
                       <P>Bacon ipsum dolor amet chuck kielbasa biltong, swine drumstick sausage pork loin shankle cupim picanha</P>
                     </div>

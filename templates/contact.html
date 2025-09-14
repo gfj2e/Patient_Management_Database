@@ -13,8 +13,8 @@
   <header class="top-nav">
     <div class="logo">Logo Here</div>
     <div class="login-buttons">
-      <button class="btn">Register</button>
-      <button class="btn">Login</button>
+      <a href="{{ url_for('register') }}"><button class="btn">Register</button></a>
+      <a href="{{ url_for('login') }}"><button class="btn">Login</button></a>
     </div>
   </header>
 
@@ -34,6 +34,55 @@
             <div class="content">
                 <h1 id="contact-title">Contact Us</h1>
                 <hr style="width: 80%; border-top: 1px dotted purple; margin:20px auto">
+                  <div class="contact-info-grid">
+                    <!--Contact information-->
+                    <div class="contact-card">
+                      <h3>McMinnville</h3>
+                      <ul>
+                        <li>Phone: 931-420-6969</li>
+                        <li>Email: yourmom@gmail.com</li>
+                        <li>Fax: 931-123-4567</li>
+                        <li>Address: 1600 Pennsylvania Avenue NW, Washington, D.C. 20500</li>
+                      </ul>
+                    </div>
+                    <div class="contact-card">
+                      <h3>Murfreesboro</h3>
+                      <ul>
+                        <li>Phone: 931-420-6969</li>
+                        <li>Email: yourmom@gmail.com</li>
+                        <li>Fax: 931-123-4567</li>
+                        <li>Address: 1600 Pennsylvania Avenue NW, Washington, D.C. 20500</li>
+                      </ul>
+                    </div>
+                    <div class="contact-card">
+                      <h3>Smyrna</h3>
+                      <ul>
+                        <li>Phone: 931-420-6969</li>
+                        <li>Email: yourmom@gmail.com</li>
+                        <li>Fax: 931-123-4567</li>
+                        <li>Address: 1600 Pennsylvania Avenue NW, Washington, D.C. 20500</li>
+                      </ul>
+                    </div>
+                    <div class="contact-card">
+                      <h3>Franklin</h3>
+                      <ul>
+                        <li>Phone: 931-420-6969</li>
+                        <li>Email: yourmom@gmail.com</li>
+                        <li>Fax: 931-123-4567</li>
+                        <li>Address: 1600 Pennsylvania Avenue NW, Washington, D.C. 20500</li>
+                      </ul>
+                    </div>
+                  </div>
+
+                <br><hr style="width: 90%; border-top: 1px dotted purple; margin:20px auto"><br>
+                <div class="emergency-num">
+
+                  <!--Emergency contact info-->
+                  <h3>Emergency</h3>
+                    <p>If you are experiencing an emergency, please dial 911 </p>
+                  <h3>Mental Health and Suicide Pervention</h3>
+                    <p>If you are experienceing a mental-health crisis please dial 988</p>
+                </div>
             </div>
         
     </div>
