@@ -1,9 +1,9 @@
 from flask import Blueprint, render_template, url_for,  request, redirect
 
-bp = Blueprint("auth", __name__, template_folder="templates")
+auth_bp = Blueprint("auth", __name__, template_folder="templates")
 
 # Register
-@bp.route('/register', methods=['GET', 'POST'])
+@auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
         # Handle registration form (save to DB later if needed)
@@ -11,7 +11,7 @@ def register():
     return render_template('register.html', title="Register")
 
 # Login
-@bp.route('/login', methods=['GET', 'POST'])
+@auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     role = request.args.get("role")
     if not role:

@@ -1,6 +1,6 @@
 from flask import Flask
-from .main.routes import bp as main_bp
-from .auth.routes import bp as auth_bp
+from .main.routes import main_bp 
+from .auth.routes import auth_bp
 
 def create_app():
     app = Flask(__name__, static_folder="../static")
