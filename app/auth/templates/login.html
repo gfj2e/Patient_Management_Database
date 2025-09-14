@@ -14,8 +14,8 @@
   <header class="navbar{% if role %} navbar-{{ role }}{% endif %}">
     <div class="logo">Logo Here</div>
     <div class="nav-buttons">
-      <a  href="{{ url_for('register') }}"><button class="login-btn">Register</button></a>
-      <a  href="{{ url_for('login') }}"><button class="login-btn">Login</button></a>
+      <a  href="{{ url_for('auth.register') }}"><button class="login-btn">Register</button></a>
+      <a  href="{{ url_for('auth.login') }}"><button class="login-btn">Login</button></a>
     </div>
   </header>
 
@@ -23,10 +23,10 @@
         <!-- Sidebar -->
         <div class="side-menu">
             <ul>
-            <li><a href="{{ url_for('index') }}">Home</a></li>
-            <li><a href="{{ url_for('contact') }}">Contact Us</a></li>
-            <li><a href="{{ url_for('about') }}">About us</a></li>
-            <li><a href="{{ url_for('services') }}">Services</a></li>
+            <li><a href="{{ url_for('main.index') }}">Home</a></li>
+            <li><a href="{{ url_for('main.contact') }}">Contact Us</a></li>
+            <li><a href="{{ url_for('main.about') }}">About us</a></li>
+            <li><a href="{{ url_for('main.services') }}">Services</a></li>
             </ul>
         </div>
 
@@ -35,9 +35,9 @@
             <!--Role buttons-->
             <div class="login-page">
                     <div class="role-buttons">
-                        <a class="role-btn" href="{{ url_for('login', role='admin') }}">Admin</a>
-                        <a class="role-btn" href="{{ url_for('login', role='doctor') }}">Doctor</a>
-                        <a class="role-btn" href="{{ url_for('login', role='patient') }}">Patient</a>
+                        <a class="role-btn" href="{{ url_for('auth.login', role='admin') }}">Admin</a>
+                        <a class="role-btn" href="{{ url_for('auth.login', role='doctor') }}">Doctor</a>
+                        <a class="role-btn" href="{{ url_for('auth.login', role='patient') }}">Patient</a>
                     </div>
 
             <!--Admin Login Page-->
@@ -70,30 +70,14 @@
                 
             <!--Patient Login Page-->
             {%elif role == "patient" %}
-                    <h2 id="patient-login-header">Patient Login</h2>
-                     <img id="admin-profile-icon" src="{{ url_for('static', filename='images/green-profile.png') }}" alt="patient profile icon">
-                    <form class="patient-login-content" method="post">
-                        <input type="hidden" name="role" value="patient">
-                            <label>Email</label>
-                                <input type="text" name="username" placeholder="Please enter your username" required>
-                            <label>Password</label>
-                                <input type="password" name="password" placeholder="Please enter your password" required>
-                            <button class="sub-btn" type="submit">Submit</button>
-                    </form>
-
-                {% endif %}
-
-            <center>
-            <!--If the user doesnt have an account, links them to the register page-->
-            <p>Don’t already have an account? 
-                <a href="{{ url_for('register') }}">Register here</a>
-            </p>
-            </center>
-            </div>
-        </div>
-    </div>
-  <footer>
-    <p>Powered by Coin Flippers</p>
-  </footer>
-</body>
-</html>
+                <h2 id="patient-login-header">Patient Login</h2>
+                <img id="admin-profile-icon" src="{{ url_for('static', filename='images/green-profile.png') }}" alt="patient profile icon">
+                <form class="patient-login-content" method="post">
+                    <input type="hidden" name="role" value="patient">
+                    <label>Username</label>
+                    <input type="text" name="username" placeholder="Please enter your username" required>
+                    <label>Password</label>
+                    <input type="password" name="password" placeholder="Please enter your password" required>
+                    <button class="sub-btn" type="submit">Submit</button>
+                </form>
+            {% endif %}

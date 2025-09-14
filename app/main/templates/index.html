@@ -12,8 +12,8 @@
   <header class="top-nav">
     <div class="logo">Logo Here</div>
     <div class="login-buttons">
-       <a href="{{ url_for('register') }}"><button class="btn">Register</button></a>
-      <a href="{{ url_for('login') }}"><button class="btn">Login</button></a>
+       <a href="{{ url_for('auth.register') }}"><button class="btn">Register</button></a>
+      <a href="{{ url_for('auth.login') }}"><button class="btn">Login</button></a>
     </div>
   </header>
 
@@ -21,10 +21,10 @@
     <!--SideMenu-->
     <div class="side-menu">
       <ul>
-        <li><a href="{{ url_for('index') }}">Home</a></li>
-        <li><a href="{{ url_for('contact') }}">Contact Us</a></li>
-        <li><a href="{{ url_for('about') }}">About us</a></li>
-        <li><a href="{{ url_for('services') }}">Services</a></li>
+        <li><a href="{{ url_for('main.index') }}">Home</a></li>
+        <li><a href="{{ url_for('main.contact') }}">Contact Us</a></li>
+        <li><a href="{{ url_for('main.about') }}">About us</a></li>
+        <li><a href="{{ url_for('main.services') }}">Services</a></li>
       </ul>
     </div>
 
@@ -63,23 +63,3 @@
         <div class="feature">
           <img src="{{ url_for('static', filename='images/medicine.png') }}" alt="Pill bottle icon"/>
           <p>Flank jowl shank pork chop buffalo alcatra pig, bacon filet mignon swine frankfurter brisket.</p>
-        </div>
-        <!--Lab testing-->
-        <div class="feature">
-          <img src="{{ url_for('static', filename='images/result.png') }}" alt="lab-icon"/>
-          <p>Flank jowl shank pork chop buffalo alcatra pig, bacon filet mignon swine frankfurter brisket.</p>
-        </div>
-        <!--Profile photo-->
-        <div class="feature">
-          <img src="{{ url_for('static', filename='images/woman.png') }}" alt="profile-icon"/>
-          <p>Flank jowl shank pork chop buffalo alcatra pig, bacon filet mignon swine frankfurter brisket.</p>
-        </div>
-      </div> 
-    </div>
-  </div>
-
-  <footer>
-    <p>Powered by CoinFlippers</p>
-  </footer>
-</body>
-</html>

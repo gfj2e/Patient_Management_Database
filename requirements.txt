@@ -1,3 +1,5 @@
 flask
 SQLAlchemy
 PyMySQL 
+flask-login
+mysql-connector-python

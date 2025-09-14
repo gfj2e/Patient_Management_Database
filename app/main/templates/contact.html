@@ -13,8 +13,8 @@
   <header class="top-nav">
     <div class="logo">Logo Here</div>
     <div class="login-buttons">
-      <a href="{{ url_for('register') }}"><button class="btn">Register</button></a>
-      <a href="{{ url_for('login') }}"><button class="btn">Login</button></a>
+      <a href="{{ url_for('auth.register') }}"><button class="btn">Register</button></a>
+      <a href="{{ url_for('auth.login') }}"><button class="btn">Login</button></a>
     </div>
   </header>
 
@@ -24,10 +24,10 @@
             <!--SideMenu-->
         <div class="side-menu">
         <ul>
-            <li><a href="{{ url_for('index') }}">Home</a></li>
-            <li><a href="{{ url_for('contact') }}">Contact Us</a></li>
-            <li><a href="{{ url_for('about') }}">About us</a></li>
-            <li><a href="{{ url_for('services') }}">Services</a></li>
+            <li><a href="{{ url_for('main.index') }}">Home</a></li>
+            <li><a href="{{ url_for('main.contact') }}">Contact Us</a></li>
+            <li><a href="{{ url_for('main.about') }}">About us</a></li>
+            <li><a href="{{ url_for('main.services') }}">Services</a></li>
         </ul>
         </div>
 
@@ -73,23 +73,3 @@
                       </ul>
                     </div>
                   </div>
-
-                <br><hr style="width: 90%; border-top: 1px dotted purple; margin:20px auto"><br>
-                <div class="emergency-num">
-
-                  <!--Emergency contact info-->
-                  <h3>Emergency</h3>
-                    <p>If you are experiencing an emergency, please dial 911 </p>
-                  <h3>Mental Health and Suicide Pervention</h3>
-                    <p>If you are experienceing a mental-health crisis please dial 988</p>
-                </div>
-            </div>
-        
-    </div>
-
-<footer>
-    <p>Powered by CoinFlippers</p>
-  </footer>
-
-    </body>
-</html>
