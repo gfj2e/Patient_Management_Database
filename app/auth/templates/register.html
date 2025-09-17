@@ -80,3 +80,33 @@
             
             <div class="form-row">
               <label>City</label>
+              <input class="register-box" type="text" name="City" placeholder="Enter your city" required>
+            </div>
+            
+            <div class="form-row">
+              <label>DOB mm/dd/yyyy</label>
+              <input class="register-box" type="text" name="DateOfBirth" placeholder="Enter your Date of Birth" required>
+            </div>
+            
+            <div class="form-row">
+              <label>Sex assigned at birth</label>
+              <input class="register-box" type="text" name="Sex" placeholder="Enter your Sex" required>
+            </div>
+          </div>
+
+          <!--Submit button-->
+          <button type="submit">Register</button>
+            </form>
+            <br><br>
+            <!--If user already has an account, links them to login-->
+            <p>Already have an account? 
+                <a href="{{ url_for('auth.login') }}">Login here</a>
+            </p>
+            </div>
+        </div>
+    </div>
+  <footer>
+    <p>Powered by Coin Flippers</p>
+  </footer>
+</body>
+</html>

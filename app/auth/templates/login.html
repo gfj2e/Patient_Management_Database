@@ -81,3 +81,17 @@
                     <button class="sub-btn" type="submit">Submit</button>
                 </form>
             {% endif %}
+              <center>
+            <!--If the user doesnt have an account, links them to the register page-->
+            <p>Don’t already have an account? 
+                <a href="{{ url_for('auth.register') }}">Register here</a>
+            </p>
+            </center>
+            </div>
+        </div>
+    </div>
+  <footer>
+    <p>Powered by Coin Flippers</p>
+  </footer>
+</body>
+</html>
