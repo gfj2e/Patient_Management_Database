@@ -7,7 +7,7 @@ def create_app():
     app = Flask(__name__, static_folder="../static")
     app.secret_key = "your_secret_key"
     
-    init_connection_engine(app)
+    # init_connection_engine(app)
     
     # register the blueprints with app 
     app.register_blueprint(main_bp)
