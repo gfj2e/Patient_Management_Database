@@ -1,5 +1,4 @@
 flask
-SQLAlchemy
-PyMySQL 
+Flask-SQLAlchemy
 flask-login
-mysql-connector-python
+cloud-sql-python-connector[pymysql]
