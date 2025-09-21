@@ -6,7 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 db_user = "root"
-db_password = "Gfj2e_7719"
+#db_password = "Gfj2e_7719"
 db_password = "andy"
 db_name = "patient_mgmt"
 db_host = "localhost"
