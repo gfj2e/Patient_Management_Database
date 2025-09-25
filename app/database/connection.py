@@ -6,7 +6,8 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 db_user = "root"
-db_password = "Gfj2e_7719"
+#db_password = "Gfj2e_7719"
+db_password = "andy"
 db_name = "patient_mgmt"
 db_host = "localhost"
 
@@ -20,9 +21,11 @@ def init_connection_engine(app):
         try:
             db.engine.connect()
             print("Database connection successful!")
+            app.config['DB_CONNECTED'] = True
             return app  
         except Exception as e:
             print(f"Failed to connect to database: {str(e)}")
+            app.config['DB_CONNECTED'] = False
             return app  
         
     # def init_connection_engine(app):

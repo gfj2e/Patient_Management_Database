@@ -45,6 +45,48 @@ body {
   color: #fff;
 }
 
+/* Tabs container: center tabs horizontally */
+.tabs {
+  display: flex;
+  justify-content: center; 
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.tab {
+  display: flex; 
+  padding: 10px 100px; 
+  margin-bottom: 10px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 2px 2px 5px rgb(84, 84, 84);
+  transition: background-color 0.3s ease;
+ 
+  white-space: nowrap;
+}
+
+.tab:hover {
+  background-color: #aed2d6;
+}
+
+.tab.active {
+  background-color: #aed2d6;
+  color: white;
+}
+.tab-content form { display: none; }
+.tab-content form.active { display: block; }
+
+@media (min-width: 601px) and (max-width: 900px) {
+  
+  .tab {
+    padding: 10px 20px;
+  }
+}
+
 /*Container holding website content*/
 .container{
   display: flex;

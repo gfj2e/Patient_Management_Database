@@ -6,6 +6,7 @@
   <title>Register</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='login_styles.css') }}">
+
 </head>
 
 <body>
@@ -32,72 +33,83 @@
         <!-- Register Content -->
         <div class="content">
            <div class="register-page">
-            <h2 id="Registration-title">Patient Registration</h2>
-            <img class="register-profile-icon" src="{{ url_for('static', filename='images/user.png') }}" alt="registration profile icon">
 
-        <!--Registration Input-->
-        <form action="#" method="post">
-          <div class="form-grid">
-            <div class="form-row">
-              <label>First Name</label>
-              <input class="register-box" type="text" name="First-Name" placeholder="Enter first name" required>
-            </div>
+<!--added tabs-->
+        <div class="tabs">
+          <div class="tab active" onclick="openTab('patient')">Patient Registration</div>
+        </div>
+
+        <!--Patient Registration Input-->
+        <div class="tab-content">
+            <form id="patient" class="active" method="POST" action="{{ url_for('auth.register') }}">
+                <input type="hidden" name="role" value="patient">
+        <!--<form action="#" method="post">-->
+            <div class="form-grid">
+                <div class="form-row">
+                    <label>First Name</label>
+                    <input class="register-box" type="text" name="First-Name" placeholder="Enter first name" required>
+                </div>
             
-            <div class="form-row">
-              <label>Last Name</label>
-              <input class="register-box" type="text" name="Last-Name" placeholder="Enter Last Name" required>
-            </div>
+                <div class="form-row">
+                    <label>Last Name</label>
+                    <input class="register-box" type="text" name="Last-Name" placeholder="Enter Last Name" required>
+                </div>
             
-            <div class="form-row">
-              <label>Email</label>
-              <input class="register-box" type="text" name="Email" placeholder="Enter your preferred email" required>
-            </div>
+                <div class="form-row">
+                    <label>Email</label>
+                    <input class="register-box" type="text" name="Email" placeholder="Enter your preferred email" required>
+                </div>
             
-            <div class="form-row">
-              <label>Username</label>
-              <input class="register-box" type="text" name="Username" placeholder="Enter your Username" required>
-            </div>
+                <div class="form-row">
+                    <label>Username</label>
+                    <input class="register-box" type="text" name="Username" placeholder="Enter your Username" required>
+                </div>
             
-            <div class="form-row">
-              <label>Password</label>
-              <input class="register-box" type="password" name="Password" placeholder="Enter your password" required>
-            </div>
+                <div class="form-row">
+                    <label>Password</label>
+                    <input class="register-box" type="password" name="Password" placeholder="Enter your password" required>
+                </div>
             
-            <div class="form-row">
-              <label>Phone #</label>
-              <input class="register-box" type="text" name="Phone-Number" placeholder="Enter your phone number" required>
-            </div>
+                <div class="form-row">
+                    <label>Phone #</label>
+                    <input class="register-box" type="text" name="Phone-Number" placeholder="Enter your phone number" required>
+                </div>
             
-            <div class="form-row">
-              <label>Address</label>
-              <input class="register-box" type="text" name="Address" placeholder="Enter your current Address" required>
-            </div>
+                <div class="form-row">
+                    <label>Address</label>
+                    <input class="register-box" type="text" name="Address" placeholder="Enter your current Address" required>
+                </div>
             
-            <div class="form-row">
-              <label>Zip Code</label>
-              <input class="register-box" type="text" name="Zip-code" placeholder="Enter your Zip Code" required>
-            </div>
+                <div class="form-row">
+                    <label>Zip Code</label>
+                    <input class="register-box" type="text" name="Zip-code" placeholder="Enter your Zip Code" required>
+                </div>
             
-            <div class="form-row">
-              <label>City</label>
-              <input class="register-box" type="text" name="City" placeholder="Enter your city" required>
-            </div>
+                <div class="form-row">
+                    <label>City</label>
+                    <input class="register-box" type="text" name="City" placeholder="Enter your city" required>
+                </div>
             
-            <div class="form-row">
-              <label>DOB mm/dd/yyyy</label>
-              <input class="register-box" type="text" name="DateOfBirth" placeholder="Enter your Date of Birth" required>
-            </div>
+                <div class="form-row">
+                    <label>Date of Birth</label>
+                    <input class="register-box" type="text" name="DateOfBirth" placeholder="mm/dd/yyyy" required>
+                </div>
             
-            <div class="form-row">
-              <label>Sex assigned at birth</label>
-              <input class="register-box" type="text" name="Sex" placeholder="Enter your Sex" required>
+                <div class="form-row">
+                    <label>Sex assigned at birth</label>
+                    <input class="register-box" type="text" name="Sex" placeholder="Enter your Sex" required>
+                </div>
             </div>
-          </div>
 
           <!--Submit button-->
-          <button type="submit">Register</button>
+          <button type="submit">Register Patient</button>
             </form>
             <br><br>
+
+
+         </div>
+        </div>
+
             <!--If user already has an account, links them to login-->
             <p>Already have an account? 
                 <a href="{{ url_for('auth.login') }}">Login here</a>
@@ -108,5 +120,16 @@
   <footer>
     <p>Powered by Coin Flippers</p>
   </footer>
+
+<script>
+//toggle
+    function openTab(tabName) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelector(`[onclick="openTab('${tabName}')"]`).classList.add('active');
+      document.querySelectorAll('.tab-content form').forEach(f => f.classList.remove('active'));
+      document.getElementById(tabName).classList.add('active');
+    }
+</script>
+
 </body>
 </html>
