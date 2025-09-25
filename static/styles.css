@@ -45,6 +45,30 @@ body {
   color: #fff;
 }
 
+.tab {
+  display: inline-block;
+  padding: 10px 100px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 2px 2px 5px rgb(84, 84, 84);
+  transition: background-color 0.3s ease;
+}
+
+.tab:hover {
+  background-color: #aed2d6;
+}
+
+.tab.active {
+  background-color: #aed2d6;
+  color: white;
+}
+.tab-content form { display: none; }
+.tab-content form.active { display: block; }
+
 /*Container holding website content*/
 .container{
   display: flex;

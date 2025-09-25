@@ -7,7 +7,7 @@ auth_bp = Blueprint("auth", __name__, template_folder="templates")
 def register():
     if request.method == 'POST':
         # Handle registration form (save to DB later if needed)
-        return redirect(url_for('login'))
+        return redirect(url_for('auth.login'))
     return render_template('register.html', title="Register")
 
 # Login

@@ -324,7 +324,7 @@ body {
 /*Submit button for the registration information*/
 button[type="submit"] {
     padding: 12px;
-    background-color:  #084b81;
+    background-color:  rgb(97, 22, 97);
     color: #fff;
     border: none;
     border-radius: 5px;
