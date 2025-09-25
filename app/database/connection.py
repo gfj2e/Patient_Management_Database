@@ -5,13 +5,13 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
-db_user = "root"
-#db_password = "Gfj2e_7719"
-db_password = "andy"
-db_name = "patient_mgmt"
-db_host = "localhost"
-
 def init_connection_engine(app):
+    db_user = "root"
+    db_password = "Gfj2e_7719"
+    # db_password = "andy"
+    db_name = "patient_mgmt"
+    db_host = "localhost"
+
     app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{db_user}:{db_password}@{db_host}/{db_name}"
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     

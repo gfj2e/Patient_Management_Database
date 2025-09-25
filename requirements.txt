@@ -2,3 +2,4 @@ flask
 Flask-SQLAlchemy
 flask-login
 cloud-sql-python-connector[pymysql]
+Flask-Migrate
