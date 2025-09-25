@@ -3,3 +3,6 @@ Flask-SQLAlchemy
 flask-login
 cloud-sql-python-connector[pymysql]
 Flask-Migrate
+Faker
+python-dotenv
+flask-bcrypt

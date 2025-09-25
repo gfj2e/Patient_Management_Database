@@ -15,11 +15,9 @@ def create_app():
     app = init_connection_engine(app)
     
     with app.app_context():
-        if app.config.get('DB_CONNECTED'):
-            db.create_all()
-            print("Database tables created successfully!")
-        else:
-            print("Warning: Database not connected, skipping create_all().")
+        db.create_all() 
+    
+    migrate.init_app(app, db)
     
     # register the blueprints with app 
     app.register_blueprint(main_bp)
