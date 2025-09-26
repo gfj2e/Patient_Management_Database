@@ -1,5 +1,5 @@
 from .connection import db
-from sqlalchemy import TIMESTAMP, func, String, Text, ForeignKey, Boolean, Date, Enum as SQLEnum, DECIMAL, DateTime
+from sqlalchemy import TIMESTAMP, func, String, Text, ForeignKey, Boolean, Date, Enum as SQLEnum, DECIMAL, DateTime, SmallInteger
 from datetime import date, datetime
 from decimal import Decimal
 from sqlalchemy.orm import DeclarativeBase
@@ -55,6 +55,7 @@ class Patient(db.Model):
     first_name: Mapped[str] = mapped_column(String(50), nullable=False)
     last_name: Mapped[str] = mapped_column(String(50), nullable=False)
     dob: Mapped[date] = mapped_column(Date, nullable=False)
+    age: Mapped[int] = mapped_column(SmallInteger, nullable=False)
     
     address: Mapped[str] = mapped_column(Text, nullable=False)
     phone_number: Mapped[str] = mapped_column(String(25))
@@ -87,16 +88,16 @@ class Test_Result(db.Model):
     
     test_id: Mapped[int] = mapped_column(primary_key=True)
     test_name: Mapped[str] = mapped_column(String(255), nullable=False)
-    test_status: Mapped[TestStatus] = mapped_column(SQLEnum(TestStatus), default=TestStatus.PENDING)
+    test_status: Mapped[TestStatus] = mapped_column(SQLEnum(TestStatus), default=TestStatus.PENDING, nullable=False)
     ordered_date: Mapped[datetime] = mapped_column(DateTime, nullable=False)
-    result_time: Mapped[datetime] = mapped_column(DateTime)
+    result_time: Mapped[datetime] = mapped_column(DateTime, nullable=True)
     
-    result_value: Mapped[str] = mapped_column(String(255))
-    unit_of_measure: Mapped[str] = mapped_column(String(255))
-    reference_range: Mapped[str] = mapped_column(String(255))
+    result_value: Mapped[str] = mapped_column(String(255), nullable=True)
+    unit_of_measure: Mapped[str] = mapped_column(String(255), nullable=True)
+    reference_range: Mapped[str] = mapped_column(String(255), nullable=True)
     is_abnormal: Mapped[bool] = mapped_column(Boolean, default=False)
     
-    result_notes: Mapped[str] = mapped_column(Text)
+    result_notes: Mapped[str] = mapped_column(Text, nullable=True)
     
     patient_id: Mapped[int] = mapped_column(ForeignKey("patients.patient_id"), nullable=False)
 
@@ -112,6 +113,8 @@ class Prescription(db.Model):
     
     patient_id: Mapped[int] = mapped_column(ForeignKey("patients.patient_id"), nullable=False)
     doctor_id: Mapped[int] = mapped_column(ForeignKey("doctors.doctor_id"), nullable=False)
+
+
 
 class User_Login(db.Model):
     __tablename__ = "user_login"
