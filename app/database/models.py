@@ -177,7 +177,7 @@ class Patient_Login(User_Login):
     id: Mapped[int] = mapped_column(ForeignKey("user_login.id"), primary_key=True)
     patient_id: Mapped[int] = mapped_column(ForeignKey("patients.patient_id"), nullable=False)
     
-    login = relationship("Patient", back_populates="login", uselist=False)
+    patient = relationship("Patient", back_populates="login", uselist=False)
     
     __mapper_args__ = {
         "polymorphic_identity": "patient_login"
@@ -189,7 +189,7 @@ class Doctor_Login(User_Login):
     id: Mapped[int] = mapped_column(ForeignKey("user_login.id"), primary_key=True)
     doctor_id: Mapped[int] = mapped_column(ForeignKey("doctors.doctor_id"))
     
-    login = relationship("Doctor", back_populates="login", uselist=False)
+    doctor = relationship("Doctor", back_populates="login", uselist=False)
 
     __mapper_args__ = {
         "polymorphic_identity": "doctor_login"
