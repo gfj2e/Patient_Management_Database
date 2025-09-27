@@ -3,24 +3,63 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login</title>
+  <title>{% if role %}{{ role|title }} Login - {% endif %}CuraCloud</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='login_styles.css') }}">
+  <style>
+    body{
+        background: rgb(244, 241, 246);
+    }S
+
+    /* Sidebar */
+.side-menu {
+    width: 220px;
+    background-color: #5e4085;
+    padding: 25px 0;
+    min-height: calc(100vh - 70px);
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.06);
+}
+
+.side-menu ul {
+    list-style: none;
+}
+
+.side-menu ul li {
+    margin: 5px 0;
+}
+
+.side-menu ul li a {
+    text-decoration: none;
+    color: #000000;
+    display: block;
+    padding: 12px 25px;
+    transition: all 0.2s ease;
+    border-left: 4px solid transparent;
+    font-weight: 20px;
+}
+
+.side-menu ul li a:hover, 
+.side-menu ul li a.active {
+
+    color: #250046;
+    border-left: 4px solid #250046;
+}
+  </style>
 </head>
+
 <body>
 
-
-  <!-- Navbar -->
-  <header class="navbar{% if role %} navbar-{{ role }}{% endif %}">
-    <div class="logo">Logo Here</div>
+    <!-- Navbar -->
+    <header class="navbar">
+        <div class="logo">CuraCloud</div>
     <div class="nav-buttons">
       <a  href="{{ url_for('auth.register') }}"><button class="login-btn">Register</button></a>
       <a  href="{{ url_for('auth.login') }}"><button class="login-btn">Login</button></a>
     </div>
-  </header>
+    </header>
 
-  <div class="container">
-        <!-- Sidebar -->
+    <div class="container">
+          <!-- Sidebar -->
         <div class="side-menu">
             <ul>
             <li><a href="{{ url_for('main.index') }}">Home</a></li>
@@ -30,68 +69,166 @@
             </ul>
         </div>
 
-        <!-- Login Content -->
-        <div class="content">
-            <!--Role buttons-->
-            <div class="login-page">
-                    <div class="role-buttons">
-                        <a class="role-btn" href="{{ url_for('auth.login', role='admin') }}">Admin</a>
-                        <a class="role-btn" href="{{ url_for('auth.login', role='doctor') }}">Doctor</a>
-                        <a class="role-btn" href="{{ url_for('auth.login', role='patient') }}">Patient</a>
-                    </div>
-
-            <!--Admin Login Page-->
-            {% if role == "admin" %}
-                <h2 id="admin-header">Admin Login</h2>
-                 <img id="admin-profile-icon" src="{{ url_for('static', filename='images/red-profile.png') }}" alt="admin profile icon">
+        <!-- Main Content -->
+        <div class="login-content">
+            <!-- Role Selection -->
+            <div class="role-selection" id="roleSelection">
+                <h1>Secure Healthcare Portal</h1>
+                <p>Select your role to continue to login</p>
                 
-                    <form class="admin-login-content" method="post">
+                <div class="role-buttons">
+                    <a class="role-btn admin-btn" href="{{ url_for('auth.login', role='admin') }}">
+                        <span class="role-btn-icon">🛡️</span>
+                        <span class="role-btn-text">Administrator</span>
+                    </a>
+                    <a class="role-btn doctor-btn" href="{{ url_for('auth.login', role='doctor') }}">
+                        <span class="role-btn-icon">👨‍⚕️</span>
+                        <span class="role-btn-text">Medical Staff</span>
+                    </a>
+                    <a class="role-btn patient-btn" href="{{ url_for('auth.login', role='patient') }}">
+                        <span class="role-btn-icon">👤</span>
+                        <span class="role-btn-text">Patient</span>
+                    </a>
+                </div>
+            </div>
 
-                        <input type="hidden" name="role" value="admin">
-                        <label>Admin ID:</label>
-                            <input type="text" name="username" placeholder="Please enter your username" required>
-                        <label>Password</label>
-                            <input type="password" name="password" placeholder="Please enter your password" required>
-                        <button class="sub-btn" type="submit">Submit</button>
-                    </form> 
+            <!-- Login Forms - Hidden until role is selected -->
+            <div class="login-container admin-login" id="adminLogin">
+                <div class="login-header">
+                    <h2>Administrator Login</h2>
+                     <img id="admin-profile-icon" src="{{ url_for('static', filename='images/user.png') }}" alt="admin profile icon">
+                </div>
+                
+                <form method="POST" action="{{ url_for('auth.login') }}">
+                    <input type="hidden" name="role" value="admin">
                     
-            <!--Doctor Login Page-->
-            {% elif role == "doctor" %}
-                <h2 id="doctor-login-header">Doctor Login</h2>
-                 <img id="admin-profile-icon" src="{{ url_for('static', filename='images/blue-profile.png') }}" alt="doctor profile icon">
-                    <form class="doctor-login-content" method="post">
-                        <input type="hidden" name="role" value="doctor">
-                        <label>Doctor ID</label>
-                            <input type="text" name="username" placeholder="Please enter your username" required>
-                        <label>Password</label>
-                            <input type="password" name="password" placeholder="Please enter your password" required>
-                        <button class="sub-btn" type="submit">Submit</button>
-                    </form>
-                
-            <!--Patient Login Page-->
-            {%elif role == "patient" %}
-                <h2 id="patient-login-header">Patient Login</h2>
-                <img id="admin-profile-icon" src="{{ url_for('static', filename='images/green-profile.png') }}" alt="patient profile icon">
-                <form class="patient-login-content" method="post">
-                    <input type="hidden" name="role" value="patient">
-                    <label>Username</label>
-                    <input type="text" name="username" placeholder="Please enter your username" required>
-                    <label>Password</label>
-                    <input type="password" name="password" placeholder="Please enter your password" required>
-                    <button class="sub-btn" type="submit">Submit</button>
+                    <div class="form-group">
+                        
+                        <label for="admin-username">Admin ID</label>
+                        <span class="input-icon">👤</span>
+                        <input class="form-input" type="text" id="admin-username" name="username" placeholder="Enter your admin ID" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="admin-password">Password</label>
+                        <span class="input-icon">🔒</span>
+                        <input class="form-input" type="password" id="admin-password" name="password" placeholder="Enter your password" required>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Sign In</button>
+                    
+                    <a href="{{ url_for('auth.login') }}" class="back-link">
+                        ← Back to Role Selection
+                    </a>
                 </form>
-            {% endif %}
-              <center>
-            <!--If the user doesnt have an account, links them to the register page-->
-            <p>Don’t already have an account? 
-                <a href="{{ url_for('auth.register') }}">Register here</a>
-            </p>
-            </center>
+
+            </div>
+
+            <div class="login-container doctor-login" id="doctorLogin">
+                <div class="login-header">
+               
+                    <h2>Medical Staff Login</h2>
+                    <img id="admin-profile-icon" src="{{ url_for('static', filename='images/user.png') }}" alt="admin profile icon">
+                </div>
+                
+                <form method="POST" action="{{ url_for('auth.login') }}">
+                    <input type="hidden" name="role" value="doctor">
+                    
+                    <div class="form-group">
+                        <label for="doctor-username">Doctor ID</label>
+                        <input class="form-input" type="text" id="doctor-username" name="username" placeholder="Enter your doctor ID" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="doctor-password">Password</label>
+                        <input class="form-input" type="password" id="doctor-password" name="password" placeholder="Enter your password" required>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Sign In</button>
+                    
+                    <a href="{{ url_for('auth.login') }}" class="back-link">
+                        ← Back to Role Selection
+                    </a>
+                </form>
+            </div>
+
+            <div class="login-container patient-login" id="patientLogin">
+                <div class="login-header">
+                    
+                    <h2>Patient Login</h2>
+                    <img id="admin-profile-icon" src="{{ url_for('static', filename='images/user.png') }}" alt="admin profile icon">
+                </div>
+                
+                <form method="POST" action="{{ url_for('auth.login') }}">
+                    <input type="hidden" name="role" value="patient">
+                    
+                    <div class="form-group">
+                        <label for="patient-username">Username</label>
+                        <input class="form-input" type="text" id="patient-username" name="username" placeholder="Enter your username" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="patient-password">Password</label>
+                        <input class="form-input" type="password" id="patient-password" name="password" placeholder="Enter your password" required>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Sign In</button>
+                    
+                    <a href="{{ url_for('auth.login') }}" class="back-link">
+                        ← Back to Role Selection
+                    </a>
+                </form>
+                
+                <div class="register-prompt">
+                    <p>Don't have an account? <a href="{{ url_for('auth.register') }}" class="register-link">Register here</a></p>
+                </div>
             </div>
         </div>
     </div>
-  <footer>
-    <p>Powered by Coin Flippers</p>
-  </footer>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div>© Powered by Coin Flippers</div>
+    <a  href="{{ url_for('patient.patient') }}"><button class="fake-login-btn">Login</button></a>
+  <div class="footer-links">
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get URL parameters to check if a role was selected
+            const urlParams = new URLSearchParams(window.location.search);
+            const role = urlParams.get('role');
+            
+            // Hide all login forms initially
+            const loginForms = document.querySelectorAll('.login-container');
+            loginForms.forEach(form => {
+                form.classList.remove('active');
+            });
+            
+            // Show role selection by default
+            const roleSelection = document.getElementById('roleSelection');
+            roleSelection.style.display = 'block';
+            
+            // If a role is specified in URL, show that login form
+            if (role) {
+                roleSelection.style.display = 'none';
+                const loginForm = document.getElementById(role + 'Login');
+                if (loginForm) {
+                    loginForm.classList.add('active');
+                }
+            }
+            
+            // Add animation to role buttons
+            const roleButtons = document.querySelectorAll('.role-btn');
+            roleButtons.forEach((button, index) => {
+                button.style.animationDelay = `${index * 0.2}s`;
+                button.style.opacity = '0';
+                setTimeout(() => {
+                    button.style.transition = 'opacity 0.5s ease, transform 0.3s ease';
+                    button.style.opacity = '1';
+                }, index * 200);
+            });
+        });
+    </script>
 </body>
 </html>
