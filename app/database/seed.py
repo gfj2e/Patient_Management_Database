@@ -6,12 +6,16 @@ import uuid
 import random
 import string
 
+# Purpose of this file is to generate fake data to fill the database with information
+# for testing purposes. Uses the Faker library to fufill this
+
 Faker.seed(0)
 fake = Faker()
 
 SPECIALTIES = ("Family Medicine", "Cardiology", "Pediatrics", "Neurology",
                "Orthopedics", "Dermatology", "Gynecology", "Oncology")
 
+# Function to generate a phone number in the format of (XXX) XXX-XXXX
 def generate_phone_number() -> int:
     number = "("
     
@@ -27,17 +31,21 @@ def generate_phone_number() -> int:
     
     return number
 
+# Function that will automatically calculate the age based on a datetime variable passed through
+# the function
 def calculate_age(dob) -> str:
     today = date.today()
     age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
     return age
 
+# Seed the database with the fake data
 def seed_database() -> None:
     
     print("Seeding database with data...")
     
     doctors = []
     
+    # Create 10 doctors
     for i in range(10):
         doctor = Doctor(
             first_name = fake.first_name(),
@@ -55,6 +63,7 @@ def seed_database() -> None:
     
     patients = []
     
+    # Create 50 patients
     for i in range(50):
         date_of_birth = fake.date_of_birth(minimum_age=18, maximum_age=100)
         
@@ -78,8 +87,11 @@ def seed_database() -> None:
     db.session.add_all(patients)
     db.session.commit()
     
+    # Patient with id 1 will be assigned the fake data with prescriptions, test_results,
+    # and appointments
     insert_test_data(patients[0].patient_id, patients[0].doctor_id)
     
+    # The doctors and patients are also to be linked to user accounts for them
     doctor_logins = []
     for doctor in doctors:
         doctor_login = Doctor_Login(    
@@ -106,7 +118,8 @@ def seed_database() -> None:
         patient_logins.append(patient_login)
     db.session.add_all(patient_logins)
     db.session.commit()
-        
+    
+    # Only one admin_login required
     admin = Admin_Login(
         user_name = "admin",
         email = "admin@garrettisgreat.com",

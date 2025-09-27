@@ -7,6 +7,8 @@ with app.app_context():
     
 #! If you need to seed the database make sure you delete the tables first
 
+
+
 # -- Truncate all tables (keeps tables but removes all data)
 # TRUNCATE TABLE appointments;
 # TRUNCATE TABLE prescriptions;

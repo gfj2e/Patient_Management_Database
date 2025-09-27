@@ -5,8 +5,10 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
+# Connects to a local MySQL server using SQLAlchemy server connector
+# Use your own login credentials to connect to your server
 def init_connection_engine(app):
-    db_user = "root"
+    db_user = "root"                # Replace these credentials
     db_password = "Gfj2e_7719"
     # db_password = "andy"
     db_name = "patient_mgmt"
