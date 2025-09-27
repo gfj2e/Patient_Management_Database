@@ -1,0 +1,4 @@
+app/database/__pycache__/connection.cpython-313.pyc
+*.pyc
+app/__pycache__/__init__.cpython-313.pyc
+app/auth/__pycache__/routes.cpython-313.pyc
