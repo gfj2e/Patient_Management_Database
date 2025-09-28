@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='patient_styles.css') }}">
-    <title>Patient Portal </title>
+    <title>Patient Portal</title>
+
 </head>
 <body>
     <header class="navbar">
-        <div class="logo">CuraCloud
-        </div>
+        <div class="logo">CuraCloud</div>
         <div class="nav-buttons">
             <div class="right-header">
                 <div class="profile-icon"> 
@@ -18,6 +18,8 @@
                 <a href="{{ url_for('auth.login') }}">
                     <button class="logout-btn">Logout</button>
                 </a>
+                </div>
+                
             </div>
         </div>
     </header>
@@ -25,13 +27,13 @@
     <div class="container">
         <div class="side-menu">
             <ul>
-                <li><a href="{{ url_for('main.index') }}" class="active">Home</a></li>
-                <li><a href="{{ url_for('main.contact') }}">Appointments</a></li>
-                <li><a href="{{ url_for('main.about') }}">Prescriptions</a></li>
-                <li><a href="{{ url_for('main.services') }}">Billing & Payments</a></li>
-                <li><a href="{{ url_for('main.services') }}">Lab Results</a></li>
-                <li><a href="{{ url_for('main.services') }}">Messages</a></li>
-                <li><a href="{{ url_for('main.services') }}">My Health</a></li>
+                <li><a href="{{ url_for('patient.patient_home') }}" class="active">Home</a></li>
+                <li><a href="{{ url_for('patient.appointments') }}">Appointments</a></li>
+                <li><a href="#">Prescriptions</a></li>
+                <li><a href="#">Billing & Payments</a></li>
+                <li><a href="#">Lab Results</a></li>
+                <li><a href="#">Messages</a></li>
+                <li><a href="#">My Health</a></li>
             </ul>
         </div>
         
@@ -41,83 +43,88 @@
                 <div class="welcome-subtitle">Welcome to your CuraCloud Patient Portal</div>
             </div>
             
-            <div class="dashboard-grid">
-                <div class="dashboard-card">
-                    <div class="card-header">Appointments</div>
-                    <div class="card-content">
-                        <p>You have no upcoming appointments.</p>
-                        <div class="card-action">
-                            <button class="btn-primary">Schedule Now</button>
+            <!-- Side by side layout -->
+            <div class="dashboard-container">
+                <div class="dashboard-vertical">
+                    <div class="dashboard-card">
+                        <div class="card-header">Appointments</div>
+                        <div class="card-content">
+                            <p class="card-text">You have no upcoming appointments.</p>
+                            <div class="card-action">
+                                <button class="btn-primary">Schedule Now</button>
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-                <div class="dashboard-card">
-                    <div class="card-header">Messages</div>
-                    <div class="card-content">
-                        <p>Have a question for your care team?</p>
-                        <div class="card-action">
-                            <button class="btn-primary">Send a Message</button>
+                    
+                    <div class="dashboard-card">
+                        <div class="card-header">Messages</div>
+                        <div class="card-content">
+                            <p class="card-text">Have a question for your care team?</p>
+                            <div class="card-action">
+                                <button class="btn-primary">Send a Message</button>
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-                <div class="dashboard-card">
-                    <div class="card-header">Billing Summary</div>
-                    <div class="card-content">
-                        <p class="status-message">You don't have any bills due.</p>
-                        <div class="card-action">
-                            <button class="btn-primary">View Details</button>
+                    
+                    <div class="dashboard-card">
+                        <div class="card-header">Billing Summary</div>
+                        <div class="card-content">
+                            <p class="card-text">You don't have any bills due.</p>
+                            <div class="card-action">
+                                <button class="btn-primary">View Details</button>
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-                <div class="dashboard-card">
-                    <div class="card-header">Lab Results</div>
-                    <div class="card-content">
-                        <p>No new lab results available.</p>
-                        <div class="card-action">
-                            <button class="btn-primary">View History</button>
+                    
+                    <div class="dashboard-card">
+                        <div class="card-header">Lab Results</div>
+                        <div class="card-content">
+                            <p class="card-text">No new lab results available.</p>
+                            <div class="card-action">
+                                <button class="btn-primary">View History</button>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="dashboard-card">
-                    <div class="card-header">Prescriptions</div>
-                    <div class="card-content">
-                        <p>Want to view your prescriptions?</p>
-                        <div class="card-action">
-                            <button class="btn-primary">Check Your Prescriptions</button>
+                    <div class="dashboard-card">
+                        <div class="card-header">Prescriptions</div>
+                        <div class="card-content">
+                            <p class="card-text">Want to view your prescriptions?</p>
+                            <div class="card-action">
+                                <button class="btn-primary">Check Your Prescriptions</button>
+                            </div>
                         </div>
                     </div>
                 </div>
+                
+                <div class="quick-actions">
+                    <div class="action-card">
+                        <div class="action-icon">📅</div>
+                        <div>Schedule Appointment</div>
+                    </div>
+                    <div class="action-card">
+                        <div class="action-icon">💊</div>
+                        <div>Refill Prescription</div>
+                    </div>
+                    <div class="action-card">
+                        <div class="action-icon">💰</div>
+                        <div>Pay Bill</div>
+                    </div>
+                    <div class="action-card">
+                        <div class="action-icon">📋</div>
+                        <div>View Health Records</div>
+                    </div>
+                </div>
             </div>
-            
-            <div class="quick-actions">
-                <div class="action-card">
-                    <div class="action-icon">📅</div>
-                    <div>Schedule Appointment</div>
-                </div>
-                <div class="action-card">
-                    <div class="action-icon">💊</div>
-                    <div>Refill Prescription</div>
-                </div>
-                <div class="action-card">
-                    <div class="action-icon">💰</div>
-                    <div>Pay Bill</div>
-                </div>
-                <div class="action-card">
-                    <div class="action-icon">📋</div>
-                    <div>View Health Records</div>
-                </div>
-            </div>
-            
-            
         </div>
     </div>
 
+    <div class="footer">
+        <div>© Powered by Coin Flippers</div>
+        <div class="footer-links"></div>
+    </div>
+
     <script>
-        // Simple interactive functionality
         document.addEventListener('DOMContentLoaded', function() {
             // Add click handlers to action cards
             const actionCards = document.querySelectorAll('.action-card');
@@ -136,12 +143,16 @@
                     this.classList.add('active');
                 });
             });
+            
+            // Add click handlers to dashboard card buttons
+            const dashboardButtons = document.querySelectorAll('.dashboard-card .btn-primary');
+            dashboardButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const cardHeader = this.closest('.dashboard-card').querySelector('.card-header').textContent;
+                    alert(`Action for: ${cardHeader}`);
+                });
+            });
         });
     </script>
 </body>
-<div class="footer">
-    <div>© Powered by Coin Flippers</div>
-    <div class="footer-links">
-    </div>
-</div>
 </html>

@@ -165,15 +165,21 @@ body {
 
 .card-content {
     padding: 20px;
-    min-height: 150px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 }
 
+
 .card-action {
     margin-top: 15px;
     text-align: right;
+}
+
+.card-text {
+    margin-bottom: 15px;
+    color: #555;
+    font-size: 16px;
 }
 
 .btn-primary {
@@ -197,43 +203,60 @@ body {
 }
 
 .quick-actions {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-    margin-top: 30px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .action-card {
     background: white;
     border-radius: 10px;
-    padding: 20px;
+    padding: 25px 20px;
     text-align: center;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
     cursor: pointer;
     transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
 }
 
 .action-card:hover {
     transform: translateY(-3px);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    background-color: #f8f9ff;
 }
 
 .action-icon {
     font-size: 32px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: #f0f2ff;
+}
+
+.action-card div:last-child {
+    font-weight: 500;
     color: #250046;
+    font-size: 16px;
 }
 
-.footer {
-    background: #f1f1f1;
-    padding: 20px;
-    text-align: center;
-    margin-top: 40px;
-    border-top: 1px solid #ddd;
-    font-size: 14px;
-    color: #666;
+.footer{
+   text-align: center;
+        padding: 20px;
+        background: rgba(37, 0, 70, 0.8);
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 14px;
+        backdrop-filter: blur(10px);
+    
 }
-
 .footer-links {
     display: flex;
     justify-content: center;
@@ -292,6 +315,19 @@ body {
     .quick-actions {
         grid-template-columns: repeat(2, 1fr);
     }
+}
+
+.dashboard-container {
+    display: flex;
+    gap: 25px;
+    margin-top: 20px;
+}
+
+.dashboard-vertical {
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 @media (max-width: 480px) {
