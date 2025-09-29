@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{{ url_for('static', filename='patient_styles.css') }}">
+        <title>Patient Portal - Side by Side Layout</title>
+    </head>
+    
+        <style>
+            .dashboard-container{
+                display:flex;
+                gap:25px;
+                margin-top:20px;
+                margin-left:30px
+            }
+
+            .dashboard-vertical{
+                flex:3;
+                display:flex;
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .quick-actions {
+                flex:1;
+                display:flex;
+                flex-direction: column;
+                gap:20px;
+            }
+        </style>
+    <body>
+    <header class="navbar">
+        <div class="logo">CuraCloud</div>
+        <div class="nav-buttons">
+            <div class="right-header">
+                <div class="profile-icon"> 
+                    <img id="admin-profile-icon" src="{{ url_for('static', filename='images/woman-patient.png') }}" alt="admin profile icon">
+                </div>
+                    <a href="{{ url_for('auth.login') }}">
+                        <button class="logout-btn">Logout</button>
+                    </a>
+                </div>
+                
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+         <div class="side-menu">
+            <ul>
+                <li><a href="{{ url_for('patient.patient_home') }}" class="active">Home</a></li>
+                <li><a href="{{ url_for('patient.appointments') }}">Appointments</a></li>
+                <li><a href="#">Prescriptions</a></li>
+                <li><a href="#">Billing & Payments</a></li>
+                <li><a href="#">Lab Results</a></li>
+                <li><a href="#">Messages</a></li>
+                <li><a href="#">My Health</a></li>
+            </ul>
+        </div>
+
+        <div class="content">
+            <div class="welcome-section">
+                <div class="welcome-message">Appointments</div>
+                <div class="welcome-subtitle">Manage your medical appointment</div>
+            </div>
+
+            <div class="dashboard-container">
+                <div class="dashboard-vertical">
+                    <div class="dashboard-card">
+                        <div class="card-header">Upcoming Appointments</div>
+                        <div class="card-content">
+                            <p class="card-text">You have no upcoming appointments scheduled</p>
+
+                            <div class="card-action">
+                                <button class="btn-primary">Schedule an appointment</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <div class="card-header">Appointment History</div>
+                            <div class="card-content">
+                                <p class="card-text">View your past appointments</p>
+                                <div class="card-action">
+                                    <button class="btn-primary">View History</button>
+                                </div>
+                            </div>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <div class="card-header">Doctor Directory</div>
+                            <div class="card-content">
+                                <p class="card-text">Find Doctors and Specialists in your area</p>
+
+                                <div class="card-action">
+                                    <button class="btn-primary">Browse Doctors</button>
+                                </div>
+                                
+                            </div>
+                    </div>
+                </div>
+
+                    <div class="quick-actions">
+                    <div class="action-card">
+                        <div class="action-icon">📅</div>
+                        <div>Schedule Appointment</div>
+                    </div>
+                    <div class="action-card">
+                        <div class="action-icon">🔄</div>
+                        <div>Reschedule</div>
+                    </div>
+                    <div class="action-card">
+                        <div class="action-icon">❌</div>
+                        <div>Cancel Appointment</div>
+                    </div>
+                    <div class="action-card">
+                        <div class="action-icon">💬</div>
+                        <div>Contact Office</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <div>© Powered by Coin Flippers</div>
+    </div>
+    </body>
+</html>

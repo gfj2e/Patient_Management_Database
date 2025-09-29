@@ -59,8 +59,8 @@ class Doctor(db.Model):
     specialty: Mapped[str] = mapped_column(String(128), nullable=False)
     state: Mapped[str] = mapped_column(String(255), nullable=False)
     city: Mapped[str] = mapped_column(String(255), nullable=False)
-    phone_number: Mapped[str] = mapped_column(String(25), nullable=False, unique=True)
-    email: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
+    phone_number: Mapped[str] = mapped_column(String(25), nullable=False, unique=False)
+    email: Mapped[str] = mapped_column(String(255), nullable=False, unique=False)
     
     patients = relationship("Patient", back_populates="doctor")
     appointments = relationship("Appointment", back_populates="doctor")
@@ -159,8 +159,8 @@ class User_Login(db.Model):
     __tablename__ = "user_login"
     
     id: Mapped[int] = mapped_column(primary_key=True)
-    user_name: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
-    email: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
+    user_name: Mapped[str] = mapped_column(String(50), nullable=False, unique=False)
+    email: Mapped[str] = mapped_column(String(100), nullable=False, unique=False)
     password: Mapped[str] = mapped_column(String(100), nullable=False)
 
     date_created: Mapped[datetime] = mapped_column(server_default=func.UTC_TIMESTAMP())

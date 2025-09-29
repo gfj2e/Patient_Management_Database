@@ -8,11 +8,12 @@ body {
     display: flex; 
     flex-direction: column; 
     height: 100vh; 
-     background: #ffffff;
+     background: #f8f9fa;
     color: #333;}
 
 .container{
   display: flex;
+   flex: 1;
 }
 
 /* Navbar */
@@ -20,7 +21,7 @@ body {
     display:flex;
     justify-content: space-between;
     align-items: center;
-    background-color: rgb(97, 22, 97);
+    background: linear-gradient(135deg, #250046 0%, #3a0066 100%);
     padding: 20px 20px;
     color: #fff
 }
@@ -32,7 +33,7 @@ body {
     background: #395571; /* blue for doctor */
 }
 .navbar-patient {
-    background: #005004; /* green for patient */
+     background-color: #250046; /* purple for patient */
 }
 
 /*Navbar formatting*/
@@ -50,31 +51,309 @@ body {
 }
 
 /* Sidebar */
-.side-menu{
-   width: 180px;
-  background: #e0e0e0;
-  padding: 20px;
-  min-height: 100vh;
-  border-right: 1px solid #ddd;
-  box-shadow: 5px 5px 10px rgba(185, 184, 184, 0.998);
+.side-menu {
+    width: 220px;
+    background: #fff;
+    padding: 25px 0;
+    min-height: calc(100vh - 70px);
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
 }
 
-.side-menu ul{
-  list-style:none;
+.side-menu ul {
+    list-style: none;
 }
 
-.side-menu ul li{
-  margin: 15px 0;
+.side-menu ul li {
+    margin: 5px 0;
 }
 
-.side-menu ul li a{
-  text-decoration: none;
-  color: #333;
+.side-menu ul li a {
+    text-decoration: none;
+    color: #555;
+    display: block;
+    padding: 12px 25px;
+    transition: all 0.2s ease;
+    border-left: 4px solid transparent;
 }
 
-.side-menu ul li a:hover{
-  color:  #0097a7;
+.side-menu ul li a:hover, 
+.side-menu ul li a.active {
+    background: #f0f5ff;
+    color: #250046;
+    border-left: 4px solid #250046;
 }
+
+    .login-content {
+        flex: 1;
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+    }
+
+    /* Role Selection - ALWAYS VISIBLE FIRST */
+    .role-selection {
+        text-align: center;
+        width: 100%;
+        max-width: 800px;
+        animation: fadeIn 0.8s ease;
+    }
+
+    .role-selection h1 {
+        font-size: 42px;
+        margin-bottom: 15px;
+        background: linear-gradient(135deg, #871abd 0%, #060016 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .role-selection p {
+        font-size: 18px;
+        color: rgba(0, 0, 0, 0.7);
+        margin-bottom: 40px;
+    }
+
+    .role-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        flex-wrap: wrap;
+    }
+
+    .role-btn {
+        background: rgb(93, 47, 128);
+        border: none;
+        border-radius: 15px;
+        padding: 25px 20px;
+        cursor: pointer;
+        color: #fff;
+        font-size: 18px;
+        font-weight: 600;
+        transition: all 0.4s ease;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        width: 200px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-decoration: none;
+    }
+
+    .role-btn:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .role-btn-icon {
+        font-size: 48px;
+        margin-bottom: 15px;
+    }
+
+    .role-btn-text {
+        font-size: 16px;
+    }
+
+    .admin-btn {
+        border: 2px solid rgba(239, 68, 68, 0.5);
+    }
+
+    .admin-btn:hover {
+        border-color: rgba(239, 68, 68, 0.8);
+        background: rgba(239, 68, 68, 0.1);
+    }
+
+    .doctor-btn {
+        border: 2px solid rgba(59, 130, 246, 0.5);
+    }
+
+    .doctor-btn:hover {
+        border-color: rgba(59, 130, 246, 0.8);
+        background: rgba(59, 130, 246, 0.1);
+    }
+
+    .patient-btn {
+        border: 2px solid rgba(16, 185, 129, 0);
+    }
+
+    .patient-btn:hover {
+        border-color: rgba(16, 185, 129, 0.8);
+        background: rgba(16, 185, 129, 0.1);
+    }
+ 
+
+    .login-container.active {
+        display: block;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .login-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .login-header-icon {
+        font-size: 60px;
+        margin-bottom: 15px;
+        display: block;
+    }
+
+    .admin-login .login-header-icon {
+        color: #ef4444;
+    }
+
+    .doctor-login .login-header-icon {
+        color: #3b82f6;
+    }
+
+    .patient-login .login-header-icon {
+        color: #10b981;
+    }
+
+    .login-header h2 {
+        font-size: 32px;
+        margin-bottom: 10px;
+    }
+
+    .login-header p {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 16px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+        position: relative;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        text-align: left;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 15px 15px 15px 45px;
+        border: none;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        color: #000000;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(69, 27, 27);
+    }
+
+    .form-input:focus {
+        outline: none;
+        background: rgba(255, 255, 255, 0.15);
+        border-color: rgba(108, 66, 245, 0.5);
+        box-shadow: 0 0 0 2px rgba(108, 66, 245, 0.3);
+    }
+
+    .input-icon {
+        position: absolute;
+        left: 15px;
+        top: 40px;
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 18px;
+    }
+
+    .submit-btn {
+      padding: 12px;
+      background-color:  rgb(97, 22, 97);
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s;
+      width: 100%;
+      margin-top: 10px;
+      box-shadow: 0 4px 15px rgba(108, 66, 245, 0.4);
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(108, 66, 245, 0.4);
+    }
+
+    .back-link {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        background: linear-gradient(135deg, #871abd 0%, #060016 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-decoration: none;
+        font-size: 14px;
+    }
+
+    .back-link:hover {
+        color: #fff;
+    }
+
+    .register-prompt {
+        text-align: center;
+        margin-top: 20px;
+        color: rgba(0, 0, 0, 0.7);
+        font-size: 14px;
+    }
+
+    .register-link {
+        color: #a78bfa;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .register-link:hover {
+        text-decoration: underline;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .container {
+            flex-direction: column;
+        }
+        
+        .login-content {
+            padding: 20px;
+        }
+        
+        .role-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .role-btn {
+            width: 100%;
+            max-width: 300px;
+            padding: 20px;
+        }
+        
+        .role-selection h1 {
+            font-size: 32px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .navbar {
+            padding: 15px;
+        }
+        
+        .logo {
+            font-size: 20px;
+        }
+        
+        .login-container {
+            padding: 30px 20px;
+        }
+    }
 
 /* Content */
 .content {
@@ -101,88 +380,9 @@ body {
     margin-right: 20px;
 }
 
-/* Role buttons */
-.role-buttons {
-     margin-bottom: 20px; 
-     border: none;
-     text-align: center;
-}
-
-/*Login form content*/
-.admin-login-content,
-.doctor-login-content,
-.patient-login-content {
-  display: flex;
-  flex-direction: column;
-  text-align: left;
-  width: 100%;
-  max-width: 350px;
-  margin: 0 auto 24px auto;
-  background: #f7f7f7;
-  padding: 24px 20px;
-  border-radius: 8px;
-  box-shadow: 2px 2px 8px #e0e0e0;
-  margin-top: 30px;
-}
-
-/*Login form input boxes*/
-.admin-login-content input,
-.doctor-login-content input,
-.patient-login-content input {
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 8px;
-  border: 1px solid #bbb;
-  border-radius: 4px;
-  height: 44px;
-}
-
-/*Login content submit buttons*/
-.admin-login-content button,
-.doctor-login-content button,
-.patient-login-content button {
-  margin-top: 16px;
-  width: 100%;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  background-color: #053510;
-  color: #ffffff;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-/*Login button label*/
-.admin-login-content label,
-.doctor-login-content label,
-.patient-login-content label {
-  margin-bottom: 4px;
-  margin-top: 12px;
-}
-
-/*Admin login header*/
-#admin-header{
-    text-align: center;
-    padding-top: 20px;
-    color: rgb(63, 0, 0);
-}
-
-/*Doctor Login header*/
-#doctor-login-header{
-    text-align: center;
-    padding-top: 20px;
-    color: rgb(0, 0, 67);
-}
-
-/*Patient login header*/
-#patient-login-header{
-    text-align: center;
-    padding-top: 20px;
-    color: rgb(0, 35, 17);
-}
 
 /*Formatting for the login/register button*/
-.login-btn{
+.fake-login-btn{
   margin-left: 10px;
   padding: 10px 12px ;
   border: none;
@@ -193,10 +393,19 @@ body {
   box-shadow: 5px 5px 10px  rgb(28, 28, 28);
 }
 
+.login-btn{
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  transition: all 0.3s ease;
+}
 .login-btn:hover,
 .login-btn:active {
-  background: #aed2d6;
-  color: #fff;
+ background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
 }
 
 
@@ -205,49 +414,6 @@ body {
 }
 
 /*************************************/
-
-/*Button formatting for assigned roles*/
-.role-btn{
-    background: #2b2b2b;
-  border: 1px solid #1f1f1f;
-  border-radius: 6px;
-  margin-left: 10px;
-  padding: 10px 20px ;
-  box-shadow: rgba(0, 0, 0, 0.1) 1px 2px 4px;
-  box-sizing: border-box;
-  color: #FFFFFF;
-  cursor: pointer;
-  display: inline-block;
-  font-family: nunito,roboto,proxima-nova,"proxima nova",sans-serif;
-  font-size: 16px;
-  font-weight: 800;
-  line-height: 16px;
-  min-height: 40px;
-  outline: 0;
-  padding: 12px 14px;
-  text-align: center;
-  text-rendering: geometricprecision;
-  text-transform: none;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
-  vertical-align: middle;
-  text-decoration: none;
-}
-
-.role-btn:hover,
-.role-btn:active {
-  background-color: initial;
-  background-position: 0 0;
-  color: #120019;
-  text-decoration: none;
-}
-
-.role-btn:active {
-  opacity: .5;
-}
-
-/****************************************/
 
 /*Profile icon for admin login*/
 #admin-profile-icon{
@@ -281,9 +447,13 @@ body {
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
-  background: #ffffff;  
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: fadeIn 0.5s ease
 }
 
 /*Formatting the registration input in a grid*/
@@ -308,14 +478,22 @@ body {
 
 /*Content box for registration information*/
 .register-box {
-    padding: 10px;
-    margin-bottom: 0;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
-    width: 100%;
+  padding: 15px 15px 15px 45px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  font-size: 16px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  color: #060606;
+  transition: all 0.3s ease;
 }
 
+.register-box:focus{
+    outline: none;
+    border-color: rgba(108, 66, 245, 0.5);
+    box-shadow: 0 0 0 3px rgba(108, 66, 245, 0.2);
+    background: rgba(255, 255, 255, 0.15);
+}
 /* Full width elements */
 .full-width {
     grid-column: 1 / span 2;
@@ -333,6 +511,7 @@ button[type="submit"] {
     transition: background-color 0.3s;
     width: 100%;
     margin-top: 10px;
+    box-shadow: 0 4px 15px rgba(108, 66, 245, 0.4);
 }
 
 button[type="submit"]:hover {
@@ -357,3 +536,168 @@ button[type="submit"]:hover {
   max-width: 40vw;           
   height: auto;    
 }
+
+/* Progress indicator */
+  .progress-container {
+      height: 5px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 5px;
+      margin-bottom: 30px;
+      overflow: hidden;
+  }
+
+  .progress-bar {
+      height: 100%;
+      background: linear-gradient(135deg, #6c42f5 0%, #8d6aff 100%);
+      width: 0%;
+      transition: width 0.5s ease;
+  }
+
+  /* Form validation styles */
+  .form-input:invalid {
+      border-color: rgba(239, 68, 68, 0.5);
+  }
+
+  .form-input:valid {
+      border-color: rgba(16, 185, 129, 0.5);
+  }
+
+    /* Responsive Design */
+  @media (max-width: 1024px) {
+      .side-menu {
+          width: 220px;
+      }
+  }
+
+  @media (max-width: 768px) {
+      .container {
+          flex-direction: column;
+      }
+      
+      .side-menu {
+          width: 100%;
+          min-height: auto;
+          padding: 20px 0;
+      }
+      
+      .side-menu-list {
+          display: flex;
+          overflow-x: auto;
+          padding: 0 15px;
+      }
+      
+      .side-menu-item {
+          margin: 0 5px;
+      }
+      
+      .side-menu-link {
+          white-space: nowrap;
+          border-left: none;
+          border-bottom: 3px solid transparent;
+          padding: 10px 15px;
+      }
+      
+      .side-menu-link:hover, 
+      .side-menu-link.active {
+          border-left: none;
+          border-bottom: 3px solid #6c42f5;
+          transform: translateY(0);
+      }
+      
+      .form-grid {
+          grid-template-columns: 1fr;
+      }
+      
+      .full-width {
+          grid-column: 1;
+      }
+      
+      .content {
+          padding: 20px;
+      }
+      
+      .register-container {
+          padding: 30px 20px;
+      }
+  }
+
+  @media (max-width: 480px) {
+      .navbar {
+          padding: 15px;
+      }
+      
+      .logo {
+          font-size: 20px;
+      }
+      
+      .tab-container {
+          flex-direction: column;
+          align-items: center;
+      }
+      
+      .tab {
+          width: 100%;
+          margin-bottom: 5px;
+          text-align: center;
+      }
+  }
+
+/* Form validation styles */
+.form-input:invalid {
+    border-color: rgba(239, 68, 68, 0.5);
+}
+
+.form-input:valid {
+    border-color: rgba(16, 185, 129, 0.5);
+}
+
+/* Progress indicator */
+.progress-container {
+    height: 5px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(135deg, #6c42f5 0%, #8d6aff 100%);
+    width: 0%;
+    transition: width 0.5s ease;
+}
+
+    .form-label {
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: rgba(38, 0, 61, 0.9);
+    display: flex;
+    align-items: center;
+}
+
+.tab-container{
+  display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 10px;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 450px;
+    background: rgb(255, 255, 255);
+    border-radius: 20px;
+    padding: 40px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: none;
+    animation: fadeIn 0.5s ease;
+}
+
+.login-container.active {
+    display: block;
+}
+
+

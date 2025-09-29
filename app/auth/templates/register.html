@@ -12,7 +12,7 @@
 <body>
   <!-- Navbar -->
   <header class="navbar">
-    <div class="logo">Logo Here</div>
+    <div class="logo">CuraCloud</div>
     <div class="nav-buttons">
       <a  href="{{ url_for('auth.register') }}"><button class="login-btn">Register</button></a>
       <a  href="{{ url_for('auth.login') }}"><button class="login-btn">Login</button></a>
@@ -32,11 +32,19 @@
 
         <!-- Register Content -->
         <div class="content">
-           <div class="register-page">
+           
 
-<!--added tabs-->
-        <div class="tabs">
-          <div class="tab active" onclick="openTab('patient')">Patient Registration</div>
+           <div class="register-page">
+         <!-- Progress Bar -->
+                <div class="progress-container">
+                    <div class="progress-bar" id="formProgress"></div>
+                </div>
+
+        <!--added tabs-->
+        <div class="tab-container">
+            <div class="tab active" onclick="openTab('patient')">
+                <span class="tab-icon"></span> Patient Registration
+            </div>
         </div>
 
         <!--Patient Registration Input-->
@@ -46,58 +54,63 @@
         <!--<form action="#" method="post">-->
             <div class="form-grid">
                 <div class="form-row">
-                    <label>First Name</label>
+                    <label class="form-label">First Name</label>
                     <input class="register-box" type="text" name="First-Name" placeholder="Enter first name" required>
                 </div>
             
                 <div class="form-row">
-                    <label>Last Name</label>
+                    <label class="form-label">Last Name</label>
                     <input class="register-box" type="text" name="Last-Name" placeholder="Enter Last Name" required>
                 </div>
             
                 <div class="form-row">
-                    <label>Email</label>
+                    <label class="form-label">Email</label>
                     <input class="register-box" type="text" name="Email" placeholder="Enter your preferred email" required>
                 </div>
             
                 <div class="form-row">
-                    <label>Username</label>
+                    <label class="form-label">Username</label>
                     <input class="register-box" type="text" name="Username" placeholder="Enter your Username" required>
                 </div>
             
                 <div class="form-row">
-                    <label>Password</label>
+                    <label class="form-label">Password</label>
                     <input class="register-box" type="password" name="Password" placeholder="Enter your password" required>
                 </div>
             
                 <div class="form-row">
-                    <label>Phone #</label>
+                    <label class="form-label">Phone #</label>
                     <input class="register-box" type="text" name="Phone-Number" placeholder="Enter your phone number" required>
                 </div>
             
                 <div class="form-row">
-                    <label>Address</label>
+                    <label class="form-label">Address</label>
                     <input class="register-box" type="text" name="Address" placeholder="Enter your current Address" required>
                 </div>
             
                 <div class="form-row">
-                    <label>Zip Code</label>
+                    <label class="form-label">Zip Code</label>
                     <input class="register-box" type="text" name="Zip-code" placeholder="Enter your Zip Code" required>
                 </div>
             
                 <div class="form-row">
-                    <label>City</label>
+                    <label class="form-label">City</label>
                     <input class="register-box" type="text" name="City" placeholder="Enter your city" required>
                 </div>
             
                 <div class="form-row">
-                    <label>Date of Birth</label>
+                    <label class="form-label">Date of Birth</label>
                     <input class="register-box" type="text" name="DateOfBirth" placeholder="mm/dd/yyyy" required>
                 </div>
             
                 <div class="form-row">
-                    <label>Sex assigned at birth</label>
-                    <input class="register-box" type="text" name="Sex" placeholder="Enter your Sex" required>
+                    <label class="form-label">Sex </label>
+                     <select class="register-box" name="Sex" required>
+                        <option value="">Select your sex</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
                 </div>
             </div>
 
@@ -106,30 +119,47 @@
             </form>
             <br><br>
 
-
+           <p >Already have an account? 
+                <a href="{{ url_for('auth.login') }}">Login here</a>
+            </p>
          </div>
         </div>
 
             <!--If user already has an account, links them to login-->
-            <p>Already have an account? 
-                <a href="{{ url_for('auth.login') }}">Login here</a>
-            </p>
+
+ 
             </div>
         </div>
     </div>
-  <footer>
-    <p>Powered by Coin Flippers</p>
-  </footer>
-
 <script>
-//toggle
-    function openTab(tabName) {
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      document.querySelector(`[onclick="openTab('${tabName}')"]`).classList.add('active');
-      document.querySelectorAll('.tab-content form').forEach(f => f.classList.remove('active'));
-      document.getElementById(tabName).classList.add('active');
-    }
-</script>
+        // Form progress indicator
+        function updateProgress() {
+            const inputs = document.querySelectorAll('input[required], select[required]');
+            const filled = Array.from(inputs).filter(input => input.value.trim() !== '').length;
+            const progress = (filled / inputs.length) * 100;
+            document.getElementById('formProgress').style.width = `${progress}%`;
+        }
 
+        // Add event listeners to all form inputs
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                input.addEventListener('input', updateProgress);
+                input.addEventListener('change', updateProgress);
+            });
+
+
+            // Initialize progress bar
+            updateProgress();
+        });
+
+      
+    </script>
+
+<div class="footer">
+    <div>© Powered by Coin Flippers</div>
+    <div class="footer-links">
+    </div>
+</div>
 </body>
 </html>
