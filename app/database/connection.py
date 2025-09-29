@@ -9,12 +9,14 @@ db = SQLAlchemy()
 # Use your own login credentials to connect to your server
 def init_connection_engine(app):
     db_user = "root"                # Replace these credentials
-    db_password = "password"
-    # db_password = "andy"
+    #db_password = "password"
     db_name = "patient_mgmt"
-    db_host = "localhost"
+    db_host = "127.0.0.1"
+    db_port = "3306"
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{db_user}:{db_password}@{db_host}/{db_name}"
+    app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://root@127.0.0.1:3306/patient_mgmt"
+
+    #app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{db_user}:{db_password}@{db_host}/{db_name}"
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     
     db.init_app(app)
