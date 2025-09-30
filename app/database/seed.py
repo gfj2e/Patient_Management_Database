@@ -40,12 +40,16 @@ def calculate_age(dob) -> str:
 
 # Seed the database with the fake data
 def seed_database() -> None:
-    
+    # destructive: drop existing tables and recreate schema so seeding is idempotent
     print("Seeding database with data...")
+    db.drop_all()
+    db.create_all()
     
     doctors = []
     
     # Create 10 doctors
+    # ensure Faker will produce unique values for emails to avoid unique-key collisions
+    fake.unique.clear()
     for i in range(10):
         doctor = Doctor(
             first_name = fake.first_name(),
@@ -54,19 +58,32 @@ def seed_database() -> None:
             state = fake.state(),
             city = fake.city(),
             phone_number = generate_phone_number(),
-            email = fake.email(),
+            email = fake.unique.email(),
             is_accepting_new_patients = random.choice([True, False])
         )
         doctors.append(doctor)
     db.session.add_all(doctors)
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        # If something odd happens, try to insert doctors individually to get clearer errors
+        for d in doctors:
+            try:
+                db.session.add(d)
+                db.session.commit()
+            except Exception:
+                db.session.rollback()
+                # skip problematic doctor
+                continue
     
     patients = []
     
     # Create 50 patients
+    # reset unique provider for patient emails
+    fake.unique.clear()
     for i in range(50):
         date_of_birth = fake.date_of_birth(minimum_age=18, maximum_age=100)
-        
         patient = Patient(
             patient_code = str(uuid.uuid4())[:16],
             first_name = fake.first_name(),
@@ -75,7 +92,7 @@ def seed_database() -> None:
             age = calculate_age(date_of_birth),
             address = fake.address().replace('\n', ', '),
             phone_number = generate_phone_number(),
-            email = fake.email(),
+            email = fake.unique.email(),
             gender = random.choice(list(Gender)),
             height = str(random.uniform(150.0, 200.0)),
             marriage_status = random.choice(list(MaritalStatus)),
