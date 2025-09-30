@@ -191,8 +191,17 @@
     <!-- Footer -->
     <div class="footer">
         <div>© Powered by Coin Flippers</div>
-    <a href="{{ url_for('patient.patient_home') }}"><button>Login</button></a>
-
+        {# Dynamic login button: send user to appropriate home after login selection #}
+        {% if role == 'doctor' %}
+            <a href="{{ url_for('doctor.doctor_home') }}"><button>Login</button></a>
+        {% elif role == 'patient' %}
+            <a href="{{ url_for('patient.patient_home') }}"><button>Login</button></a>
+        {% elif role == 'admin' %}
+            {# Admin home not implemented; fallback to main.index for now #}
+            <a href="{{ url_for('main.index') }}"><button>Login</button></a>
+        {% else %}
+            <a href="{{ url_for('main.index') }}"><button>Login</button></a>
+        {% endif %}
     </div>
 
     <script>
