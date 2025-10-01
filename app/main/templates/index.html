@@ -32,47 +32,54 @@
    <div class="content">
       <div class="home-img">
         <div class="home-text">
-          <h1>Website Name here</h1>
-          <p>Health at your fingertips</p>
+          <h1>Welcome to CuraCloud</h1>
+          <p>Health at your fingertips.</p>
         </div>
-        <img src="{{ url_for('static', filename='images/person-at-computer.png') }}" alt="Person looking at a computer">
+        <img src="{{ url_for('static', filename='images/doctorclipart.png') }}" alt="Person looking at a computer">
       <br><br>
       <div class="intro">
-      <p >Bacon ipsum dolor amet chuck kielbasa biltong, swine drumstick sausage pork loin shankle cupim picanha jerky frankfurter. Doner meatball turducken cupim jerky ham ball tip, kielbasa buffalo leberkas drumstick pork chop. Jerky picanha ham, pork loin short loin
-         pork belly turkey hamburger porchetta leberkas buffalo.
-        Bacon ipsum dolor amet chuck kielbasa biltong, swine drumstick sausage pork loin shankle cupim picanha jerky frankfurter. Doner meatball turducken cupim jerky ham ball tip, kielbasa buffalo leberkas drumstick pork chop. Jerky picanha ham, pork loin short
-         loin pork belly turkey hamburger porchetta leberkas buffalo.</p>
+      <p >The CuraCloud Patient Portal gives you quick and secure access to your healthcare. Schedule or view appointments. 
+          Review billing statements and lab results or communicate directly with your Provider. View current medications and dosages, allowing 
+          you to stay informed on your treatments. New patients can register or existing patients can login anytime.</p>
       
         </div>
         </div>
 
-
-      
       <div class="features">
+      <p>
+          FEATURES
+      </p>
+      </div>
+
+      <div class="features">
+        <!--Profile photo-->
+        <div class="feature">
+          <img src="{{ url_for('static', filename='images/woman.png') }}" alt="profile-icon"/>
+          <p>Create or login to your account.</p>
+        </div>
         <!--Appointment scheduling-->
         <div class="feature">
             <img src="{{ url_for('static', filename='images/schedule.png') }}" alt="Calendar icon">
-            <p>Flank jowl shank pork chop buffalo alcatra pig, bacon filet mignon swine frankfurter brisket.</p>
+            <p>Easily view and create appointments.</p>
         </div>
         <!--Billing Information-->
         <div class="feature">
-          <img src="{{ url_for('static', filename='images/open.png') }}" alt="billing statement icon"/>
-          <p>Flank jowl shank pork chop buffalo alcatra pig, bacon filet mignon swine frankfurter brisket.</p>
+          <img src="{{ url_for('static', filename='images/bill.png') }}" alt="billing statement icon"/>
+          <p>Check billing statements.</p>
         </div>
         <!--Prescription information-->
         <div class="feature">
           <img src="{{ url_for('static', filename='images/medicine.png') }}" alt="Pill bottle icon"/>
-          <p>Flank jowl shank pork chop buffalo alcatra pig, bacon filet mignon swine frankfurter brisket.</p>
+          <p>See your current medications.</p>
         </div>
         <!--Lab testing-->
         <div class="feature">
           <img src="{{ url_for('static', filename='images/result.png') }}" alt="lab-icon"/>
-          <p>Flank jowl shank pork chop buffalo alcatra pig, bacon filet mignon swine frankfurter brisket.</p>
+          <p>Review recent lab results.</p>
         </div>
-        <!--Profile photo-->
         <div class="feature">
-          <img src="{{ url_for('static', filename='images/woman.png') }}" alt="profile-icon"/>
-          <p>Flank jowl shank pork chop buffalo alcatra pig, bacon filet mignon swine frankfurter brisket.</p>
+          <img src="{{ url_for('static', filename='images/open.png') }}" alt="profile-icon"/>
+          <p>Securely message your healthcare provider.</p>
         </div>
       </div> 
     </div>
