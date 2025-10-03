@@ -42,7 +42,7 @@ class TestStatus(PyEnum):
     PENDING = "Pending"
     COMPLETED = "Completed"
     CANCELLED = "Cancelled"
-
+    
 # Defining the tables
 # General format of defining a column is
 #! column_name: Mapped[python var] = mapped_column(SQLAlchemy var, different properties)
@@ -65,6 +65,7 @@ class Doctor(db.Model):
     patients = relationship("Patient", back_populates="doctor")
     appointments = relationship("Appointment", back_populates="doctor")
     prescriptions = relationship("Prescription", back_populates="doctor")
+    messages = relationship("Message", back_populates="doctor")
     login = relationship("Doctor_Login", back_populates="doctor", uselist=False)
     
     is_accepting_new_patients: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
@@ -95,6 +96,8 @@ class Patient(db.Model):
     appointments = relationship("Appointment", back_populates="patient")
     test_results = relationship("Test_Result", back_populates="patient")
     prescriptions = relationship("Prescription", back_populates="patient")
+    billing = relationship("Billing", back_populates="patient")
+    message = relationship("Message", back_populates="patient")
     login = relationship("Patient_Login", back_populates="patient", uselist=False)
     
     doctor_id: Mapped[int] = mapped_column(ForeignKey("doctors.doctor_id"))
@@ -147,6 +150,31 @@ class Prescription(db.Model):
     
     doctor = relationship("Doctor", back_populates="prescriptions")
     patient = relationship("Patient", back_populates="prescriptions")
+    
+    patient_id: Mapped[int] = mapped_column(ForeignKey("patients.patient_id"), nullable=False)
+    doctor_id: Mapped[int] = mapped_column(ForeignKey("doctors.doctor_id"), nullable=False)
+    
+class Billing(db.Model):
+    __tablename__ = "billing"
+    
+    billing_id: Mapped[int] = mapped_column(primary_key=True)
+    billing_amount: Mapped[Decimal] = mapped_column(DECIMAL(10, 2), nullable=False, default=0.00)
+    billing_date: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    notes: Mapped[str] = mapped_column(Text, nullable=True)
+    
+    patient = relationship("Patient", back_populates="billing")
+    
+    patient_id: Mapped[int] = mapped_column(ForeignKey("patients.patient_id"), nullable=False)
+    
+class Message(db.Model):
+    __tablename__ = "messages"
+    
+    message_id: Mapped[int] = mapped_column(primary_key=True)
+    content: Mapped[str] = mapped_column(Text, nullable=False)
+    sender_type: Mapped[str] = mapped_column(String(10), nullable=False)
+    
+    doctor = relationship("Doctor", back_populates="messages")
+    patient = relationship("Patient", back_populates="messages")
     
     patient_id: Mapped[int] = mapped_column(ForeignKey("patients.patient_id"), nullable=False)
     doctor_id: Mapped[int] = mapped_column(ForeignKey("doctors.doctor_id"), nullable=False)
