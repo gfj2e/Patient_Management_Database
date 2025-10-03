@@ -7,6 +7,7 @@ from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
 from enum import Enum as PyEnum
+from flask_login import UserMixin
 
 # Defining the tables using SQLAlchemy
 # Tables:
@@ -97,7 +98,7 @@ class Patient(db.Model):
     test_results = relationship("Test_Result", back_populates="patient")
     prescriptions = relationship("Prescription", back_populates="patient")
     billing = relationship("Billing", back_populates="patient")
-    message = relationship("Message", back_populates="patient")
+    messages = relationship("Message", back_populates="patient")
     login = relationship("Patient_Login", back_populates="patient", uselist=False)
     
     doctor_id: Mapped[int] = mapped_column(ForeignKey("doctors.doctor_id"))
@@ -183,7 +184,7 @@ class Message(db.Model):
 # which patient_login, doctor_login, and admin_login inherit from
 # Columns inherited are user_name, email, password, and date_created
 #! For more info, see https://docs.sqlalchemy.org/en/20/orm/inheritance.html
-class User_Login(db.Model):
+class User_Login(db.Model, UserMixin):
     __tablename__ = "user_login"
     
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -193,6 +194,7 @@ class User_Login(db.Model):
 
     date_created: Mapped[datetime] = mapped_column(server_default=func.UTC_TIMESTAMP())
     type: Mapped[str] = mapped_column(String(20))
+    
     
     __mapper_args__ = {
         "polymorphic_identity": "user_login",
