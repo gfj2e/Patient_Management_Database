@@ -102,7 +102,7 @@ def login():
         if isinstance(current_user, Patient_Login):
             return redirect(url_for('patient.patient_home'))
         elif isinstance(current_user, Doctor_Login):
-            return redirect(url_for('doctor.dashboard'))
+            return redirect(url_for('doctor.doctor_home'))
         else:
             return redirect(url_for('main.index'))
     
@@ -137,7 +137,7 @@ def login():
             if role == "patient":
                 return redirect(url_for('patient.patient_home'))
             elif role == "doctor":
-                return redirect(url_for('doctor.dashboard'))
+                return redirect(url_for('doctor.doctor_home'))
             else:
                 return redirect(url_for('admin.dashboard'))
         else:

@@ -12,7 +12,7 @@ def index():
         if isinstance(current_user, Patient_Login):
             return redirect(url_for('patient.patient_home'))
         elif isinstance(current_user, Doctor_Login):
-            return redirect(url_for('doctor.dashboard')) # Assuming you have a doctor dashboard
+            return redirect(url_for('doctor.doctor_home')) # Assuming you have a doctor dashboard
         elif isinstance(current_user, Admin_Login):
             return redirect(url_for('admin.dashboard')) # Assuming you have an admin dashboard
     return render_template("index.html")

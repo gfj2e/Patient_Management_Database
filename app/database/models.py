@@ -1,8 +1,8 @@
 from .connection import db
-from sqlalchemy import TIMESTAMP, func, String, Text, ForeignKey, Boolean, Date, Enum as SQLEnum, DECIMAL, DateTime, SmallInteger
+from sqlalchemy import (func, String, Text, ForeignKey, Boolean, Date, 
+                        Enum as SQLEnum, DECIMAL, DateTime, SmallInteger)
 from datetime import date, datetime
 from decimal import Decimal
-from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
@@ -89,10 +89,8 @@ class Patient(db.Model):
     gender: Mapped[Gender] = mapped_column(SQLEnum(Gender), nullable=False)
     height: Mapped[Decimal] = mapped_column(DECIMAL(5, 2), nullable=False)
     
-    # Allow these fields to be NULL
     marriage_status: Mapped[MaritalStatus] = mapped_column(SQLEnum(MaritalStatus), nullable=True)
     race: Mapped[Race] = mapped_column(SQLEnum(Race), nullable=True)
-    insurance_id: Mapped[str] = mapped_column(String(255), nullable=True)
     
     doctor = relationship("Doctor", back_populates="patients")
     appointments = relationship("Appointment", back_populates="patient")
@@ -100,6 +98,7 @@ class Patient(db.Model):
     prescriptions = relationship("Prescription", back_populates="patient")
     billing = relationship("Billing", back_populates="patient")
     messages = relationship("Message", back_populates="patient")
+    insurance = relationship("Insurance", back_populates="patient")
     login = relationship("Patient_Login", back_populates="patient", uselist=False)
     
     doctor_id: Mapped[int] = mapped_column(ForeignKey("doctors.doctor_id"))
@@ -180,6 +179,20 @@ class Message(db.Model):
     
     patient_id: Mapped[int] = mapped_column(ForeignKey("patients.patient_id"), nullable=False)
     doctor_id: Mapped[int] = mapped_column(ForeignKey("doctors.doctor_id"), nullable=False)
+    
+class Insurance(db.Model):
+    __tablename__ = "insurance"
+    
+    member_id: Mapped[str] = mapped_column(String(50), primary_key=True, autoincrement=False)
+    
+    primary_insurance: Mapped[str] = mapped_column(String(255), nullable=False)
+    group_number: Mapped[str] = mapped_column(String(50), nullable=False)
+    plan_type: Mapped[str] = mapped_column(String(15), nullable=False)
+    
+    patient = relationship("Patient", back_populates="insurance")
+    
+    patient_id: Mapped[int] = mapped_column(ForeignKey("patients.patient_id"), nullable=False)
+    
 
 # Using polymorphic inheritance to inherit columns from user logins,
 # which patient_login, doctor_login, and admin_login inherit from

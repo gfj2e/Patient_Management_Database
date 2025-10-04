@@ -43,7 +43,7 @@ def calculate_age(dob) -> str:
 
 def write_to_csv(dic):
     with open("usernames_passwords.csv", "w", newline='') as csvfile:
-        fieldnames = ["username", "password"]
+        fieldnames = ["username", "password", "role"]
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(dic)
@@ -90,7 +90,6 @@ def seed_database() -> None:
             height = str(random.uniform(150.0, 200.0)),
             marriage_status = random.choice(list(MaritalStatus)),
             race = random.choice(list(Race)),
-            insurance_id = f"INS{fake.random_number(digits=8)}",
             doctor_id = random.choice(doctors).doctor_id
         )
         patients.append(patient)
@@ -107,7 +106,9 @@ def seed_database() -> None:
     doctor_logins = []
     for doctor in doctors:
         password = ''.join(random.sample(string.ascii_lowercase, 8))
-        new_dic = {"username": f"{doctor.first_name.lower()}.{doctor.last_name.lower()}", "password": password}
+        new_dic = {"username": f"{doctor.first_name.lower()}.{doctor.last_name.lower()}", 
+                   "password": password,
+                   "role": "doctor"}
         login_dic.append(new_dic)
         
         password = bytes([ord(char) for char in password])
@@ -127,7 +128,9 @@ def seed_database() -> None:
     patient_logins = []
     for patient in patients:
         password = ''.join(random.sample(string.ascii_lowercase, 8))
-        new_dic = {"username": f"{patient.first_name.lower()}.{patient.last_name.lower()}", "password": password}
+        new_dic = {"username": f"{patient.first_name.lower()}.{patient.last_name.lower()}", 
+                   "password": password,
+                   "role": "patient"}
         login_dic.append(new_dic)
         
         password = bytes([ord(char) for char in password])
@@ -151,7 +154,9 @@ def seed_database() -> None:
         password = bcrypt.generate_password_hash("garrett_is_awesome").decode("utf-8"),
         type = "admin_login"
     )
-    new_dic = {"username": "admin", "password": "garrett_is_awesome"}
+    new_dic = {"username": "admin", 
+               "password": "garrett_is_awesome",
+               "role": "admin"}
     login_dic.append(new_dic)
     
     db.session.add(admin)
