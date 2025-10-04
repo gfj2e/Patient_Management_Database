@@ -9,3 +9,7 @@ def patient_home():
 @patient_bp.route("/appointments")
 def appointments():
     return render_template("appointments.html")  
+
+@patient_bp.route("/prescriptions")
+def prescriptions():
+    return render_template("prescriptions.html")

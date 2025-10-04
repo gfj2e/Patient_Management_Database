@@ -173,7 +173,8 @@ body {
 
 .card-action {
     margin-top: 15px;
-    text-align: right;
+    text-align: middle;
+  
 }
 
 .card-text {
@@ -190,6 +191,8 @@ body {
     border-radius: 6px;
     cursor: pointer;
     transition: background 0.3s ease;
+    justify-content: right;
+    justify-items:right;
 }
 
 .btn-primary:hover {
@@ -342,4 +345,46 @@ body {
     .logo {
         font-size: 18px;
     }
+}
+
+
+.warning-header h2{
+  font-weight:bold;
+  font-size: 20px;
+  margin-top: 20px;
+  margin-bottom: 5px;
+  color: rgb(95, 0, 0);
+}
+
+.warning-header p{
+  text-align: center;
+  font-weight: bold;
+  font-size:px15;
+  display: flex;
+  color: black;
+}
+
+.warning-content{
+  display:flex;
+  text-align: center;
+  align-items:center;
+  flex-direction: column;
+  background-color: white;
+  padding: 20px 20px;
+  padding-bottom: 40px;
+  margin-top: 20px;
+  margin-left:15%;
+  margin-right: 15%;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.attention-header{
+  background: #250046;
+    color: white;
+    padding: 15px 40px;
+    font-weight: 600;
+    font-size: 18px;
 }
