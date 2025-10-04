@@ -88,10 +88,11 @@ class Patient(db.Model):
     
     gender: Mapped[Gender] = mapped_column(SQLEnum(Gender), nullable=False)
     height: Mapped[Decimal] = mapped_column(DECIMAL(5, 2), nullable=False)
-    marriage_status: Mapped[MaritalStatus] = mapped_column(SQLEnum(MaritalStatus))
-    race: Mapped[Race] = mapped_column(SQLEnum(Race))
     
-    insurance_id: Mapped[str] = mapped_column(String(255))
+    # Allow these fields to be NULL
+    marriage_status: Mapped[MaritalStatus] = mapped_column(SQLEnum(MaritalStatus), nullable=True)
+    race: Mapped[Race] = mapped_column(SQLEnum(Race), nullable=True)
+    insurance_id: Mapped[str] = mapped_column(String(255), nullable=True)
     
     doctor = relationship("Doctor", back_populates="patients")
     appointments = relationship("Appointment", back_populates="patient")
