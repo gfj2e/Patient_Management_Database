@@ -21,21 +21,26 @@ def appointments():
     return render_template("appointments.html")  
 
 @patient_bp.route("/prescriptions")
+@login_required
 def prescriptions():
     return render_template("prescriptions.html")
 
 @patient_bp.route("/billing")
+@login_required
 def billing():
     return render_template("billing.html")
 
 @patient_bp.route("/lab-results")
+@login_required
 def lab_results():
     return render_template("lab_results.html")
 
 @patient_bp.route("/messages")
+@login_required
 def messages():
     return render_template("messages.html")
 
 @patient_bp.route("/patient_info")
+@login_required
 def patient_info():
     return render_template("patient_info.html")

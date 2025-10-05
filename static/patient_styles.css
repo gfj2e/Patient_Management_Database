@@ -379,7 +379,7 @@ body {
       transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-<<<<<<< Updated upstream
+
     .flip-card:hover {
       transform: translateY(-5px);
       box-shadow: 0 8px 25px rgba(37, 0, 70, 0.15);
@@ -464,7 +464,7 @@ body {
       background: rgba(255,255,255,0.4);
       border-radius: 4px;
     }
-=======
+
 .attention-header{
   background: #250046;
     color: white;
@@ -780,4 +780,3 @@ body {
         flex-direction: column;
     }
 }
->>>>>>> Stashed changes
