@@ -24,10 +24,10 @@
     <div class="container">
         <div class="side-menu">
             <ul>
-                <li><a href="{{ url_for('doctor.doctor_home') }}" class="active">Home</a></li>
+                <li><a href="{{ url_for('doctor.doctor_home') }}">Home</a></li>
                 <li><a href="{{ url_for('doctor.doctor_appointments') }}">Appointments</a></li>
                 <li><a href="{{ url_for('doctor.doctor_messages') }}">Messages</a></li>
-                <li><a href="{{ url_for('doctor.doctor_patients') }}">Patient List</a></li>
+                <li><a href="{{ url_for('doctor.doctor_patients') }}" class="active">Patient List</a></li>
                 <li><a href="#">Prescription Refill Requests</a></li>
                 <!-- <li><a href="#">Lab Results</a></li> -->
                 <!--<li><a href="#">My Health</a></li> -->
@@ -40,7 +40,7 @@
                 <div class="welcome-subtitle">View and manage your patients.</div>
             </div>
 
-            <div class="dashboard-container">
+            <!-- <div class="dashboard-container">
                 <div class="dashboard-vertical">
                     {% if patients %}
                         <table border="1" cellpadding="5" cellspacing="0">
@@ -69,7 +69,75 @@
                         <p>No patients assigned.</p>
                     {% endif %}
                 </div>
+            </div> -->
+
+<!-- SECOND TRY -->
+<!-- <div class="patients-grid">
+    {% for patient in patients %}
+    <div class="patient-card" id="card-{{ patient.patient_id }}">
+        <div class="card-header">
+            <h3>{{ patient.first_name }} {{ patient.last_name }}</h3>
+        </div>
+        <div class="card-content">
+            <p><strong>Email:</strong> {{ patient.email or 'N/A' }}</p>
+            <p><strong>Phone:</strong> {{ patient.phone_number or 'N/A' }}</p>
+            <p><strong>DOB:</strong> {{ patient.dob.strftime('%Y-%m-%d') if patient.dob else 'N/A' }}</p>
+        </div>
+        <div class="card-action">
+            <button class="btn-primary" onclick="togglePatientDetails('{{ patient.patient_id }}')">
+                View Details
+            </button>
+        </div>
+        <div id="details-{{ patient.patient_id }}" class="patient-details hidden">
+            <p><strong>Gender:</strong> {{ patient.gender }}</p>
+            <p><strong>Age:</strong> {{ patient.age }}</p>
+            <p><strong>Height:</strong> {{ patient.height }} cm</p>
+            <p><strong>Marital Status:</strong> {{ patient.marriage_status or 'N/A' }}</p>
+            <p><strong>Race:</strong> {{ patient.race or 'N/A' }}</p>
+            <p><strong>Address:</strong> {{ patient.address }}</p>
+        </div>
+    </div>
+    {% endfor %}
+</div> -->
+
+
+<div class="patient-grid">
+        {% for patient in patients %}
+        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+          <div class="flip-card-inner">
+
+            <div class="flip-card-front">
+              <h3>{{ patient.first_name }} {{ patient.last_name }}</h3>
+              <p><strong>Email:</strong> {{ patient.email or "N/A" }}</p>
+              <p><strong>Phone:</strong> {{ patient.phone_number or "N/A" }}</p>
+              <button class="view-btn">View Details</button>
             </div>
+
+            <div class="flip-card-back">
+              <h3>{{ patient.first_name }} {{ patient.last_name }}</h3>
+              <div class="back-details">
+                <p><strong>Date of Birth:</strong> {{ patient.dob.strftime("%Y-%m-%d") if patient.dob else "N/A" }}</p>
+                <p><strong>Age:</strong> {{ patient.age }}</p>
+                <p><strong>Gender:</strong> {{ patient.gender.value if patient.gender else "N/A" }}</p>
+                <p><strong>Marital Status:</strong> {{ patient.marriage_status.value if patient.marriage_status else "N/A" }}</p>
+                <p><strong>Address:</strong> {{ patient.address }}</p>
+                <p><strong>Race:</strong> {{ patient.race.value if patient.race else "N/A" }}</p>
+                <p><strong>Height:</strong> {{ patient.height }} cm</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+
+<script>
+function togglePatientDetails(id) {
+    const details = document.getElementById("details-" + id);
+    details.classList.toggle("hidden");
+}
+</script>
+
         </div>
     </div>
 
