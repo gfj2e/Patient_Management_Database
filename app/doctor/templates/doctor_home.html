@@ -60,15 +60,18 @@
                             <div class="card-content">
                                 <div class="appointments-section">
                                     {% if appointments %}
-                                        <ul>
-                                            {% for appt in appointments %}
-                                                <li>
-                                                    {{ appt.appointment_time.strftime("%Y-%m-%d %H:%M") }} -
-                                                    {{ appt.patient.first_name }} {{ appt.patient.last_name }}:
-                                                    {{ appt.clinic_name }} ({{ appt.city }}, {{ appt.state }})
-                                                </li>
-                                            {% endfor %}
-                                        </ul>
+<div class="appointments-list">
+    {% for appt in appointments %}
+        <div class="appt-row">
+            <span class="appt-time">{{ appt.appointment_time.strftime("%B %d, %Y at %I:%M %p") }}</span>
+            <span class="appt-details">
+                — {{ appt.patient.first_name }} {{ appt.patient.last_name }},
+                {{ appt.clinic_name }} ({{ appt.city }}, {{ appt.state }})
+            </span>
+        </div>
+    {% endfor %}
+</div>
+
                                     {% else %}
                                         <p>You have no upcoming appointments.</p>
                                     {% endif %}
