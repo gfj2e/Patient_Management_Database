@@ -51,8 +51,8 @@
             <ul>
                 <li><a href="{{ url_for('doctor.doctor_home') }}" class="active">Home</a></li>
                 <li><a href="{{ url_for('doctor.doctor_appointments') }}">Appointments</a></li>
-                <li><a href="#">Messages</a></li>
-                <li><a href="#">Patient List</a></li>
+                <li><a href="{{ url_for('doctor.doctor_messages') }}">Messages</a></li>
+                <li><a href="{{ url_for('doctor.doctor_patients') }}">Patient List</a></li>
                 <li><a href="#">Prescription Refill Requests</a></li>
                 <!-- <li><a href="#">Lab Results</a></li> -->
                 <!--<li><a href="#">My Health</a></li> -->
@@ -61,7 +61,7 @@
 
         <div class="content">
             <div class="welcome-section">
-                <div class="welcome-message">Appointment Manager for Dr. {{ doctor.first_name }} {{ doctor.last_name }}</div>
+                <div class="welcome-message">Appointments for Dr. {{ doctor.first_name }} {{ doctor.last_name }}</div>
                 <div class="welcome-subtitle">Manage your medical appointments.</div>
             </div>
 

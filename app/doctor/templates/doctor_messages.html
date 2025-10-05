@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='patient_styles.css') }}">
+    <title>Doctor Messages</title>
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo"><a href="{{ url_for('main.index') }}">CuraCloud</a></div>
+        <div class="nav-buttons">
+            <div class="right-header">
+                <div class="profile-icon"> 
+                    <img id="admin-profile-icon" src="{{ url_for('static', filename='images/woman-patient.png') }}" alt="doctor profile icon">
+                </div>
+                <a href="{{ url_for('auth.logout') }}">
+                    <button class="logout-btn">Logout</button>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="side-menu">
+            <ul>
+                <li><a href="{{ url_for('doctor.doctor_home') }}" class="active">Home</a></li>
+                <li><a href="{{ url_for('doctor.doctor_appointments') }}">Appointments</a></li>
+                <li><a href="{{ url_for('doctor.doctor_messages') }}">Messages</a></li>
+                <li><a href="{{ url_for('doctor.doctor_patients') }}">Patient List</a></li>
+                <li><a href="#">Prescription Refill Requests</a></li>
+                <!-- <li><a href="#">Lab Results</a></li> -->
+                <!--<li><a href="#">My Health</a></li> -->
+            </ul>
+        </div>
+
+        <div class="content">
+            <div class="welcome-section">
+                <div class="welcome-message">Messages for Dr. {{ doctor.first_name }} {{ doctor.last_name }}</div>
+                <div class="welcome-subtitle">View all messages from patients.</div>
+            </div>
+
+            <div class="dashboard-container">
+                <div class="dashboard-vertical">
+                    {% if messages %}
+                        <table border="1" cellpadding="5" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <!-- <th>Time</th> -->
+                                    <th>Patient</th>
+                                    <th>Message</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for msg in messages %}
+                                <tr>
+                                    <!-- <td>{{ msg.timestamp.strftime("%Y-%m-%d %H:%M") if msg.timestamp else "N/A" }}</td> -->
+                                    <td>{{ msg.patient.first_name }} {{ msg.patient.last_name }}</td>
+                                    <td>{{ msg.content }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p>You have no messages.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div>© Powered by Coin Flippers</div>
+    </div>
+</body>
+</html>

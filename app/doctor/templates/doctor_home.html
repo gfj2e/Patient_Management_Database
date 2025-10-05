@@ -35,8 +35,8 @@
             <ul>
                 <li><a href="{{ url_for('doctor.doctor_home') }}" class="active">Home</a></li>
                 <li><a href="{{ url_for('doctor.doctor_appointments') }}">Appointments</a></li>
-                <li><a href="#">Messages</a></li>
-                <li><a href="#">Patient List</a></li>
+                <li><a href="{{ url_for('doctor.doctor_messages') }}">Messages</a></li>
+                <li><a href="{{ url_for('doctor.doctor_patients') }}">Patient List</a></li>
                 <li><a href="#">Prescription Refill Requests</a></li>
                 <!-- <li><a href="#">Lab Results</a></li> -->
                 <!--<li><a href="#">My Health</a></li> -->
@@ -55,22 +55,22 @@
                     <div class="dashboard-card">
                         <div class="card-header">Appointments</div>
 
-<div class="appointments-section">
-    <!-- <h3>Upcoming Appointments</h3> -->
-    {% if appointments %}
-        <ul>
-        {% for appt in appointments %}
-            <li>
-                {{ appt.appointment_time.strftime("%Y-%m-%d %H:%M") }} -
-                {{ appt.patient.first_name }} {{ appt.patient.last_name }}:
-                {{ appt.clinic_name }} ({{ appt.city }}, {{ appt.state }})
-            </li>
-        {% endfor %}
-        </ul>
-    {% else %}
-        <p>You have no upcoming appointments.</p>
-    {% endif %}
-</div>
+            <div class="appointments-section">
+                <!-- <h3>Upcoming Appointments</h3> -->
+                {% if appointments %}
+                    <ul>
+                    {% for appt in appointments %}
+                        <li>
+                            {{ appt.appointment_time.strftime("%Y-%m-%d %H:%M") }} -
+                            {{ appt.patient.first_name }} {{ appt.patient.last_name }}:
+                            {{ appt.clinic_name }} ({{ appt.city }}, {{ appt.state }})
+                        </li>
+                    {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>You have no upcoming appointments.</p>
+                {% endif %}
+            </div>
 
                         <div class="card-content">
                             <!-- <p class="card-text">You have no upcoming appointments.</p> -->
@@ -88,7 +88,7 @@
                         <div class="card-content">
                             <p class="card-text">You have {{ messages_count }} message{% if messages_count != 1 %}s{% endif %}.</p>
                             <div class="card-action">
-                                <a href="{{ url_for('doctor.doctor_appointments') }}">
+                                <a href="{{ url_for('doctor.doctor_messages') }}">
                                     <button class="btn-primary">View Messages</button>
                                 </a>
                             </div>
@@ -100,7 +100,9 @@
                         <div class="card-content">
                             <p class="card-text">You have {{ patients|length }} patient(s).</p>
                             <div class="card-action">
-                                <button class="btn-primary">View Patients</button>
+                                <a href="{{ url_for('doctor.doctor_patients') }}">
+                                    <button class="btn-primary">View Patients</button>
+                                </a>
                             </div>
                         </div>
                     </div>

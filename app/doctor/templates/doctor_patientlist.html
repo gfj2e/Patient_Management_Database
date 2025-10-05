@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='patient_styles.css') }}">
+    <title>Doctor Patients</title>
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo"><a href="{{ url_for('main.index') }}">CuraCloud</a></div>
+        <div class="nav-buttons">
+            <div class="right-header">
+                <div class="profile-icon"> 
+                    <img id="admin-profile-icon" src="{{ url_for('static', filename='images/woman-patient.png') }}" alt="doctor profile icon">
+                </div>
+                <a href="{{ url_for('auth.logout') }}">
+                    <button class="logout-btn">Logout</button>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="side-menu">
+            <ul>
+                <li><a href="{{ url_for('doctor.doctor_home') }}" class="active">Home</a></li>
+                <li><a href="{{ url_for('doctor.doctor_appointments') }}">Appointments</a></li>
+                <li><a href="{{ url_for('doctor.doctor_messages') }}">Messages</a></li>
+                <li><a href="{{ url_for('doctor.doctor_patients') }}">Patient List</a></li>
+                <li><a href="#">Prescription Refill Requests</a></li>
+                <!-- <li><a href="#">Lab Results</a></li> -->
+                <!--<li><a href="#">My Health</a></li> -->
+            </ul>
+        </div>
+
+        <div class="content">
+            <div class="welcome-section">
+                <div class="welcome-message">Patients of Dr. {{ doctor.first_name }} {{ doctor.last_name }}</div>
+                <div class="welcome-subtitle">View and manage your patients.</div>
+            </div>
+
+            <div class="dashboard-container">
+                <div class="dashboard-vertical">
+                    {% if patients %}
+                        <table border="1" cellpadding="5" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>Email</th>
+                                    <th>Date of Birth</th>
+                                    <th>Phone</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for patient in patients %}
+                                <tr>
+                                    <td>{{ patient.first_name }}</td>
+                                    <td>{{ patient.last_name }}</td>
+                                    <td>{{ patient.email }}</td>
+                                    <td>{{ patient.date_of_birth.strftime("%Y-%m-%d") if patient.date_of_birth else "N/A" }}</td>
+                                    <td>{{ patient.phone if patient.phone else "N/A" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p>No patients assigned.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div>© Powered by Coin Flippers</div>
+    </div>
+</body>
+</html>

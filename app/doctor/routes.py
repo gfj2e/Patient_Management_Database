@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash
 from flask_login import login_required, current_user, logout_user
-from ..database.models import Doctor_Login, Appointment
+from ..database.models import Doctor_Login, Appointment, Patient, Message
 from datetime import datetime, date
 
 
@@ -77,7 +77,47 @@ def doctor_appointments():
         flash("You must be logged in as a doctor to view this page")
         return redirect(url_for('auth.login'))
     
-    
+@doctor_bp.route("/doctor/messages")
+@login_required
+def doctor_messages():
+    if current_user.is_authenticated and isinstance(current_user, Doctor_Login):
+        doctor = current_user.doctor
+
+        # Query all messages for this doctor
+        messages = doctor.messages  # already a list of Message objects
+
+        return render_template(
+            "doctor_messages.html",
+            doctor=doctor,
+            messages=messages
+        )
+    else:
+        flash("You must be logged in as a doctor to view this page")
+        return redirect(url_for('auth.login'))
+
+@doctor_bp.route("/doctor/patients")
+@login_required
+def doctor_patients():
+    if current_user.is_authenticated and isinstance(current_user, Doctor_Login):
+        doctor = current_user.doctor
+
+        patients = doctor.patients 
+
+        return render_template(
+            "doctor_patientlist.html",
+            doctor=doctor,
+            patients=patients
+        )
+    else:
+        flash("You must be logged in as a doctor to view this page")
+        return redirect(url_for('auth.login'))
+
+@doctor_bp.route("/patients")
+@login_required
+def doctor_patientlist():
+    # Assuming `current_user` is a Doctor
+    patients = Patient.query.filter_by(doctor_id=current_user.doctor_id).all()
+    return render_template("doctor_patientlist.html", patients=patients)
 
 @auth_bp.route("/logout")
 def logout():
