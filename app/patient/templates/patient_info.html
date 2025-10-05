@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{{ url_for('static', filename='patient_styles.css') }}">
+        <title>Patient Portal</title>
+    </head>
+    <body>
+        <header class="navbar">
+            <div class="logo">CuraCloud</div>
+            <div class="nav-buttons">
+                <div class="right-header">
+                    <div class="profile-icon"> 
+                        <img id="admin-profile-icon" src="{{ url_for('static', filename='images/woman-patient.png') }}" alt="admin profile icon">
+                    </div>
+                        <a href="{{ url_for('auth.login') }}">
+                            <button class="logout-btn">Logout</button>
+                        </a>
+                    </div>
+                    
+                </div>
+            </div>
+        </header>
+
+    </body>
+    
+        <div class="container">
+            <div class="side-menu">
+                <ul>
+                    <li><a href="{{ url_for('patient.patient_home') }}" class="active">Home</a></li>
+                    <li><a href="{{ url_for('patient.appointments') }}">Appointments</a></li>
+                    <li><a href="{{ url_for('patient.prescriptions') }}">Prescriptions</a></li>
+                    <li><a href="{{ url_for('patient.billing') }}">Billing & Payments</a></li>
+                    <li><a href="{{ url_for('patient.lab_results') }}">Lab Results</a></li>
+                    <li><a href="{{ url_for('patient.messages') }}">Messages</a></li>
+                    <li><a href="{{ url_for('patient.patient_info') }}">My Health</a></li>
+                </ul>
+            </div>
+
+            <div class="content">
+                <div class="welcome-section">
+                    <div class="welcome-message">Good evening, Karigan!</div>
+                    <div class="welcome-subtitle">View and manage your personal</div>
+                </div>    
+            </div>
+        </div>
+</html>
