@@ -455,7 +455,6 @@ body {
       font-size: 14px;
     }
 
-    /* Smooth scrollbar for back of card */
     .flip-card-back::-webkit-scrollbar {
       width: 6px;
     }
@@ -463,3 +462,93 @@ body {
       background: rgba(255,255,255,0.4);
       border-radius: 4px;
     }
+
+
+    /* appt card attempt */
+.appointments-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); /* same width as patient cards */
+    gap: 25px;
+    margin-top: 20px;
+    justify-items: center;
+}
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+        }
+
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 12px;
+            padding: 20px;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .flip-card-front {
+            color: #250046;
+        }
+
+        .flip-card-front h3 {
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+
+        .flip-card-front p {
+            color: #555;
+        }
+
+        .flip-card-back {
+            transform: rotateY(180deg);
+            background: linear-gradient(135deg, #4a00a3 0%, #6a11cb 100%);
+            color: white !important;
+        }
+
+        .flip-card-back p {
+            margin: 6px 0;
+            font-size: 14px;
+        }
+
+        .flip-card-back button {
+            background: white;
+            color: #250046;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .flip-card-back button:hover {
+            background: #f0f0f0;
+        }
+
+        .card-section-header {
+            background: linear-gradient(135deg, #4a00a3 0%, #6a11cb 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            font-size: 20px;
+            font-weight: 600;
+            margin-top: 20px;
+        }
+
+
+.flip-card-back,
+.flip-card-back * {
+  color: white !important;
+}

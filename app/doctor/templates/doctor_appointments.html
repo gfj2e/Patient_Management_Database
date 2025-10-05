@@ -31,7 +31,9 @@
         </style>
     <body>
     <header class="navbar">
-        <div class="logo">CuraCloud</div>
+        <div class="logo">
+            <a href="{{ url_for('main.index') }}">CuraCloud</a>
+        </div>
         <div class="nav-buttons">
             <div class="right-header">
                 <div class="profile-icon"> 
@@ -71,7 +73,7 @@
                 <div class="dashboard-vertical">
 
     <!-- Today's Appointments -->
-    <div class="dashboard-card">
+    <!-- <div class="dashboard-card">
         <div class="card-header">Today's Appointments</div>
         <div class="card-content">
             {% if todays_appointments %}
@@ -101,10 +103,10 @@
             <p>No appointments today.</p>
             {% endif %}
         </div>
-    </div>
+    </div> -->
 
     <!-- Upcoming Appointments -->
-    <div class="dashboard-card">
+    <!-- <div class="dashboard-card">
         <div class="card-header">Upcoming Appointments</div>
         <div class="card-content">
             {% if upcoming_appointments %}
@@ -134,10 +136,10 @@
             <p>No upcoming appointments.</p>
             {% endif %}
         </div>
-    </div>
+    </div> -->
 
     <!-- Past Appointments -->
-    <div class="dashboard-card">
+    <!-- <div class="dashboard-card">
         <div class="card-header">Past Appointments</div>
         <div class="card-content">
             {% if past_appointments %}
@@ -167,11 +169,122 @@
             <p>No past appointments.</p>
             {% endif %}
         </div>
-    </div>
+    </div> -->
 
+<!-- TODAY’S APPOINTMENTS -->
+<div class="card-section-header">Today's Appointments</div>
+<div class="appointments-grid">
+    {% if todays_appointments %}
+        {% for appt in todays_appointments %}
+        <div class="flip-card">
+            <div class="flip-card-inner">
+                
+                <!-- FRONT: Appointment Info -->
+                <div class="flip-card-front">
+                    <h3>{{ appt.patient.first_name }} {{ appt.patient.last_name }}</h3>
+                    <p><strong>Date:</strong> {{ appt.appointment_time.strftime("%B %d, %Y") }}</p>
+                    <p><strong>Time:</strong> {{ appt.appointment_time.strftime("%I:%M %p") }}</p><br>
+                    <button class="btn-primary toggle-btn">Hover for Patient Details</button>
+                </div>
+
+                <!-- BACK: Patient Info -->
+                <div class="flip-card-back">
+                    <h3 class="back-card-title">{{ appt.patient.first_name }} {{ appt.patient.last_name }}</h3>
+                    <p><strong>DOB:</strong> {{ appt.patient.dob.strftime("%Y-%m-%d") }}</p>
+                    <p><strong>Age:</strong> {{ appt.patient.age }}</p>
+                    <p><strong>Phone:</strong> {{ appt.patient.phone_number or "phone number missing" }}</p>
+                    <p><strong>Email:</strong> {{ appt.patient.email or "email missing" }}</p>
+                    <p><strong>Address:</strong> {{ appt.patient.address or "address missing" }}</p>
+                </div>
+
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p>No appointments today.</p>
+    {% endif %}
+</div>
+
+<!-- UPCOMING APPOINTMENTS -->
+<div class="card-section-header">Upcoming Appointments</div>
+<div class="appointments-grid">
+    {% if upcoming_appointments %}
+        {% for appt in upcoming_appointments %}
+        <div class="flip-card">
+            <div class="flip-card-inner">
+                
+                <!-- FRONT: Appointment Info -->
+                <div class="flip-card-front">
+                    <h3>{{ appt.patient.first_name }} {{ appt.patient.last_name }}</h3>
+                    <p><strong>Date:</strong> {{ appt.appointment_time.strftime("%B %d, %Y") }}</p>
+                    <p><strong>Time:</strong> {{ appt.appointment_time.strftime("%I:%M %p") }}</p><br>
+                    <button class="btn-primary toggle-btn">Hover for Patient Details</button>
+                </div>
+
+                <!-- BACK: Patient Info -->
+                <div class="flip-card-back">
+                    <h3 class="back-card-title">{{ appt.patient.first_name }} {{ appt.patient.last_name }}</h3>
+                    <p><strong>DOB:</strong> {{ appt.patient.dob.strftime("%Y-%m-%d") }}</p>
+                    <p><strong>Age:</strong> {{ appt.patient.age }}</p>
+                    <p><strong>Phone:</strong> {{ appt.patient.phone_number or "phone number missing" }}</p>
+                    <p><strong>Email:</strong> {{ appt.patient.email or "email missing" }}</p>
+                    <p><strong>Address:</strong> {{ appt.patient.address or "address missing" }}</p>
+                    <!-- <button class="btn-secondary toggle-btn">View Appointment Info</button> -->
+                </div>
+
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p>No upcoming appointments.</p>
+    {% endif %}
 </div>
 
 
+
+
+<!-- PAST APPOINTMENTS -->
+<div class="card-section-header">Past Appointments</div>
+<div class="appointments-grid">
+    {% if past_appointments %}
+        {% for appt in past_appointments %}
+        <div class="flip-card">
+            <div class="flip-card-inner">
+
+                <!-- FRONT: Appointment Info -->
+                <div class="flip-card-front">
+                    <h3>{{ appt.patient.first_name }} {{ appt.patient.last_name }}</h3>
+                    <p><strong>Date:</strong> {{ appt.appointment_time.strftime("%B %d, %Y") }}</p>
+                    <p><strong>Time:</strong> {{ appt.appointment_time.strftime("%I:%M %p") }}</p><br>
+                    <button class="btn-primary toggle-btn">Hover for Patient Details</button>
+                </div>
+
+                <!-- BACK: Patient Info -->
+                <div class="flip-card-back">
+                    <h3>{{ appt.patient.first_name }} {{ appt.patient.last_name }}</h3>
+                    <p><strong>DOB:</strong> {{ appt.patient.dob.strftime("%Y-%m-%d") }}</p>
+                    <p><strong>Age:</strong> {{ appt.patient.age }}</p>
+                    <p><strong>Phone:</strong> {{ appt.patient.phone_number or "phone number missing" }}</p>
+                    <p><strong>Email:</strong> {{ appt.patient.email or "email missing" }}</p>
+                    <p><strong>Address:</strong> {{ appt.patient.address or "address missing" }}</p>
+                </div>
+
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p>No past appointments.</p>
+    {% endif %}
+</div>
+
+    </div>
+</div>
+
+
+
+
+
+<!-- 
                     <div class="quick-actions">
                     <div class="action-card">
                         <div class="action-icon">📅</div>
@@ -188,7 +301,8 @@
                     <div class="action-card">
                         <div class="action-icon">💬</div>
                         <div>Contact Office</div>
-                    </div>
+                    </div> -->
+
                 </div>
             </div>
         </div>
