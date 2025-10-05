@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='patient_styles.css') }}">
+    <title>Admin Dashboard | CuraCloud</title>
+</head>
+
+<body>
+    <header class="navbar">
+        <div class="logo">
+            <a href="{{ url_for('main.index') }}">CuraCloud</a>
+        </div>
+        <div class="nav-buttons">
+            <div class="right-header">
+                <div class="profile-icon">
+                    <img id="admin-profile-icon" src="{{ url_for('static', filename='images/admin-icon.png') }}" alt="admin profile icon">
+                </div>
+                <a href="{{ url_for('auth.logout') }}">
+                    <button class="logout-btn">Logout</button>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="side-menu">
+            <ul>
+                <li><a href="{{ url_for('admin.admin_home') }}" class="active">Home</a></li>
+                <li><a href="{{ url_for('admin.admin_patients') }}">Patients</a></li>
+                <li><a href="{{ url_for('admin.admin_doctors') }}">Doctors</a></li>
+                <li><a href="{{ url_for('admin.admin_billing') }}">Billing</a></li>
+            </ul>
+        </div>
+
+        <div class="content">
+            <div class="welcome-section">
+                <div class="welcome-message">Welcome, Admin!</div>
+                <div class="welcome-subtitle">Manage CuraCloud operations and oversee users.</div>
+            </div>
+
+            <div class="dashboard-grid">
+                <!-- Patients Card -->
+                <div class="dashboard-card">
+                    <div class="card-header">Patients</div>
+                    <div class="card-content">
+                        <p class="card-text">Total Registered Patients: {{ patients_count }}</p>
+                        <div class="card-action">
+                            <a href="{{ url_for('admin.admin_patients') }}">
+                                <button class="btn-primary">View Patients</button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Doctors Card -->
+                <div class="dashboard-card">
+                    <div class="card-header">Doctors</div>
+                    <div class="card-content">
+                        <p class="card-text">Active Doctors: {{ doctors_count }}</p>
+                        <div class="card-action">
+                            <a href="{{ url_for('admin.admin_doctors') }}">
+                                <button class="btn-primary">Manage Doctors</button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Billing Card -->
+                <div class="dashboard-card">
+                    <div class="card-header">Billing</div>
+                    <div class="card-content">
+                        <p class="card-text">Billing Records: {{ billing_total_count }}</p>
+                        <div class="card-action">
+                            <a href="{{ url_for('admin.admin_billing') }}">
+                                <button class="btn-primary">View Billing</button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reports or System Logs -->
+                <div class="dashboard-card">
+                    <div class="card-header">System Logs</div>
+                    <div class="card-content">
+                        <p class="card-text">Monitor user activity and system changes.</p>
+                        <div class="card-action">
+                            <button class="btn-primary">View Logs</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div>© Powered by Coin Flippers</div>
+    </div>
+</body>
+</html>

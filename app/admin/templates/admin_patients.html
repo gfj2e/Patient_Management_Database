@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='patient_styles.css') }}">
+    <title>Admin - Patients</title>
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">
+            <a href="{{ url_for('main.index') }}">CuraCloud</a>
+        </div>
+        <div class="nav-buttons">
+            <div class="right-header">
+                <div class="profile-icon">
+                    <img src="{{ url_for('static', filename='images/admin-icon.png') }}" alt="Admin Icon">
+                </div>
+                <a href="{{ url_for('auth.logout') }}">
+                    <button class="logout-btn">Logout</button>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="side-menu">
+            <ul>
+                <li><a href="{{ url_for('admin.admin_home') }}">Home</a></li>
+                <li><a href="{{ url_for('admin.admin_patients') }}" class="active">Patients</a></li>
+                <li><a href="{{ url_for('admin.admin_doctors') }}">Doctors</a></li>
+                <li><a href="{{ url_for('admin.admin_billing') }}">Billing</a></li>
+            </ul>
+        </div>
+
+        <div class="content">
+            <div class="welcome-section">
+                <div class="welcome-message">Patient Records</div>
+                <div class="welcome-subtitle">View and manage all registered patients.</div>
+            </div>
+
+            <div class="dashboard-container">
+                <div class="dashboard-vertical">
+                    <!-- <div class="card-section-header">All Registered Patients</div> -->
+
+                    {% if patients %}
+                    <div class="table-container">
+                        <table class="billing-table">
+                            <thead>
+                                <tr>
+                                    <th>Patient ID</th>
+                                    <th>Full Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Date of Birth</th>
+                                    <th>Doctor Assigned</th>
+                                    <th>Gender</th>
+                                    <th>Address</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for patient in patients %}
+                                <tr>
+                                    <td>{{ patient.patient_id }}</td>
+                                    <td>{{ patient.first_name }} {{ patient.last_name }}</td>
+                                    <td>{{ patient.email or 'N/A' }}</td>
+                                    <td>{{ patient.phone_number or 'N/A' }}</td>
+                                    <td>{{ patient.dob.strftime("%m/%d/%Y") }}</td>
+                                    <td>
+                                        {% if patient.doctor %}
+                                            Dr. {{ patient.doctor.first_name }} {{ patient.doctor.last_name }}
+                                        {% else %}
+                                            Not Assigned
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ patient.gender.value if patient.gender else "N/A" }}</td>
+                                    <td>{{ patient.address or 'N/A' }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                        <p>No patients found.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div>© Powered by Coin Flippers</div>
+    </div>
+</body>
+</html>

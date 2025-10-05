@@ -139,7 +139,7 @@ def login():
             elif role == "doctor":
                 return redirect(url_for('doctor.doctor_home'))
             else:
-                return redirect(url_for('admin.dashboard'))
+                return redirect(url_for('admin.admin_home'))
         else:
             flash("Invalid username or password!", "danger")
             return redirect(url_for('auth.login', role=role))

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='patient_styles.css') }}">
+    <title>Admin - Doctors</title>
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">
+            <a href="{{ url_for('main.index') }}">CuraCloud</a>
+        </div>
+        <div class="nav-buttons">
+            <div class="right-header">
+                <div class="profile-icon">
+                    <img id="admin-profile-icon" src="{{ url_for('static', filename='images/admin-icon.png') }}" alt="admin profile icon">
+                </div>
+                <a href="{{ url_for('auth.logout') }}">
+                    <button class="logout-btn">Logout</button>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="side-menu">
+            <ul>
+                <li><a href="{{ url_for('admin.admin_home') }}">Home</a></li>
+                <li><a href="{{ url_for('admin.admin_patients') }}">Patients</a></li>
+                <li><a href="{{ url_for('admin.admin_doctors') }}" class="active">Doctors</a></li>
+                <li><a href="{{ url_for('admin.admin_billing') }}">Billing</a></li>
+            </ul>
+        </div>
+
+        <div class="content">
+            <div class="welcome-section">
+                <div class="welcome-message">Doctor Directory</div>
+                <div class="welcome-subtitle">View and manage all registered doctors in the system.</div>
+            </div>
+
+            <div class="dashboard-container">
+                <div class="dashboard-vertical">
+                    {% if doctors %}
+                        <table border="1" cellpadding="6" cellspacing="0" class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Doctor ID</th>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>Specialty</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Patients Assigned</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for doc in doctors %}
+                                <tr>
+                                    <td>{{ doc.doctor_id }}</td>
+                                    <td>{{ doc.first_name }}</td>
+                                    <td>{{ doc.last_name }}</td>
+                                    <td>{{ doc.specialty or 'N/A' }}</td>
+                                    <td>{{ doc.email or 'N/A' }}</td>
+                                    <td>{{ doc.phone_number or 'N/A' }}</td>
+                                    <td>{{ doc.patients|length }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p>No doctors found.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div>© Powered by Coin Flippers</div>
+    </div>
+</body>
+</html>

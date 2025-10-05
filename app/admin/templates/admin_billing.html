@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Billing Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='patient_styles.css') }}">
+</head>
+
+<body>
+<header class="navbar">
+    <div class="logo">
+        <a href="{{ url_for('main.index') }}">CuraCloud</a>
+    </div>
+    <div class="nav-buttons">
+        <div class="right-header">
+            <div class="profile-icon">
+                <img id="admin-profile-icon" src="{{ url_for('static', filename='images/admin.png') }}" alt="Admin profile">
+            </div>
+            <a href="{{ url_for('auth.logout') }}">
+                <button class="logout-btn">Logout</button>
+            </a>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <div class="side-menu">
+        <ul>
+            <li><a href="{{ url_for('admin.admin_home') }}">Home</a></li>
+            <li><a href="{{ url_for('admin.admin_patients') }}">Patients</a></li>
+            <li><a href="{{ url_for('admin.admin_doctors') }}">Doctors</a></li>
+            <li><a href="{{ url_for('admin.admin_billing') }}" class="active">Billing</a></li>
+        </ul>
+    </div>
+
+    <div class="content">
+        <div class="welcome-section">
+            <div class="welcome-message">Billing Overview</div>
+            <div class="welcome-subtitle">View and manage all billing records.</div>
+        </div>
+
+        <!-- <div class="card-section-header">Billing Records</div> -->
+        <table class="billing-table">
+            <thead>
+                <tr>
+                    <th>Billing ID</th>
+                    <th>Patient Name</th>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Notes</th>
+
+                </tr>
+            </thead>
+            <tbody>
+    {% if billing_records %}
+        {% for bill in billing_records %}
+        <tr>
+            <td>{{ bill.billing_id }}</td>
+                        <td>
+                {% if bill.patient %}
+                    {{ bill.patient.first_name }} {{ bill.patient.last_name }}
+                {% else %}
+                    Unknown
+                {% endif %}
+            </td>
+            <td>{{ bill.billing_date.strftime("%B %d, %Y") }}</td>
+            <td>{{ "%.2f"|format(bill.billing_amount) }}</td>
+            <td>{{ bill.notes }}</td>
+
+        </tr>
+        {% endfor %}
+    {% else %}
+        <tr>
+            <td colspan="5" style="text-align:center;">No billing records found.</td>
+        </tr>
+    {% endif %}
+</tbody>
+
+        </table>
+    </div>
+</div>
+
+<div class="footer">
+    <div>© Powered by Coin Flippers</div>
+</div>
+</body>
+</html>

@@ -40,34 +40,44 @@
                 <div class="welcome-subtitle">View all messages from patients.</div>
             </div>
 
-            <div class="dashboard-container">
-                <div class="dashboard-vertical">
-                    {% if messages %}
-                        <table border="1" cellpadding="5" cellspacing="0">
-                            <thead>
-                                <tr>
-                                    <!-- <th>Time</th> -->
-                                    <th>Patient</th>
-                                    <th>Message</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for msg in messages %}
-                                <tr>
-                                    <!-- <td>{{ msg.timestamp.strftime("%Y-%m-%d %H:%M") if msg.timestamp else "N/A" }}</td> -->
-                                    <td>{{ msg.patient.first_name }} {{ msg.patient.last_name }}</td>
-                                    <td>{{ msg.content }}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    {% else %}
-                        <p>You have no messages.</p>
-                    {% endif %}
-                </div>
+            <div class="messages-container">
+                {% if messages %}
+                    {% set grouped = {} %}
+                    {% for msg in messages %}
+                        {% set patient_id = msg.patient.patient_id %}
+                        {% if grouped.setdefault(patient_id, []) %}
+                            {% set _ = grouped[patient_id].append(msg) %}
+                        {% else %}
+                            {% set grouped = grouped.update({patient_id: [msg]}) %}
+                        {% endif %}
+                    {% endfor %}
+
+        {% for pid, msgs in grouped.items() %}
+            <div class="patient-message-group">
+                <h3 class="patient-name">{{ msgs[0].patient.first_name }} {{ msgs[0].patient.last_name }}</h3>
+                {% for msg in msgs %}
+                    <div class="message {{ 'sent' if msg.sender_type == 'doctor' else 'received' }}">
+                        <div class="bubble">
+                            <span class="label">
+                                {{ 'Sent' if msg.sender_type == 'doctor' else 'Received' }}
+                            </span>
+                            {{ msg.content }}
+                        </div>
+                    </div>
+                {% endfor %}
             </div>
+        {% endfor %}
+    {% else %}
+        <p>You have no messages.</p>
+    {% endif %}
+</div>
+
+
+
         </div>
     </div>
+
+    
 
     <div class="footer">
         <div>© Powered by Coin Flippers</div>
