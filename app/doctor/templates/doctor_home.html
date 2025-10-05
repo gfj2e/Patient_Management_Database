@@ -9,7 +9,10 @@
 </head>
 <body>
     <header class="navbar">
-        <div class="logo">CuraCloud</div>
+        <!-- <div class="logo">CuraCloud</div> -->
+        <div class="logo">
+            <a href="{{ url_for('main.index') }}">CuraCloud</a>
+        </div>
         <div class="nav-buttons">
             <div class="right-header">
                 <div class="profile-icon"> 
@@ -32,10 +35,10 @@
             <ul>
                 <li><a href="{{ url_for('doctor.doctor_home') }}" class="active">Home</a></li>
                 <li><a href="{{ url_for('doctor.doctor_appointments') }}">Appointments</a></li>
-                <li><a href="#">Prescription Refill Requests</a></li>
-                <li><a href="#">Patient List</a></li>
-                <!-- <li><a href="#">Lab Results</a></li> -->
                 <li><a href="#">Messages</a></li>
+                <li><a href="#">Patient List</a></li>
+                <li><a href="#">Prescription Refill Requests</a></li>
+                <!-- <li><a href="#">Lab Results</a></li> -->
                 <!--<li><a href="#">My Health</a></li> -->
             </ul>
         </div>
@@ -43,7 +46,7 @@
         <div class="content">
             <div class="welcome-section">
                 <div class="welcome-message">Hello, Dr. {{ doctor_name }}!</div>
-                <div class="welcome-subtitle">Welcome to your CuraCloud Doctor Portal</div>
+                <div class="welcome-subtitle">Welcome to your CuraCloud Doctor Portal.</div>
             </div>
             
             <!-- Side by side layout -->
@@ -51,35 +54,58 @@
                 <div class="dashboard-vertical">
                     <div class="dashboard-card">
                         <div class="card-header">Appointments</div>
+
+<div class="appointments-section">
+    <!-- <h3>Upcoming Appointments</h3> -->
+    {% if appointments %}
+        <ul>
+        {% for appt in appointments %}
+            <li>
+                {{ appt.appointment_time.strftime("%Y-%m-%d %H:%M") }} -
+                {{ appt.patient.first_name }} {{ appt.patient.last_name }}:
+                {{ appt.clinic_name }} ({{ appt.city }}, {{ appt.state }})
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>You have no upcoming appointments.</p>
+    {% endif %}
+</div>
+
                         <div class="card-content">
-                            <p class="card-text">You have no upcoming appointments.</p>
+                            <!-- <p class="card-text">You have no upcoming appointments.</p> -->
                             <div class="card-action">
-                                <button class="btn-primary">Schedule Now</button>
+                                <a href="{{ url_for('doctor.doctor_appointments') }}">
+                                    <button class="btn-primary">View Appointments</button>
+                                </a>
                             </div>
+
                         </div>
                     </div>
                     
                     <div class="dashboard-card">
                         <div class="card-header">Messages</div>
                         <div class="card-content">
-                            <p class="card-text">Have a question for your care team?</p>
+                            <p class="card-text">You have {{ messages_count }} message{% if messages_count != 1 %}s{% endif %}.</p>
                             <div class="card-action">
-                                <button class="btn-primary">Send a Message</button>
+                                <a href="{{ url_for('doctor.doctor_appointments') }}">
+                                    <button class="btn-primary">View Messages</button>
+                                </a>
                             </div>
                         </div>
                     </div>
                     
                     <div class="dashboard-card">
-                        <div class="card-header">Billing Summary</div>
+                        <div class="card-header">Patient List</div>
                         <div class="card-content">
-                            <p class="card-text">You don't have any bills due.</p>
+                            <p class="card-text">You have {{ patients|length }} patient(s).</p>
                             <div class="card-action">
-                                <button class="btn-primary">View Details</button>
+                                <button class="btn-primary">View Patients</button>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="dashboard-card">
+                    <!-- <div class="dashboard-card">
                         <div class="card-header">Lab Results</div>
                         <div class="card-content">
                             <p class="card-text">No new lab results available.</p>
@@ -87,14 +113,14 @@
                                 <button class="btn-primary">View History</button>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
 
                     <div class="dashboard-card">
-                        <div class="card-header">Prescriptions</div>
+                        <div class="card-header">Prescription Refill Requests</div>
                         <div class="card-content">
-                            <p class="card-text">Want to view your prescriptions?</p>
+                            <!-- <p class="card-text">Want to view your prescriptions?</p> -->
                             <div class="card-action">
-                                <button class="btn-primary">Check Your Prescriptions</button>
+                                <button class="btn-primary">View Requests</button>
                             </div>
                         </div>
                     </div>
@@ -152,7 +178,7 @@
             dashboardButtons.forEach(button => {
                 button.addEventListener('click', function() {
                     const cardHeader = this.closest('.dashboard-card').querySelector('.card-header').textContent;
-                    alert(`Action for: ${cardHeader}`);
+            //        (`Action for: ${cardHeadealertr}`);
                 });
             });
         });
