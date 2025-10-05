@@ -5,6 +5,9 @@ from datetime import date, datetime, timedelta
 import uuid
 import random
 import string
+from ..extensions import bcrypt
+import csv
+
 
 # Purpose of this file is to generate fake data to fill the database with information
 # for testing purposes. Uses the Faker library to fufill this
@@ -37,6 +40,13 @@ def calculate_age(dob) -> str:
     today = date.today()
     age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
     return age
+
+def write_to_csv(dic):
+    with open("usernames_passwords.csv", "w", newline='') as csvfile:
+        fieldnames = ["username", "password", "role"]
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(dic)
 
 # Seed the database with the fake data
 def seed_database() -> None:
@@ -80,7 +90,6 @@ def seed_database() -> None:
             height = str(random.uniform(150.0, 200.0)),
             marriage_status = random.choice(list(MaritalStatus)),
             race = random.choice(list(Race)),
-            insurance_id = f"INS{fake.random_number(digits=8)}",
             doctor_id = random.choice(doctors).doctor_id
         )
         patients.append(patient)
@@ -92,12 +101,22 @@ def seed_database() -> None:
     insert_test_data(patients[0].patient_id, patients[0].doctor_id)
     
     # The doctors and patients are also to be linked to user accounts for them
+    
+    login_dic = [{}]
     doctor_logins = []
     for doctor in doctors:
+        password = ''.join(random.sample(string.ascii_lowercase, 8))
+        new_dic = {"username": f"{doctor.first_name.lower()}.{doctor.last_name.lower()}", 
+                   "password": password,
+                   "role": "doctor"}
+        login_dic.append(new_dic)
+        
+        password = bytes([ord(char) for char in password])
+        
         doctor_login = Doctor_Login(    
             user_name = f"{doctor.first_name.lower()}.{doctor.last_name.lower()}",
             email = doctor.email,
-            password = ''.join(random.sample(string.ascii_lowercase, 8)),
+            password = bcrypt.generate_password_hash(password).decode("utf-8"),
             doctor_id = doctor.doctor_id,
             type = "doctor_login"
         )
@@ -108,13 +127,22 @@ def seed_database() -> None:
     
     patient_logins = []
     for patient in patients:
+        password = ''.join(random.sample(string.ascii_lowercase, 8))
+        new_dic = {"username": f"{patient.first_name.lower()}.{patient.last_name.lower()}", 
+                   "password": password,
+                   "role": "patient"}
+        login_dic.append(new_dic)
+        
+        password = bytes([ord(char) for char in password])
+        
         patient_login = Patient_Login(
             user_name = f"{patient.first_name.lower()}.{patient.last_name.lower()}",
             email = patient.email,
-            password = ''.join(random.sample(string.ascii_lowercase, 8)),
+            password = bcrypt.generate_password_hash(password).decode("utf-8"),
             patient_id = patient.patient_id,
             type = "patient_login"
         )
+        
         patient_logins.append(patient_login)
     db.session.add_all(patient_logins)
     db.session.commit()
@@ -123,11 +151,18 @@ def seed_database() -> None:
     admin = Admin_Login(
         user_name = "admin",
         email = "admin@garrettisgreat.com",
-        password = "garrett_is_awesome",
+        password = bcrypt.generate_password_hash("garrett_is_awesome").decode("utf-8"),
         type = "admin_login"
     )
+    new_dic = {"username": "admin", 
+               "password": "garrett_is_awesome",
+               "role": "admin"}
+    login_dic.append(new_dic)
+    
     db.session.add(admin)
     db.session.commit()
+    
+    write_to_csv(login_dic)
     
     print("Database seeding complete!")
     

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{{ url_for('static', filename='patient_styles.css') }}">
+        <title>Patient Portal - Side by Side Layout</title>
+    </head>
+    
+        <style>
+            .dashboard-container{
+                display:flex;
+                gap:25px;
+                margin-top:20px;
+                margin-left:30px
+            }
+
+            .dashboard-vertical{
+                flex:3;
+                display:flex;
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .quick-actions {
+                flex:1;
+                display:flex;
+                flex-direction: column;
+                gap:20px;
+            }
+        </style>
+    <body>
+    <header class="navbar">
+        <div class="logo">CuraCloud</div>
+        <div class="nav-buttons">
+            <div class="right-header">
+                <div class="profile-icon"> 
+                    <img id="admin-profile-icon" src="{{ url_for('static', filename='images/woman-patient.png') }}" alt="admin profile icon">
+                </div>
+                    <a href="{{ url_for('auth.login') }}">
+                        <button class="logout-btn">Logout</button>
+                    </a>
+                </div>
+                
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="side-menu">
+            <ul>
+                <li><a href="{{ url_for('doctor.doctor_home') }}">Home</a></li>
+                <li><a href="{{ url_for('doctor.doctor_appointments') }}" class="active">Appointments</a></li>
+                <li><a href="{{ url_for('doctor.doctor_messages') }}">Messages</a></li>
+                <li><a href="{{ url_for('doctor.doctor_patients') }}">Patient List</a></li>
+                <li><a href="#">Prescription Refill Requests</a></li>
+                <!-- <li><a href="#">Lab Results</a></li> -->
+                <!--<li><a href="#">My Health</a></li> -->
+            </ul>
+        </div>
+
+        <div class="content">
+            <div class="welcome-section">
+                <div class="welcome-message">Appointments for Dr. {{ doctor.first_name }} {{ doctor.last_name }}</div>
+                <div class="welcome-subtitle">Manage your medical appointments.</div>
+            </div>
+
+            <div class="dashboard-container">
+
+
+                <div class="dashboard-vertical">
+
+    <!-- Today's Appointments -->
+    <div class="dashboard-card">
+        <div class="card-header">Today's Appointments</div>
+        <div class="card-content">
+            {% if todays_appointments %}
+            <table border="1" cellpadding="5" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Patient Name</th>
+                        <th>Clinic</th>
+                        <th>City</th>
+                        <th>State</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for appt in todays_appointments %}
+                    <tr>
+                        <td>{{ appt.appointment_time.strftime("%H:%M") }}</td>
+                        <td>{{ appt.patient.first_name }} {{ appt.patient.last_name }}</td>
+                        <td>{{ appt.clinic_name }}</td>
+                        <td>{{ appt.city }}</td>
+                        <td>{{ appt.state }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>No appointments today.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Upcoming Appointments -->
+    <div class="dashboard-card">
+        <div class="card-header">Upcoming Appointments</div>
+        <div class="card-content">
+            {% if upcoming_appointments %}
+            <table border="1" cellpadding="5" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Date & Time</th>
+                        <th>Patient Name</th>
+                        <th>Clinic</th>
+                        <th>City</th>
+                        <th>State</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for appt in upcoming_appointments %}
+                    <tr>
+                        <td>{{ appt.appointment_time.strftime("%Y-%m-%d %H:%M") }}</td>
+                        <td>{{ appt.patient.first_name }} {{ appt.patient.last_name }}</td>
+                        <td>{{ appt.clinic_name }}</td>
+                        <td>{{ appt.city }}</td>
+                        <td>{{ appt.state }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>No upcoming appointments.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Past Appointments -->
+    <div class="dashboard-card">
+        <div class="card-header">Past Appointments</div>
+        <div class="card-content">
+            {% if past_appointments %}
+            <table border="1" cellpadding="5" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Date & Time</th>
+                        <th>Patient Name</th>
+                        <th>Clinic</th>
+                        <th>City</th>
+                        <th>State</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for appt in past_appointments %}
+                    <tr>
+                        <td>{{ appt.appointment_time.strftime("%Y-%m-%d %H:%M") }}</td>
+                        <td>{{ appt.patient.first_name }} {{ appt.patient.last_name }}</td>
+                        <td>{{ appt.clinic_name }}</td>
+                        <td>{{ appt.city }}</td>
+                        <td>{{ appt.state }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>No past appointments.</p>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+
+
+                    <div class="quick-actions">
+                    <div class="action-card">
+                        <div class="action-icon">📅</div>
+                        <div>Schedule Appointment</div>
+                    </div>
+                    <div class="action-card">
+                        <div class="action-icon">🔄</div>
+                        <div>Reschedule</div>
+                    </div>
+                    <div class="action-card">
+                        <div class="action-icon">❌</div>
+                        <div>Cancel Appointment</div>
+                    </div>
+                    <div class="action-card">
+                        <div class="action-icon">💬</div>
+                        <div>Contact Office</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <div>© Powered by Coin Flippers</div>
+    </div>
+    </body>
+</html>

@@ -1,12 +1,13 @@
 from .connection import db
-from sqlalchemy import TIMESTAMP, func, String, Text, ForeignKey, Boolean, Date, Enum as SQLEnum, DECIMAL, DateTime, SmallInteger
+from sqlalchemy import (func, String, Text, ForeignKey, Boolean, Date, 
+                        Enum as SQLEnum, DECIMAL, DateTime, SmallInteger)
 from datetime import date, datetime
 from decimal import Decimal
-from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
 from enum import Enum as PyEnum
+from flask_login import UserMixin
 
 # Defining the tables using SQLAlchemy
 # Tables:
@@ -42,7 +43,7 @@ class TestStatus(PyEnum):
     PENDING = "Pending"
     COMPLETED = "Completed"
     CANCELLED = "Cancelled"
-
+    
 # Defining the tables
 # General format of defining a column is
 #! column_name: Mapped[python var] = mapped_column(SQLAlchemy var, different properties)
@@ -65,6 +66,7 @@ class Doctor(db.Model):
     patients = relationship("Patient", back_populates="doctor")
     appointments = relationship("Appointment", back_populates="doctor")
     prescriptions = relationship("Prescription", back_populates="doctor")
+    messages = relationship("Message", back_populates="doctor")
     login = relationship("Doctor_Login", back_populates="doctor", uselist=False)
     
     is_accepting_new_patients: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
@@ -86,15 +88,17 @@ class Patient(db.Model):
     
     gender: Mapped[Gender] = mapped_column(SQLEnum(Gender), nullable=False)
     height: Mapped[Decimal] = mapped_column(DECIMAL(5, 2), nullable=False)
-    marriage_status: Mapped[MaritalStatus] = mapped_column(SQLEnum(MaritalStatus))
-    race: Mapped[Race] = mapped_column(SQLEnum(Race))
     
-    insurance_id: Mapped[str] = mapped_column(String(255))
+    marriage_status: Mapped[MaritalStatus] = mapped_column(SQLEnum(MaritalStatus), nullable=True)
+    race: Mapped[Race] = mapped_column(SQLEnum(Race), nullable=True)
     
     doctor = relationship("Doctor", back_populates="patients")
     appointments = relationship("Appointment", back_populates="patient")
     test_results = relationship("Test_Result", back_populates="patient")
     prescriptions = relationship("Prescription", back_populates="patient")
+    billing = relationship("Billing", back_populates="patient")
+    messages = relationship("Message", back_populates="patient")
+    insurance = relationship("Insurance", back_populates="patient")
     login = relationship("Patient_Login", back_populates="patient", uselist=False)
     
     doctor_id: Mapped[int] = mapped_column(ForeignKey("doctors.doctor_id"))
@@ -150,12 +154,51 @@ class Prescription(db.Model):
     
     patient_id: Mapped[int] = mapped_column(ForeignKey("patients.patient_id"), nullable=False)
     doctor_id: Mapped[int] = mapped_column(ForeignKey("doctors.doctor_id"), nullable=False)
+    
+class Billing(db.Model):
+    __tablename__ = "billing"
+    
+    billing_id: Mapped[int] = mapped_column(primary_key=True)
+    billing_amount: Mapped[Decimal] = mapped_column(DECIMAL(10, 2), nullable=False, default=0.00)
+    billing_date: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    notes: Mapped[str] = mapped_column(Text, nullable=True)
+    
+    patient = relationship("Patient", back_populates="billing")
+    
+    patient_id: Mapped[int] = mapped_column(ForeignKey("patients.patient_id"), nullable=False)
+    
+class Message(db.Model):
+    __tablename__ = "messages"
+    
+    message_id: Mapped[int] = mapped_column(primary_key=True)
+    content: Mapped[str] = mapped_column(Text, nullable=False)
+    sender_type: Mapped[str] = mapped_column(String(10), nullable=False)
+    
+    doctor = relationship("Doctor", back_populates="messages")
+    patient = relationship("Patient", back_populates="messages")
+    
+    patient_id: Mapped[int] = mapped_column(ForeignKey("patients.patient_id"), nullable=False)
+    doctor_id: Mapped[int] = mapped_column(ForeignKey("doctors.doctor_id"), nullable=False)
+    
+class Insurance(db.Model):
+    __tablename__ = "insurance"
+    
+    member_id: Mapped[str] = mapped_column(String(50), primary_key=True, autoincrement=False)
+    
+    primary_insurance: Mapped[str] = mapped_column(String(255), nullable=False)
+    group_number: Mapped[str] = mapped_column(String(50), nullable=False)
+    plan_type: Mapped[str] = mapped_column(String(15), nullable=False)
+    
+    patient = relationship("Patient", back_populates="insurance")
+    
+    patient_id: Mapped[int] = mapped_column(ForeignKey("patients.patient_id"), nullable=False)
+    
 
 # Using polymorphic inheritance to inherit columns from user logins,
 # which patient_login, doctor_login, and admin_login inherit from
 # Columns inherited are user_name, email, password, and date_created
 #! For more info, see https://docs.sqlalchemy.org/en/20/orm/inheritance.html
-class User_Login(db.Model):
+class User_Login(db.Model, UserMixin):
     __tablename__ = "user_login"
     
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -165,6 +208,7 @@ class User_Login(db.Model):
 
     date_created: Mapped[datetime] = mapped_column(server_default=func.UTC_TIMESTAMP())
     type: Mapped[str] = mapped_column(String(20))
+    
     
     __mapper_args__ = {
         "polymorphic_identity": "user_login",
@@ -177,7 +221,7 @@ class Patient_Login(User_Login):
     id: Mapped[int] = mapped_column(ForeignKey("user_login.id"), primary_key=True)
     patient_id: Mapped[int] = mapped_column(ForeignKey("patients.patient_id"), nullable=False)
     
-    login = relationship("Patient", back_populates="login", uselist=False)
+    patient = relationship("Patient", back_populates="login", uselist=False)
     
     __mapper_args__ = {
         "polymorphic_identity": "patient_login"
@@ -189,7 +233,7 @@ class Doctor_Login(User_Login):
     id: Mapped[int] = mapped_column(ForeignKey("user_login.id"), primary_key=True)
     doctor_id: Mapped[int] = mapped_column(ForeignKey("doctors.doctor_id"))
     
-    login = relationship("Doctor", back_populates="login", uselist=False)
+    doctor = relationship("Doctor", back_populates="login", uselist=False)
 
     __mapper_args__ = {
         "polymorphic_identity": "doctor_login"

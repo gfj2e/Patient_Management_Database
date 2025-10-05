@@ -43,6 +43,21 @@ body {
     font-size: 24px;
 }
 
+.logo a {
+    color: inherit; 
+    text-decoration: none;  
+    font-size: inherit; 
+    font-weight: inherit; 
+    display: inline-block;
+    cursor: pointer; 
+}
+
+.logo a:hover {
+    color: inherit;
+    text-decoration: none;
+}
+
+
 .right-header {
     display: flex;
     align-items: center;
@@ -173,8 +188,7 @@ body {
 
 .card-action {
     margin-top: 15px;
-    text-align: middle;
-  
+    text-align: right;
 }
 
 .card-text {
@@ -191,8 +205,6 @@ body {
     border-radius: 6px;
     cursor: pointer;
     transition: background 0.3s ease;
-    justify-content: right;
-    justify-items:right;
 }
 
 .btn-primary:hover {
@@ -348,43 +360,106 @@ body {
 }
 
 
-.warning-header h2{
-  font-weight:bold;
-  font-size: 20px;
-  margin-top: 20px;
-  margin-bottom: 5px;
-  color: rgb(95, 0, 0);
-}
 
-.warning-header p{
-  text-align: center;
-  font-weight: bold;
-  font-size:px15;
-  display: flex;
-  color: black;
-}
+/* // stuffs for patient list */
+/* https://www.w3schools.com/howto/howto_css_flip_card.asp */
+ .patient-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+      margin-top: 30px;
+    }
 
-.warning-content{
-  display:flex;
-  text-align: center;
-  align-items:center;
-  flex-direction: column;
-  background-color: white;
-  padding: 20px 20px;
-  padding-bottom: 40px;
-  margin-top: 20px;
-  margin-left:15%;
-  margin-right: 15%;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  overflow: hidden;
-  border-radius: 12px;
-}
+    .flip-card {
+      background-color: transparent;
+      width: 100%;
+      height: 260px;
+      perspective: 1000px;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
 
-.attention-header{
-  background: #250046;
-    color: white;
-    padding: 15px 40px;
-    font-weight: 600;
-    font-size: 18px;
-}
+    .flip-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(37, 0, 70, 0.15);
+    }
+
+    .flip-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
+      transform-style: preserve-3d;
+    }
+
+    .flip-card:hover .flip-card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .flip-card-front, .flip-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 12px;
+      backface-visibility: hidden;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+
+    .flip-card-front {
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .flip-card-back {
+      background: linear-gradient(135deg, #250046 0%, #3a0066 100%);
+      color: white;
+      transform: rotateY(180deg);
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .flip-card h3 {
+      color: #250046;
+      margin-bottom: 10px;
+    }
+
+    .flip-card p {
+      margin: 6px 0;
+      color: #555;
+      text-align: center;
+    }
+
+    .view-btn {
+      margin-top: 12px;
+      background: #250046;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .view-btn:hover {
+      background: #3a0066;
+    }
+
+    .back-details p {
+      margin: 5px 0;
+      color: rgba(255,255,255,0.9);
+      font-size: 14px;
+    }
+
+    /* Smooth scrollbar for back of card */
+    .flip-card-back::-webkit-scrollbar {
+      width: 6px;
+    }
+    .flip-card-back::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.4);
+      border-radius: 4px;
+    }
