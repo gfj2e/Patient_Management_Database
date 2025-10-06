@@ -4,7 +4,8 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="{{ url_for('static', filename='patient_styles.css') }}">
-        <title>Patient Portal</title>
+        <title>Patient Portal - Health Dashboard</title>
+   
     </head>
     <body>
         <header class="navbar">
@@ -14,58 +15,148 @@
                     <div class="profile-icon"> 
                         <img id="admin-profile-icon" src="{{ url_for('static', filename='images/woman-patient.png') }}" alt="admin profile icon">
                     </div>
-                        <a href="{{ url_for('auth.login') }}">
-                            <button class="logout-btn">Logout</button>
-                        </a>
-                    </div>
-                    
+                    <a href="{{ url_for('auth.login') }}">
+                        <button class="logout-btn">Logout</button>
+                    </a>
                 </div>
             </div>
         </header>
 
-    </body>
-    
         <div class="container">
             <div class="side-menu">
                 <ul>
-                    <li><a href="{{ url_for('patient.patient_home') }}" class="active">Home</a></li>
+                    <li><a href="{{ url_for('patient.patient_home') }}">Home</a></li>
                     <li><a href="{{ url_for('patient.appointments') }}">Appointments</a></li>
                     <li><a href="{{ url_for('patient.prescriptions') }}">Prescriptions</a></li>
                     <li><a href="{{ url_for('patient.billing') }}">Billing & Payments</a></li>
                     <li><a href="{{ url_for('patient.lab_results') }}">Lab Results</a></li>
                     <li><a href="{{ url_for('patient.messages') }}">Messages</a></li>
-                    <li><a href="{{ url_for('patient.patient_info') }}">My Health</a></li>
+                    <li><a href="#" class="active">Health Dashboard</a></li>
                 </ul>
             </div>
 
             <div class="content">
-                <div class="welcome-section">
-                    <div class="welcome-message">Good evening, Karigan!</div>
-                    <div class="welcome-subtitle">View and manage your personal</div>
+                <div class="health-header">
+                    <div class="patient-profile">
+                        <div class="patient-avatar">👤</div>
+                        <div class="patient-info">
+                            <h1>Karigan Stewart</h1>
+                            <div class="patient-meta">
+                                <span class="meta-tag">Age: 100</span>
+                                <span class="meta-tag">Alien</span>
+                                <span class="meta-tag">Caucasian</span>
+                                <span class="meta-tag">hababablow</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                   
+                </div>
 
-                    <div class="dashboard-container">
-                        <div class="dashboard-vertical">
-                            <div class="dashboard-card-health">
-                                <div class="card-header">
-                                    <div class="card-icon">💊</div>
-                                    <h3>Active Prescriptions</h3>
+                <div class="dashboard-container">
+                    <div class="dashboard-vertical">
+                        <div class="health-card">
+                            <div class="card-header">
+                                <div class="card-icon">💊</div>
+                                <h3>Active Prescriptions</h3>
+                            </div>
+                            <div class="prescription-item">
+                                <div class="med-name">
+                                    Lisinopril 10mg
+                                    <span class="status-badge status-active">Active</span>
                                 </div>
-                                    <div class="prescription-item">
-                                        <div class="med-name">
-                                            Lisinopril 10mg
-                                            <span class="status-badge status-active"></span>
-                                        </div>
-                                        <div class="med-details">Once daily in the morning</div>
-                                        <div class="med-notes">For blood pressure control. Take with food</div>
-                                    </div>
-                                    <div style="margin-top: 20px;">
-                                        <button class="refill-btn"></button>
-                                    </div>
+                                <div class="med-details">Once daily in the morning</div>
+                                <div class="med-notes">For blood pressure control. Take with or without food.</div>
+                            </div>
+                            <div style="margin-top: 20px;">
+                                <button class="glow-btn">Request Refill</button>
                             </div>
                         </div>
 
+                        <div class="health-card">
+                            <div class="card-header">
+                                <div class="card-icon">👤</div>
+                                <h3>Personal Details</h3>
+                            </div>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-header">Patient Id</div>
+                                    <div class="info-value">1111-1111-1111</div>
+                                </div>
+                                
+                                <div class="info-item">
+                                    <div class="info-header">Date of Birth</div>
+                                    <div class="info-value">mm/dd/yyyy</div>
+                                </div>
+
+                                <div class="info-item">
+                                    <div class="info-header">Age</div>
+                                    <div class="info-value">100 years</div>
+                                </div>
+
+                                <div class="info-item">
+                                    <div class="info-header">Gender</div>
+                                    <div class="info-value">Alien</div>
+                                </div>
+
+                                <div class="info-item">
+                                    <div class="info-header">Marital Status</div>
+                                    <div class="info-value">Complicated</div>
+                                </div>
+
+                                <div class="info-item">
+                                    <div class="info-header">Race/Ethnicity</div>
+                                    <div class="info-value">Dog</div>
+                                </div>
+
+                                <div class="info-item">
+                                    <div class="info-header">Height</div>
+                                    <div class="info-value">200 ft</div>
+                                </div>
+
+                                <div class="info-item">
+                                    <div class="info-header">Insurance Provider</div>
+                                    <div class="info-value">INS45872316</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="health-card">
+                            <div class="card-header">
+                                <div class="card-icon">📞</div>
+                                <h3>Contact Information</h3>
+                            </div>
+                            <div class="info-grid">
+                                 <div class="info-item">
+                                    <div class="info-header">Phone Number:</div>
+                                    <div class="info-value">(111)111-1111</div>
+                                </div>
+
+                                <div class="info-item">
+                                    <div class="info-header">Email Address:</div>
+                                    <div class="info-value">Garrett.is.a.turd@gmail.com</div>
+                                </div>
+
+                                <div class="info-item">
+                                    <div class="info-header">Home Address:</div>
+                                    <div class="info-value">123 Main Street, City, State 12345</div>
+                                </div>
+
+                                <div class="info-item">
+                                    <div class="info-header">Primary Doctor</div>
+                                    <div class="info-value">Dr. Mike</div>
+                                </div>
+                            </div>
+
+                            <div style="margin-top: 20px;">
+                                <button class="glow-btn">Update Contact Info</button>
+                        </div>
                     </div>
-                </div>    
+                </div>
             </div>
         </div>
+
+
+
+    </body>
 </html>
