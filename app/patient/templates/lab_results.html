@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{{ url_for('static', filename='patient_styles.css') }}">
+        <title>Patient Portal - Lab Results</title>
+
+        <style>
+        .dashboard-container{
+            display:flex;
+            gap:25px;
+            margin-top:20px;
+        }
+
+        .dashboard-vertical{
+            flex:3;
+            display:flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .quick-actions {
+            flex:1;
+            display:flex;
+            flex-direction: column;
+            gap:20px;
+        }
+        </style>
+    </head>
+    <body>
+        <header class="navbar">
+        <div class="logo">CuraCloud</div>
+        <div class="nav-buttons">
+            <div class="right-header">
+                <div class="profile-icon"> 
+                    <img id="admin-profile-icon" src="{{ url_for('static', filename='images/woman-patient.png') }}" alt="admin profile icon">
+                </div>
+                <a href="{{ url_for('auth.login') }}">
+                    <button class="logout-btn">Logout</button>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="side-menu">
+            <ul>
+                <li><a href="{{ url_for('patient.patient_home') }}">Home</a></li>
+                <li><a href="{{ url_for('patient.appointments') }}">Appointments</a></li>
+                <li><a href="{{ url_for('patient.prescriptions') }}">Prescriptions</a></li>
+                <li><a href="{{ url_for('patient.billing') }}">Billing & Payments</a></li>
+                <li><a href="{{ url_for('patient.lab_results') }}">Lab Results</a></li>
+                <li><a href="{{ url_for('patient.messages') }}">Messages</a></li>
+                <li><a href="{{ url_for('patient.patient_info') }}">My Health</a></li>
+            </ul>
+        </div>
+
+        <div class="content">
+            <div class="welcome-section">
+                <div class="welcome-message">Lab Results</div>
+                <div class="welcome-subtitle">Manage and view your lab results</div>
+            </div>
+            
+            <!--Lab results summary-->
+            <div class="dashboard-container">
+                <div class="dashboard-vertical">
+                    <div class="dashboard-card">
+                        <div class="card-header">Recent Lab Results</div>
+                        <div class="card-content">
+                            <table class="lab-table">
+                                <thead>
+                                    <tr>
+                                        <th>Test Date</th>
+                                        <th>Test Type</th>
+                                        <th>Ordering Doctor</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>mm/dd/yyyy</td>
+                                        <td>Test Name</td>
+                                        <td>Doctor Name</td>
+                                        <td class="status-normal">Normal</td>
+                                        <td><button class="lab-details">View Details</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>mm/dd/yyyy</td>
+                                        <td>Test Name</td>
+                                        <td>Doctor Name</td>
+                                        <td class="status-abnormal">Abnormal</td>
+                                        <td><button class="lab-details">View Details</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>mm/dd/yyyy</td>
+                                        <td>Test Name</td>
+                                        <td>Doctor Name</td>
+                                        <td class="status-normal">Normal</td>
+                                        <td><button class="lab-details">View Details</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>mm/dd/yyyy</td>
+                                        <td>Test Name</td>
+                                        <td>Doctor Name</td>
+                                        <td class="status-pending">Pending</td>
+                                        <td><button class="lab-details">View Details</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!--Detailed recent lab-->
+                    <div class="dashboard-card">
+                        <div class="card-header">Lastest results mm/dd/yyy</div>
+                        <div class="card-content">
+                            <div class="test-panel">
+                                <div class="test-name">TEST NAME HERE</div>
+                                <div class="test-results">
+                                    <div class="test-value">Testing value</div>
+                                    <div class="test-range">Normal Range: 4.5-11.0</div>
+                                </div>
+                                <div class="test-results">
+                                    <div class="test-value">Testing value</div>
+                                    <div class="test-range">Normal Range: 4.5-11.0</div>
+                                </div>
+                                <div class="test-results">
+                                    <div class="test-value">Testing value</div>
+                                    <div class="test-range">Normal Range: 4.5-11.0</div>
+                                </div>
+                                <div class="test-results">
+                                    <div class="test-value">Testing value</div>
+                                    <div class="test-range">Normal Range: 4.5-11.0</div>
+                                </div>
+                            </div>
+                            <!--Pretend extra panel-->
+                            <div class="test-panel">
+                                <div class="test-name">TEST NAME HERE</div>
+                                <div class="test-results">
+                                    <div class="test-value">Testing value</div>
+                                    <div class="test-range">Normal Range: 4.5-11.0</div>
+                                </div>
+                                <div class="test-results">
+                                    <div class="test-value">Testing value</div>
+                                    <div class="test-range">Normal Range: 4.5-11.0</div>
+                                </div>
+                                <div class="test-results">
+                                    <div class="test-value">Testing value</div>
+                                    <div class="test-range">Normal Range: 4.5-11.0</div>
+                                </div>
+                                <div class="test-results">
+                                    <div class="test-value">Testing value</div>
+                                    <div class="test-range">Normal Range: 4.5-11.0</div>
+                                </div>
+                            </div>
+
+                            <div class="card-action">
+                                <button class="btn-primary">Download Report</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <div class="card-header">Results needing attention</div>
+                        <div class="card-content">
+                            <div class="critical-alert">
+                                <strong>Important Notice</strong>
+                                <p>There was an abnormal result found in your \test name here\ that needs attention. Please contact your provider</p>
+                            </div>
+
+                            <div class="test-panel">
+                                <div class="test-name">Testing Name - mm/dd/yyyy</div>
+                                <div class="test-results">
+                                    <div>TSH</div>
+                                    <div class="test-value">testing value</div>
+                                    <div class="test-range">Normal Range: 0.0-0.0</div>
+                                    <div class="trend-up">↑ High</div>
+                                </div>
+                            </div>
+
+                            <div class="card-action">
+                                <button class="btn-primary">Message Doctor</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <div class="action-card">
+                        <div class="action-icon">📊</div>
+                        <div>View All Results</div>
+                    </div>
+                    <div class="action-card">
+                        <div class="action-icon">📥</div>
+                        <div>Download Reports</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </body>
+</html>
