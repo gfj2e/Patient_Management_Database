@@ -47,7 +47,7 @@ def register():
             return redirect(url_for('auth.register'))
 
         try:
-            dob = datetime.strptime(dob_str, "%m/%d/%Y").date()
+            dob = datetime.strptime(dob_str, "%Y-%m-%d").date()
             age = calculate_age(dob)
 
             gender = {

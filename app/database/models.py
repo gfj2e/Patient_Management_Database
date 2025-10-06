@@ -191,7 +191,7 @@ class Insurance(db.Model):
     
     patient = relationship("Patient", back_populates="insurance")
     
-    patient_id: Mapped[int] = mapped_column(ForeignKey("patients.patient_id"), nullable=False)
+    patient_id: Mapped[int] = mapped_column(ForeignKey("patients.patient_id"), nullable=True)
     
 
 # Using polymorphic inheritance to inherit columns from user logins,
