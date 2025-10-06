@@ -19,7 +19,8 @@ def doctor_home():
             Appointment.appointment_time >= datetime.now()
         ).order_by(Appointment.appointment_time).all()
 
-        patients = {appt.patient for appt in Appointment.query.filter_by(doctor_id=doctor.doctor_id).all()}
+        patients = Patient.query.filter_by(doctor_id=doctor.doctor_id).all()
+
 
         messages_count = len(doctor.messages)
 
