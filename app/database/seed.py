@@ -1,5 +1,6 @@
 from ..database.models import *
 from ..database.connection import db
+from sqlalchemy import insert
 from faker import Faker
 from datetime import date, datetime, timedelta
 import uuid
@@ -47,9 +48,17 @@ def write_to_csv(dic):
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(dic)
-
+        
+def delete_table_data() -> None:
+    db.drop_all()
+    db.create_all()
+    db.session.commit()
+    print("Data successfully deleted")
+    
 # Seed the database with the fake data
 def seed_database() -> None:
+    
+    delete_table_data()
     
     print("Seeding database with data...")
     
@@ -196,18 +205,18 @@ def insert_test_data(patient_ident: int, doctor_ident: int) -> None:
     db.session.add_all(prescriptions)
     db.session.commit()
     
-    appointments = [
-        Appointment(
-            appointment_time = datetime.now() + timedelta(days=14),
-            clinic_name = "Ohio Medical Center",
-            state = "Ohio",
-            city = "Lauration",
-            patient_id = patient_ident,
-            doctor_id = doctor_ident
-        )
-    ]
-    db.session.add_all(appointments)
-    db.session.commit()
+    # appointments = [
+    #     Appointment(
+    #         appointment_time = datetime.now() + timedelta(days=14),
+    #         clinic_name = "Ohio Medical Center",
+    #         state = "Ohio",
+    #         city = "Lauration",
+    #         patient_id = patient_ident,
+    #         doctor_id = doctor_ident
+    #     )
+    # ]
+    # db.session.add_all(appointments)
+    # db.session.commit()
     
     test_results = [
         Test_Result(
@@ -231,4 +240,35 @@ def insert_test_data(patient_ident: int, doctor_ident: int) -> None:
     ]
     
     db.session.add_all(test_results)
+    db.session.commit()
+    
+    db.session.execute(
+        insert(Message),
+        [
+            {"content": "Hello, how are you feeling today?", "sender_type": "doctor", "doctor_id": 1, "patient_id": 1},
+            {"content": "I have been feeling better, thank you.", "sender_type": "patient", "doctor_id": 1, "patient_id": 1},
+            {"content": "Please remember to take your medication twice a day.", "sender_type": "doctor", "doctor_id": 1, "patient_id": 1},
+            {"content": "Got it, I will follow the instructions.", "sender_type": "patient", "doctor_id": 1, "patient_id": 1},
+            {"content": "Can we schedule a follow-up appointment next week?", "sender_type": "doctor", "doctor_id": 1, "patient_id": 1},
+            {"content": "Are you alive?", "sender_type": "doctor", "doctor_id": 1, "patient_id": 1}
+        ]
+    )
+    
+    db.session.execute(
+        insert(Billing),
+        [
+            {"billing_date": "2025-10-05", "billing_amount": 250.00, "notes": "Routine checkup and consultation", "patient_id": 1},
+            {"billing_date": "2025-10-04", "billing_amount": 480.00, "notes": "Follow-up visit with lab tests", "patient_id": 2},
+            {"billing_date": "2025-10-02", "billing_amount": 1200.00, "notes": "Minor surgical procedure billing", "patient_id": 3}
+        ]
+    )
+    
+    db.session.execute(
+        insert(Appointment),
+        [
+            {"appointment_time": "2025-09-21 12:02:30", "clinic_name": "TN Medical Center", "state": "Tennessee", "city": "Nashville", "patient_id": 1, "doctor_id": 1},
+            {"appointment_time": "2025-10-07 14:02:30", "clinic_name": "TN Medical Center", "state": "Tennessee", "city": "Nashville", "patient_id": 1, "doctor_id": 1}
+        ]
+    )
+    
     db.session.commit()
