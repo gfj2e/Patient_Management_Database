@@ -64,7 +64,7 @@
             <ul>
             <li><a href="{{ url_for('main.index') }}">Home</a></li>
             <li><a href="{{ url_for('main.contact') }}">Contact Us</a></li>
-            <li><a href="{{ url_for('main.about') }}">About us</a></li>
+            <li><a href="{{ url_for('main.about') }}">About Us</a></li>
             <li><a href="{{ url_for('main.services') }}">Services</a></li>
             </ul>
         </div>
@@ -83,7 +83,7 @@
                     </a>
                     <a class="role-btn doctor-btn" href="{{ url_for('auth.login', role='doctor') }}">
                         <span class="role-btn-icon">👨‍⚕️</span>
-                        <span class="role-btn-text">Medical Staff</span>
+                        <span class="role-btn-text">Doctor</span>
                     </a>
                     <a class="role-btn patient-btn" href="{{ url_for('auth.login', role='patient') }}">
                         <span class="role-btn-icon">👤</span>
