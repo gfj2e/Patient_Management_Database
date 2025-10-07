@@ -12,7 +12,7 @@
         <div class="nav-buttons">
             <div class="right-header">
                 <div class="profile-icon"> 
-                    <img id="admin-profile-icon" src="{{ url_for('static', filename='images/woman-patient.png') }}" alt="doctor profile icon">
+                    <img id="admin-profile-icon" src="{{ url_for('static', filename='images/user.png') }}" alt="doctor profile icon">
                 </div>
                 <a href="{{ url_for('auth.logout') }}">
                     <button class="logout-btn">Logout</button>
@@ -110,7 +110,7 @@
               <h3>{{ patient.first_name }} {{ patient.last_name }}</h3>
               <p><strong>Email:</strong> {{ patient.email or "N/A" }}</p>
               <p><strong>Phone:</strong> {{ patient.phone_number or "N/A" }}</p>
-              <button class="view-btn">View Details</button>
+              <button class="view-btn">Hover for More Info</button>
             </div>
 
             <div class="flip-card-back">
