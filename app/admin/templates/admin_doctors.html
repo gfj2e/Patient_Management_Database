@@ -42,30 +42,52 @@
 
 <div class="add-doctor-section">
     <h3>Add New Doctor</h3>
-    <form method="POST" action="{{ url_for('admin.add_doctor') }}">
-        <input type="text" name="first_name" placeholder="First Name" required>
-        <input type="text" name="last_name" placeholder="Last Name" required>
-        <!-- <input type="text" name="specialty" placeholder="Specialty"> -->
-        <select name="specialty" required>
-            <option value="">Select Specialty</option>
-            {% for spec in specialties %}
-                <option value="{{ spec }}">{{ spec }}</option>
-            {% endfor %}
-        </select>
-        <input type="email" name="email" placeholder="Email" required>
-        <input type="text" name="phone" placeholder="Phone">
-        <input type="text" name="city" placeholder="City" required>
-        <input type="text" name="state" placeholder="State" required>
-        <button type="submit" class="btn-primary">Add Doctor</button>
+    <form method="POST" action="{{ url_for('admin.add_doctor') }}" class="doctor-form-grid">
+        <div class="form-row">
+            <input type="text" name="first_name" placeholder="First Name" required>
+            <input type="text" name="last_name" placeholder="Last Name" required>
+        </div>
+
+        <div class="form-row">
+            <select name="specialty" required>
+                <option value="">Select Specialty</option>
+                {% for spec in specialties %}
+                    <option value="{{ spec }}">{{ spec }}</option>
+                {% endfor %}
+            </select>
+            <input type="email" name="email" placeholder="Email" required>
+        </div>
+
+        <div class="form-row">
+            <input type="text" name="phone" placeholder="Phone">
+            <input type="text" name="city" placeholder="City" required>
+            <input type="text" name="state" placeholder="State" required>
+        </div>
+
+        <!-- <div class="form-row full-width">
+            <label for="assigned_patients">Assign Patients:</label>
+            <select name="assigned_patients" id="assigned_patients" multiple size="4">
+                {% for patient in patients %}
+                    <option value="{{ patient.patient_id }}">
+                        {{ patient.first_name }} {{ patient.last_name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div> -->
+
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">Add Doctor</button>
+        </div>
     </form>
 </div>
+
 
 
 
             <div class="dashboard-container">
                 <div class="dashboard-vertical">
                     {% if doctors %}
-                        <table border="1" cellpadding="6" cellspacing="0" class="data-table">
+                        <table cellpadding="6" cellspacing="0" class="data-table">
                             <thead>
                                 <tr>
                                     <th>Doctor ID</th>

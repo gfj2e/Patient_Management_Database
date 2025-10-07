@@ -3,6 +3,8 @@ from flask_login import login_required, current_user
 from ..database.models import Admin_Login, Patient, Doctor, Billing
 from ..database.connection import db
 from app.database.seed import SPECIALTIES
+from datetime import date, datetime
+
 
 
 
@@ -104,3 +106,62 @@ def delete_doctor(doctor_id):
     db.session.commit()
     flash("Doctor deleted successfully.", "info")
     return redirect(url_for("admin.admin_doctors"))
+
+@admin_bp.route("/add_patient", methods=["POST"])
+def add_patient():
+    first_name = request.form["first_name"]
+    last_name = request.form["last_name"]
+    email = request.form.get("email")
+    phone = request.form.get("phone_number")
+    dob_str = request.form.get("dob")
+    gender = request.form.get("gender")
+    address = request.form.get("address")
+
+    # generate next patient_code
+    last_patient = Patient.query.order_by(Patient.patient_id.desc()).first()
+    next_id = (last_patient.patient_id + 1) if last_patient else 1
+    patient_code = f"P{next_id:04d}"
+
+    # Convert DOB string to date
+    dob = datetime.strptime(dob_str, "%Y-%m-%d").date()
+
+    # Compute age
+    today = date.today()
+    age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
+
+    # Default fallback values
+    height = 0
+    marriage_status = "Single"
+    race = "OTHER_MIXED"
+
+    default_doctor = Doctor.query.first()
+    doctor_id = default_doctor.doctor_id if default_doctor else None
+
+    new_patient = Patient(
+        patient_code=patient_code,
+        first_name=first_name,
+        last_name=last_name,
+        email=email,
+        phone_number=phone,
+        dob=dob,
+        age=age,
+        gender=gender,
+        address=address,
+        height=height,
+        marriage_status=marriage_status,
+        race=race,
+        doctor_id=doctor_id
+    )
+
+    db.session.add(new_patient)
+    db.session.commit()
+    flash("Patient added successfully!", "success")
+    return redirect(url_for("admin.admin_patients"))
+
+@admin_bp.route("/delete_patient/<int:patient_id>", methods=["POST"])
+def delete_patient(patient_id):
+    patient = Patient.query.get_or_404(patient_id)
+    db.session.delete(patient)
+    db.session.commit()
+    flash("Patient deleted successfully!", "success")
+    return redirect(url_for("admin.admin_patients"))

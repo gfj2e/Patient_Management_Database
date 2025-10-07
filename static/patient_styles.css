@@ -686,9 +686,12 @@ body {
         }
 
         .data-table th {
-            background: linear-gradient(135deg, #4a00a3 0%, #6a11cb 100%);
-            color: white;
-            font-size: 16px;
+            background: #f8f9ff;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #250046;
+            border-bottom: 2px solid #e0e0e0;
         }
 
         .data-table tr:nth-child(even) {
@@ -1374,7 +1377,7 @@ body {
 }
 
 .btn-danger {
-    background-color: #4fc9d9;
+    background-color: #4a00a3;
     color: white;
     border: none;
     padding: 6px 12px;
@@ -1413,3 +1416,49 @@ body {
     background: #fff url("data:image/svg+xml;utf8,<svg fill='%234a00a3' height='12' viewBox='0 0 24 24' width='12' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>") no-repeat right 12px center;
     background-size: 14px;
 }
+/* --- Compact Doctor Form Grid --- */
+.add-doctor-section form {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    flex-wrap: nowrap;       /* no wrapping */
+    overflow-x: auto;        /* scroll horizontally if needed */
+    white-space: nowrap;     /* prevent line breaks */
+    padding-bottom: 5px;
+}
+
+/* compact field styling */
+.add-doctor-section input,
+.add-doctor-section select {
+    display: inline-block;
+    padding: 5px 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    height: 30px;
+    width: 130px;
+    flex-shrink: 0;          /* prevent shrinking */
+}
+
+.add-doctor-section select {
+    width: 150px;            /* slightly wider for dropdown */
+}
+
+.add-doctor-section button {
+    height: 30px;
+    padding: 0 14px;
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+/* Hide scrollbar but keep horizontal scrolling for the doctor form */
+.add-doctor-section form::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Edge */
+}
+
+.add-doctor-section form {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;     /* Firefox */
+}
+
