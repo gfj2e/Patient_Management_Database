@@ -1465,11 +1465,11 @@ body {
 .checkbox-label {
     display: inline-flex;
     align-items: center;
-    gap: 2px;                  /* tighter spacing between box and text */
+    gap: 2px;  
     font-weight: 400;
     font-size: 13px;
     color: #333;
-    height: 30px;              /* match input height */
+    height: 30px;  
     line-height: 30px;
     margin: 0;
     padding: 0;
@@ -1478,8 +1478,8 @@ body {
 .checkbox-label input[type="checkbox"] {
     width: 14px;
     height: 14px;
-    transform: none;           /* remove scaling distortion */
-    vertical-align: middle;    /* vertically align with text */
+    transform: none;  
+    vertical-align: middle; 
     margin: 0 -60px 0 0; 
     cursor: pointer;
 }
@@ -1492,7 +1492,7 @@ body {
     display: inline-flex;
     align-items: center;
     flex-shrink: 0;
-    margin-left: -60px;     /* nudges it closer to previous field */
-    margin-right: 0px;    /* keeps spacing consistent */
-    height: 30px;         /* match input height */
+    margin-left: -60px;
+    margin-right: 0px; 
+    height: 30px; 
 }

@@ -56,7 +56,8 @@ def admin_doctors():
 def admin_billing():
     if current_user.is_authenticated and isinstance(current_user, Admin_Login):
         billing_records = Billing.query.all()
-        return render_template("admin_billing.html", billing_records=billing_records)
+        patients = Patient.query.all()
+        return render_template("admin_billing.html", billing_records=billing_records, patients=patients)
     else:
         flash("You must be logged in as an admin to view this page.")
         return redirect(url_for("auth.login"))
@@ -168,3 +169,26 @@ def delete_patient(patient_id):
     db.session.commit()
     flash("Patient deleted successfully!", "success")
     return redirect(url_for("admin.admin_patients"))
+
+@admin_bp.route("/add_billing", methods=["POST"])
+def add_billing():
+    patient_id = request.form.get("patient_id")
+    amount = request.form.get("amount")
+    billing_date = request.form.get("billing_date")
+    notes = request.form.get("notes")
+
+    if not all([patient_id, amount, billing_date]):
+        flash("All required fields must be filled.", "danger")
+        return redirect(url_for("admin.admin_billing"))
+
+    billing_entry = Billing(
+        patient_id=patient_id,
+        billing_amount=amount,
+        billing_date=datetime.strptime(billing_date, "%Y-%m-%d").date(),
+        notes=notes
+    )
+    db.session.add(billing_entry)
+    db.session.commit()
+
+    flash("Billing entry added successfully!", "success")
+    return redirect(url_for("admin.admin_billing"))
