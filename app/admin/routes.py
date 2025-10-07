@@ -78,6 +78,9 @@ def add_doctor():
     city = request.form.get("city")
     state = request.form.get("state")
 
+    # Checkbox returns "on" if checked, or None if not
+    accepting_new = True if request.form.get("accepting_patients") == "on" else False
+
     if not all([first_name, last_name, email]):
         flash("First name, last name, and email are required.", "danger")
         return redirect(url_for("admin.admin_doctors"))
@@ -90,7 +93,7 @@ def add_doctor():
         city=city,
         phone_number=phone,
         email=email,
-        is_accepting_new_patients=True
+        is_accepting_new_patients=accepting_new
     )
     db.session.add(new_doctor)
     db.session.commit()
