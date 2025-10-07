@@ -1,6 +1,10 @@
-from flask import Blueprint, render_template, redirect, url_for, flash
+from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
 from ..database.models import Admin_Login, Patient, Doctor, Billing
+from ..database.connection import db
+from app.database.seed import SPECIALTIES
+
+
 
 admin_bp = Blueprint("admin", __name__, template_folder="templates")
 
@@ -40,7 +44,7 @@ def admin_patients():
 def admin_doctors():
     if current_user.is_authenticated and isinstance(current_user, Admin_Login):
         doctors = Doctor.query.all()
-        return render_template("admin_doctors.html", doctors=doctors)
+        return render_template("admin_doctors.html", doctors=doctors,specialties=SPECIALTIES)
     else:
         flash("You must be logged in as an admin to view this page.")
         return redirect(url_for("auth.login"))
@@ -62,3 +66,41 @@ def patients():
     return render_template("admin_patients.html", patients=patients)
 
 
+@admin_bp.route("/add_doctor", methods=["POST"])
+def add_doctor():
+    first_name = request.form.get("first_name")
+    last_name = request.form.get("last_name")
+    specialty = request.form.get("specialty")
+    email = request.form.get("email")
+    phone = request.form.get("phone")
+    city = request.form.get("city")
+    state = request.form.get("state")
+
+    if not all([first_name, last_name, email]):
+        flash("First name, last name, and email are required.", "danger")
+        return redirect(url_for("admin.admin_doctors"))
+
+    new_doctor = Doctor(
+        first_name=first_name,
+        last_name=last_name,
+        specialty=specialty,
+        state=state,
+        city=city,
+        phone_number=phone,
+        email=email,
+        is_accepting_new_patients=True
+    )
+    db.session.add(new_doctor)
+    db.session.commit()
+
+    flash("Doctor added successfully!", "success")
+    return redirect(url_for("admin.admin_doctors"))
+
+
+@admin_bp.route("/delete_doctor/<int:doctor_id>", methods=["POST"])
+def delete_doctor(doctor_id):
+    doctor = Doctor.query.get_or_404(doctor_id)
+    db.session.delete(doctor)
+    db.session.commit()
+    flash("Doctor deleted successfully.", "info")
+    return redirect(url_for("admin.admin_doctors"))
