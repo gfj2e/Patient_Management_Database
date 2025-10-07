@@ -1,7 +1,7 @@
 from .connection import db
 from sqlalchemy import (func, String, Text, ForeignKey, Boolean, Date, 
                         Enum as SQLEnum, DECIMAL, DateTime, SmallInteger)
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from decimal import Decimal
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
@@ -160,7 +160,7 @@ class Billing(db.Model):
     
     billing_id: Mapped[int] = mapped_column(primary_key=True)
     billing_amount: Mapped[Decimal] = mapped_column(DECIMAL(10, 2), nullable=False, default=0.00)
-    billing_date: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    billing_date: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=lambda: datetime.now() + timedelta(days=30))
     notes: Mapped[str] = mapped_column(Text, nullable=True)
     
     patient = relationship("Patient", back_populates="billing")
