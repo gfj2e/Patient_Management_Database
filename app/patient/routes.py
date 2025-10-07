@@ -11,6 +11,7 @@ patient_bp = Blueprint("patient", __name__, template_folder="templates")
 def patient_home():
     if current_user.is_authenticated and isinstance(current_user, Patient_Login):
         patient = current_user.patient
+        patient_name = f"{patient.first_name} {patient.last_name}"
         
         upcoming_appointments = Appointment.query.filter(
             Appointment.patient_id == patient.patient_id,
@@ -32,7 +33,8 @@ def patient_home():
         patient_prescriptions = patient.prescriptions
         
         return render_template("patient_home.html", 
-                               patient=patient, 
+                               patient=patient,
+                               patient_name=patient_name, 
                                upcoming_appointments=upcoming_appointments,
                                message_count=message_count,
                                billing=billing,
