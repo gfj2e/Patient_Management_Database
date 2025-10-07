@@ -72,6 +72,24 @@
     {% endif %}
 </div>
 
+<div class="send-message-section">
+    <h3>Send a Message</h3>
+    <form method="POST" action="{{ url_for('doctor.send_message') }}">
+        <label for="patient_id">Select Patient:</label>
+        <select name="patient_id" id="patient_id" required>
+            {% for patient in patients %}
+                <option value="{{ patient.patient_id }}">
+                    {{ patient.first_name }} {{ patient.last_name }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <label for="content">Message:</label>
+        <textarea name="content" id="content" rows="3" placeholder="Type your message..." required></textarea>
+
+        <button type="submit" class="btn-primary">Send</button>
+    </form>
+</div>
 
 
         </div>

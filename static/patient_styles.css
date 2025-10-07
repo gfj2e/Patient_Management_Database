@@ -1311,3 +1311,36 @@ body {
 }
 
 .status-active { background: #10b981; color: white; }
+
+/* for doctor-side messaging */
+.send-message-section {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    margin-top: 30px;
+}
+
+.send-message-section h3 {
+    color: #250046;
+    margin-bottom: 15px;
+}
+
+.send-message-section form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.send-message-section select,
+.send-message-section textarea {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+}
+
+.send-message-section .btn-primary {
+    align-self: flex-start;
+    margin-top: 10px;
+}

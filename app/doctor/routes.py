@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash
+from flask import Blueprint, render_template, redirect, request, url_for, flash
 from flask_login import login_required, current_user, logout_user
 from ..database.models import Doctor_Login, Appointment, Patient, Message
 from datetime import datetime, date
@@ -77,24 +77,6 @@ def doctor_appointments():
     else:
         flash("You must be logged in as a doctor to view this page")
         return redirect(url_for('auth.login'))
-    
-@doctor_bp.route("/doctor/messages")
-@login_required
-def doctor_messages():
-    if current_user.is_authenticated and isinstance(current_user, Doctor_Login):
-        doctor = current_user.doctor
-
-        # Query all messages for this doctor
-        messages = doctor.messages  # already a list of Message objects
-
-        return render_template(
-            "doctor_messages.html",
-            doctor=doctor,
-            messages=messages
-        )
-    else:
-        flash("You must be logged in as a doctor to view this page")
-        return redirect(url_for('auth.login'))
 
 @doctor_bp.route("/doctor/patients")
 @login_required
@@ -119,6 +101,44 @@ def doctor_patientlist():
     # Assuming `current_user` is a Doctor
     patients = Patient.query.filter_by(doctor_id=current_user.doctor_id).all()
     return render_template("doctor_patientlist.html", patients=patients)
+
+@doctor_bp.route("/doctor/messages")
+@login_required
+def doctor_messages():
+    if current_user.is_authenticated and isinstance(current_user, Doctor_Login):
+        doctor = current_user.doctor
+        messages = Message.query.filter_by(doctor_id=doctor.doctor_id).all()
+        patients = Patient.query.filter_by(doctor_id=doctor.doctor_id).all()
+        return render_template("doctor_messages.html", doctor=doctor, messages=messages, patients=patients)
+    else:
+        flash("You must be logged in as a doctor to view this page")
+        return redirect(url_for('auth.login'))
+
+@doctor_bp.route("/send_message", methods=["POST"])
+@login_required
+def send_message():
+    from ..database.models import Message, Patient
+    from ..database.connection import db
+
+    patient_id = request.form.get("patient_id")
+    content = request.form.get("content")
+
+    if not patient_id or not content:
+        flash("Please select a patient and enter a message.", "danger")
+        return redirect(url_for("doctor.doctor_messages"))
+
+    new_message = Message(
+        content=content,
+        sender_type="doctor",
+        doctor_id=current_user.doctor_id,
+        patient_id=int(patient_id)
+    )
+    db.session.add(new_message)
+    db.session.commit()
+
+    flash("Message sent successfully!", "success")
+    return redirect(url_for("doctor.doctor_messages"))
+
 
 @auth_bp.route("/logout")
 def logout():
