@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='patient_styles.css') }}">
     <title>Patient Portal</title>
-
 </head>
 <body>
     <header class="navbar">
@@ -18,8 +17,6 @@
                 <a href="{{ url_for('auth.logout') }}">
                     <button class="logout-btn">Logout</button>
                 </a>
-                </div>
-                
             </div>
         </div>
     </header>
@@ -39,11 +36,11 @@
         
         <div class="content">
             <div class="welcome-section-patient">
-                <div class="welcome-message">Good evening, Karigan!</div>
+                <div class="welcome-message">Welcome, {{ patient_name }}!</div>
                 <div class="welcome-subtitle">Welcome to your CuraCloud Patient Portal</div>
             </div>
             
-            <!-- Side by side layout -->
+            <!-- Dynamic content based on database data -->
             <div class="dashboard-container">
                 <div class="dashboard-vertical">
                     <div class="dashboard-card">
@@ -52,9 +49,21 @@
                             <h3>Appointments</h3>
                         </div>
                         <div class="card-content">
-                            <p class="card-text">You have no upcoming appointments.</p>
+                            {% if upcoming_appointments %}
+                                <div class="appointments-list">
+                                    {% for appointment in upcoming_appointments %}
+                                    <div class="appointment-item">
+                                        <strong>{{ appointment.appointment_time.strftime('%B %d, %Y at %I:%M %p') }}</strong>
+                                        <br>
+                                        <span>Dr. {{ appointment.doctor.last_name if appointment.doctor else 'TBD' }}</span>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <p class="card-text">You have no upcoming appointments.</p>
+                            {% endif %}
                             <div class="card-action">
-                                <button class="glow-btn">Schedule Now</button>
+                                <button class="glow-btn" onclick="navigateToAppointments()">Schedule Now</button>
                             </div>
                         </div>
                     </div>
@@ -65,9 +74,13 @@
                             <h3>Messages</h3>
                         </div>
                         <div class="card-content">
-                            <p class="card-text">Have a question for your care team?</p>
+                            {% if message_count > 0 %}
+                                <p class="card-text">You have {{ message_count }} unread message(s).</p>
+                            {% else %}
+                                <p class="card-text">Have a question for your care team?</p>
+                            {% endif %}
                             <div class="card-action">
-                                <button class="glow-btn">Send a Message</button>
+                                <button class="glow-btn" onclick="navigateToMessages()">Send a Message</button>
                             </div>
                         </div>
                     </div>
@@ -78,9 +91,16 @@
                             <h3>Billing Summary</h3>
                         </div>
                         <div class="card-content">
-                            <p class="card-text">You don't have any bills due.</p>
+                            {% if billing %}
+                                <div class="billing-info">
+                                    <p><strong>Amount Due:</strong> ${{ "%.2f"|format(billing.amount_due) }}</p>
+                                    <p><strong>Due Date:</strong> {{ billing.billing_date.strftime('%m/%d/%Y') }}</p>
+                                </div>
+                            {% else %}
+                                <p class="card-text">You don't have any bills due.</p>
+                            {% endif %}
                             <div class="card-action">
-                                <button class="glow-btn">View Details</button>
+                                <button class="glow-btn" onclick="navigateToBilling()">View Details</button>
                             </div>
                         </div>
                     </div>
@@ -91,9 +111,18 @@
                             <h3>Lab Results</h3>
                         </div>
                         <div class="card-content">
-                            <p class="card-text">No new lab results available.</p>
+                            {% if lab_results %}
+                                <div class="lab-results-preview">
+                                    <p>You have {{ lab_results|length }} lab result(s) available.</p>
+                                    <div class="recent-result">
+                                        Most recent: {{ lab_results[0].result_time.strftime('%m/%d/%Y') }}
+                                    </div>
+                                </div>
+                            {% else %}
+                                <p class="card-text">No new lab results available.</p>
+                            {% endif %}
                             <div class="card-action">
-                                <button class="glow-btn">View History</button>
+                                <button class="glow-btn" onclick="navigateToLabResults()">View History</button>
                             </div>
                         </div>
                     </div>
@@ -104,28 +133,41 @@
                             <h3>Prescriptions</h3>
                         </div>
                         <div class="card-content">
-                            <p class="card-text">Want to view your prescriptions?</p>
+                            {% if patient_prescriptions %}
+                                <div class="prescriptions-preview">
+                                    <p>You have {{ patient_prescriptions|length }} active prescription(s).</p>
+                                    <div class="recent-prescription">
+                                        {% for prescription in patient_prescriptions[:2] %}
+                                        <div class="prescription-item">
+                                            {{ prescription.medication_name }}
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% else %}
+                                <p class="card-text">No active prescriptions.</p>
+                            {% endif %}
                             <div class="card-action">
-                                <button class="glow-btn">Check Your Prescriptions</button>
+                                <button class="glow-btn" onclick="navigateToPrescriptions()">Check Your Prescriptions</button>
                             </div>
                         </div>
                     </div>
                 </div>
                 
                 <div class="quick-actions">
-                    <div class="action-card">
+                    <div class="action-card" onclick="navigateToAppointments()">
                         <div class="action-icon">📅</div>
                         <div>Schedule Appointment</div>
                     </div>
-                    <div class="action-card">
+                    <div class="action-card" onclick="navigateToPrescriptions()">
                         <div class="action-icon">💊</div>
                         <div>Refill Prescription</div>
                     </div>
-                    <div class="action-card">
+                    <div class="action-card" onclick="navigateToBilling()">
                         <div class="action-icon">💰</div>
                         <div>Pay Bill</div>
                     </div>
-                    <div class="action-card">
+                    <div class="action-card" onclick="navigateToPatientInfo()">
                         <div class="action-icon">📋</div>
                         <div>View Health Records</div>
                     </div>
@@ -140,13 +182,38 @@
     </div>
 
     <script>
+        // Navigation functions that use Flask URLs
+        function navigateToAppointments() {
+            window.location.href = "{{ url_for('patient.appointments') }}";
+        }
+
+        function navigateToPrescriptions() {
+            window.location.href = "{{ url_for('patient.prescriptions') }}";
+        }
+
+        function navigateToBilling() {
+            window.location.href = "{{ url_for('patient.billing') }}";
+        }
+
+        function navigateToLabResults() {
+            window.location.href = "{{ url_for('patient.lab_results') }}";
+        }
+
+        function navigateToMessages() {
+            window.location.href = "{{ url_for('patient.messages') }}";
+        }
+
+        function navigateToPatientInfo() {
+            window.location.href = "{{ url_for('patient.patient_info') }}";
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             // Add click handlers to action cards
             const actionCards = document.querySelectorAll('.action-card');
             actionCards.forEach(card => {
                 card.addEventListener('click', function() {
                     const actionText = this.querySelector('div:last-child').textContent;
-                    alert(`You selected: ${actionText}`);
+                    console.log(`Action selected: ${actionText}`);
                 });
             });
             
@@ -160,11 +227,11 @@
             });
             
             // Add click handlers to dashboard card buttons
-            const dashboardButtons = document.querySelectorAll('.dashboard-card .btn-primary');
+            const dashboardButtons = document.querySelectorAll('.dashboard-card .glow-btn');
             dashboardButtons.forEach(button => {
                 button.addEventListener('click', function() {
-                    const cardHeader = this.closest('.dashboard-card').querySelector('.card-header').textContent;
-                    alert(`Action for: ${cardHeader}`);
+                    const cardHeader = this.closest('.dashboard-card').querySelector('h3').textContent;
+                    console.log(`Action for: ${cardHeader}`);
                 });
             });
         });

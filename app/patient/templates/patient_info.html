@@ -5,7 +5,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="{{ url_for('static', filename='patient_styles.css') }}">
         <title>Patient Portal - Health Dashboard</title>
-   
     </head>
     <body>
         <header class="navbar">
@@ -15,7 +14,7 @@
                     <div class="profile-icon"> 
                         <img id="admin-profile-icon" src="{{ url_for('static', filename='images/woman-patient.png') }}" alt="admin profile icon">
                     </div>
-                    <a href="{{ url_for('auth.login') }}">
+                    <a href="{{ url_for('auth.logout') }}">
                         <button class="logout-btn">Logout</button>
                     </a>
                 </div>
@@ -31,7 +30,7 @@
                     <li><a href="{{ url_for('patient.billing') }}">Billing & Payments</a></li>
                     <li><a href="{{ url_for('patient.lab_results') }}">Lab Results</a></li>
                     <li><a href="{{ url_for('patient.messages') }}">Messages</a></li>
-                    <li><a href="#" class="active">Health Dashboard</a></li>
+                    <li><a href="{{ url_for('patient.patient_info') }}" class="active">Health Dashboard</a></li>
                 </ul>
             </div>
 
@@ -40,17 +39,15 @@
                     <div class="patient-profile">
                         <div class="patient-avatar">👤</div>
                         <div class="patient-info">
-                            <h1>Karigan Stewart</h1>
+                            <h1>Welcome {{ patient_name }}</h1>
                             <div class="patient-meta">
-                                <span class="meta-tag">Age: 100</span>
-                                <span class="meta-tag">Alien</span>
-                                <span class="meta-tag">Caucasian</span>
-                                <span class="meta-tag">hababablow</span>
+                                <span class="meta-tag">Age: {{ patient.age }}</span>
+                                <span class="meta-tag">{{ patient.gender.value }}</span>
+                                <span class="meta-tag">{{ patient.race.value if patient.race else 'N/A' }}</span>
+                                <span class="meta-tag">Patient ID: {{ patient.patient_code }}</span>
                             </div>
                         </div>
                     </div>
-                    
-                   
                 </div>
 
                 <div class="dashboard-container">
@@ -60,16 +57,26 @@
                                 <div class="card-icon">💊</div>
                                 <h3>Active Prescriptions</h3>
                             </div>
-                            <div class="prescription-item">
-                                <div class="med-name">
-                                    Lisinopril 10mg
-                                    <span class="status-badge status-active">Active</span>
+                            {% if patient.prescriptions %}
+                                {% for prescription in patient.prescriptions %}
+                                <div class="prescription-item">
+                                    <div class="med-name">
+                                        {{ prescription.medication_name }}
+                                        <span class="status-badge status-active">Active</span>
+                                    </div>
+                                    <div class="med-details">{{ prescription.dosage }} - {{ prescription.frequency }}</div>
+                                    <div class="med-notes">{{ prescription.instructions if prescription.instructions else 'Take as directed by your physician.' }}</div>
                                 </div>
-                                <div class="med-details">Once daily in the morning</div>
-                                <div class="med-notes">For blood pressure control. Take with or without food.</div>
-                            </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="prescription-item">
+                                    <div class="med-name">
+                                        No active prescriptions
+                                    </div>
+                                </div>
+                            {% endif %}
                             <div style="margin-top: 20px;">
-                                <button class="glow-btn">Request Refill</button>
+                                <button class="glow-btn" onclick="requestRefill()">Request Refill</button>
                             </div>
                         </div>
 
@@ -80,43 +87,50 @@
                             </div>
                             <div class="info-grid">
                                 <div class="info-item">
-                                    <div class="info-header">Patient Id</div>
-                                    <div class="info-value">1111-1111-1111</div>
+                                    <div class="info-header">Patient ID</div>
+                                    <div class="info-value">{{ patient.patient_code }}</div>
                                 </div>
                                 
                                 <div class="info-item">
                                     <div class="info-header">Date of Birth</div>
-                                    <div class="info-value">mm/dd/yyyy</div>
+                                    <div class="info-value">
+                                        {{ patient.dob.strftime('%m/%d/%Y') }}
+                                    </div>
                                 </div>
 
                                 <div class="info-item">
                                     <div class="info-header">Age</div>
-                                    <div class="info-value">100 years</div>
+                                    <div class="info-value">
+                                        {{ patient.age }} years
+                                    </div>
                                 </div>
 
                                 <div class="info-item">
                                     <div class="info-header">Gender</div>
-                                    <div class="info-value">Alien</div>
+                                    <div class="info-value">
+                                        {{ patient.gender.value }}
+                                    </div>
                                 </div>
 
                                 <div class="info-item">
                                     <div class="info-header">Marital Status</div>
-                                    <div class="info-value">Complicated</div>
+                                    <div class="info-value">
+                                        {{ patient.marriage_status.value if patient.marriage_status else 'N/A' }}
+                                    </div>
                                 </div>
 
                                 <div class="info-item">
                                     <div class="info-header">Race/Ethnicity</div>
-                                    <div class="info-value">Dog</div>
+                                    <div class="info-value">
+                                        {{ patient.race.value if patient.race else 'N/A' }}
+                                    </div>
                                 </div>
 
                                 <div class="info-item">
                                     <div class="info-header">Height</div>
-                                    <div class="info-value">200 ft</div>
-                                </div>
-
-                                <div class="info-item">
-                                    <div class="info-header">Insurance Provider</div>
-                                    <div class="info-value">INS45872316</div>
+                                    <div class="info-value">
+                                        {{ patient.height }} cm
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -127,36 +141,61 @@
                                 <h3>Contact Information</h3>
                             </div>
                             <div class="info-grid">
-                                 <div class="info-item">
-                                    <div class="info-header">Phone Number:</div>
-                                    <div class="info-value">(111)111-1111</div>
+                                <div class="info-item">
+                                    <div class="info-header">Phone Number</div>
+                                    <div class="info-value">
+                                        {{ patient.phone_number if patient.phone_number else 'N/A' }}
+                                    </div>
                                 </div>
 
                                 <div class="info-item">
-                                    <div class="info-header">Email Address:</div>
-                                    <div class="info-value">Garrett.is.a.turd@gmail.com</div>
+                                    <div class="info-header">Email Address</div>
+                                    <div class="info-value">
+                                        {{ patient.email if patient.email else 'N/A' }}
+                                    </div>
                                 </div>
 
                                 <div class="info-item">
-                                    <div class="info-header">Home Address:</div>
-                                    <div class="info-value">123 Main Street, City, State 12345</div>
+                                    <div class="info-header">Home Address</div>
+                                    <div class="info-value">
+                                        {{ patient.address }}
+                                    </div>
                                 </div>
 
                                 <div class="info-item">
                                     <div class="info-header">Primary Doctor</div>
-                                    <div class="info-value">Dr. Mike</div>
+                                    <div class="info-value">
+                                        {% if patient.doctor %}
+                                            Dr. {{ patient.doctor.first_name }} {{ patient.doctor.last_name }}
+                                        {% else %}
+                                            Not assigned
+                                        {% endif %}
+                                    </div>
                                 </div>
                             </div>
 
                             <div style="margin-top: 20px;">
-                                <button class="glow-btn">Update Contact Info</button>
+                                <button class="glow-btn" onclick="updateContactInfo()">Update Contact Info</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
+        <script>
+            function requestRefill() {
+                alert('Redirecting to prescription refill page...');
+                window.location.href = "{{ url_for('patient.prescriptions') }}";
+            }
 
+            function updateContactInfo() {
+                alert('This feature would open a form to update contact information.');
+            }
 
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('Patient info page loaded');
+            });
+        </script>
     </body>
 </html>

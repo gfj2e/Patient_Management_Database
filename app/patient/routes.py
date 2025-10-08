@@ -72,4 +72,13 @@ def messages():
 @patient_bp.route("/patient_info")
 @login_required
 def patient_info():
-    return render_template("patient_info.html")
+    if current_user.is_authenticated and isinstance(current_user, Patient_Login):
+        patient = current_user.patient
+        patient_name = f"{patient.first_name} {patient.last_name}"
+        
+        return render_template("patient_info.html", 
+                             patient=patient,
+                             patient_name=patient_name)
+    else:
+        flash("You must be logged in as a patient to view this page.", "danger")
+        return redirect(url_for('auth.login'))
