@@ -6,3 +6,14 @@ Flask-Migrate
 Faker
 python-dotenv
 flask-bcrypt
+
+
+#MAC INSTRUCTIONS
+#python3 -m venv venv
+#source venv/bin/activate
+#pip install --upgrade pip
+#pip install -r requirements.txt
+#python3 seed_database.py
+#python3 app.py
+
+#ensure db is created in mysql
