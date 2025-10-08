@@ -21,14 +21,18 @@ def patient_home():
         message_count = len(patient.messages)
         
         billing = Billing.query.filter(
-            Billing.patient_id == patient.patient_id,
-            Billing.billing_date >= datetime.now()
+        Billing.patient_id == patient.patient_id
         ).order_by(Billing.billing_date.asc()).first()
         
         lab_results = Test_Result.query.filter(
             Test_Result.patient_id == patient.patient_id,
             Test_Result.test_status == TestStatus.COMPLETED
         ).order_by(Test_Result.result_time.desc()).all()
+        
+        print(f"Patient ID: {patient.patient_id}")
+        print(f"Lab results found: {len(lab_results)}")
+        for result in lab_results:
+            print(f"Result: {result.test_name}, Status: {result.test_status}, Date: {result.result_time}")
         
         patient_prescriptions = patient.prescriptions
         

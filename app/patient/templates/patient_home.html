@@ -93,7 +93,7 @@
                         <div class="card-content">
                             {% if billing %}
                                 <div class="billing-info">
-                                    <p><strong>Amount Due:</strong> ${{ "%.2f"|format(billing.amount_due) }}</p>
+                                    <p><strong>Amount Due:</strong> ${{ "%.2f"|format(billing.billing_amount) }}</p>
                                     <p><strong>Due Date:</strong> {{ billing.billing_date.strftime('%m/%d/%Y') }}</p>
                                 </div>
                             {% else %}

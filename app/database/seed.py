@@ -337,7 +337,20 @@ def insert_lisa_walters_data():
             test_status=TestStatus.PENDING,
             ordered_date=datetime.now() - timedelta(days=2),
             patient_id=patient_id
-        )
+        ),
+        Test_Result(
+            test_name="Thyroid Stimulating Hormone (TSH)",
+            test_status=TestStatus.COMPLETED,
+            ordered_date=datetime(2025, 8, 15),
+            result_time=datetime(2025, 8, 17),
+            result_value="2.1",
+            unit_of_measure="mIU/L",
+            reference_range="0.4 - 4.0",
+            is_abnormal=True,
+            result_notes="TSH level is within the normal range.",
+            patient_id=patient_id
+        ),
+        
     ]
     db.session.add_all(test_results)
 
