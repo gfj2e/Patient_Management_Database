@@ -271,4 +271,99 @@ def insert_test_data(patient_ident: int, doctor_ident: int) -> None:
         ]
     )
     
+    insert_lisa_walters_data()
+    
+    db.session.commit()
+    
+def insert_lisa_walters_data():
+    patient_id = 2
+    doctor_id = 4 
+    
+    appointments = [
+        Appointment(
+            appointment_time=datetime(2025, 8, 15, 10, 30, 0),
+            clinic_name="City Health Clinic",
+            state="California",
+            city="Los Angeles",
+            patient_id=patient_id,
+            doctor_id=doctor_id
+        ),
+        Appointment(
+            appointment_time=datetime.now() + timedelta(days=25),
+            clinic_name="City Health Clinic",
+            state="California",
+            city="Los Angeles",
+            patient_id=patient_id,
+            doctor_id=doctor_id
+        )
+    ]
+    db.session.add_all(appointments)
+
+    prescriptions = [
+        Prescription(
+            medication_name="Amoxicillin",
+            dosage="500mg",
+            frequency_taken="Every 8 hours for 7 days",
+            notes="Finish all medication even if feeling better.",
+            patient_id=patient_id,
+            doctor_id=doctor_id
+        ),
+        Prescription(
+            medication_name="Ibuprofen",
+            dosage="400mg",
+            frequency_taken="As needed for pain, max 3 times a day",
+            notes="Take with food to avoid stomach upset.",
+            patient_id=patient_id,
+            doctor_id=doctor_id
+        )
+    ]
+    db.session.add_all(prescriptions)
+
+    test_results = [
+        Test_Result(
+            test_name="Thyroid Stimulating Hormone (TSH)",
+            test_status=TestStatus.COMPLETED,
+            ordered_date=datetime(2025, 8, 15),
+            result_time=datetime(2025, 8, 17),
+            result_value="2.1",
+            unit_of_measure="mIU/L",
+            reference_range="0.4 - 4.0",
+            is_abnormal=False,
+            result_notes="TSH level is within the normal range.",
+            patient_id=patient_id
+        ),
+        Test_Result(
+            test_name="Vitamin D, 25-Hydroxy",
+            test_status=TestStatus.PENDING,
+            ordered_date=datetime.now() - timedelta(days=2),
+            patient_id=patient_id
+        )
+    ]
+    db.session.add_all(test_results)
+
+    billings = [
+        Billing(
+            billing_amount=150.00,
+            billing_date=datetime(2025, 8, 15),
+            notes="Consultation Fee",
+            patient_id=patient_id
+        ),
+        Billing(
+            billing_amount=75.50,
+            billing_date=datetime(2025, 8, 17),
+            notes="Lab Work: TSH Test",
+            patient_id=patient_id
+        )
+    ]
+    db.session.add_all(billings)
+    
+    # --- Insurance Information ---
+    insurance = Insurance(
+        member_id="WALTERS98765",
+        primary_insurance="Blue Cross Blue Shield",
+        group_number="BCBS-GRP-555",
+        plan_type="PPO",
+        patient_id=patient_id
+    )
+    db.session.add(insurance)
     db.session.commit()
