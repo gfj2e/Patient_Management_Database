@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, url_for,  request, redirect, flash
 from flask_login import logout_user, login_required, login_user, current_user
+from sqlalchemy import select
 from ..extensions import bcrypt
 from ..database.models import *
 from ..database.connection import db
@@ -39,10 +40,12 @@ def register():
             flash("All fields are required.", "danger")
             return redirect(url_for('auth.register'))
 
-        if User_Login.query.filter_by(user_name=username).first():
+        #if User_Login.query.filter_by(user_name=username).first():
+        if db.session.execute(select(User_Login).where(User_Login.user_name == username)).scalar():
             flash("Username already exists. Please choose another username.", "danger")
             return redirect(url_for('auth.register'))
-        if User_Login.query.filter_by(email=email).first():
+        # if User_Login.query.filter_by(email=email).first():
+        if db.session.execute(select(User_Login).where(User_Login.email == email)).scalar():
             flash("Email already exists. Please choose another email.", "danger")
             return redirect(url_for('auth.register'))
 
@@ -121,11 +124,11 @@ def login():
         
         user = None
         if role == "patient":
-            user = Patient_Login.query.filter_by(user_name=username).first()
+            user = db.session.execute(select(Patient_Login).where(Patient_Login.user_name == username)).scalar()
         elif role == "doctor":
-            user = Doctor_Login.query.filter_by(user_name=username).first()
+            user = db.session.execute(select(Doctor_Login).where(Doctor_Login.user_name == username)).scalar()
         elif role == "admin":
-            user = Admin_Login.query.filter_by(user_name=username).first()
+            user = db.session.execute(select(Admin_Login).where(Admin_Login.user_name == username)).scalar()
         else:
             flash("Invalid role selected", "danger")
             return redirect(url_for('auth.login'))
