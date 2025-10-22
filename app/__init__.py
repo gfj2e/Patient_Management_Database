@@ -15,7 +15,10 @@ def create_app():
     app = Flask(__name__, static_folder="../static")
     app.secret_key = "your_secret_key"
     
-    app = init_connection_engine(app)
+    init_connection_engine(app)
+    # Ensure the SQLAlchemy instance is registered with this Flask app
+    # from .database.connection import db as _db
+    # _db.init_app(app)
     
     bcrypt.init_app(app)
     login_manager.init_app(app)
@@ -25,8 +28,10 @@ def create_app():
         return User_Login.query.get(int(user_id))
     
     with app.app_context():
-        db.create_all() 
-    
+        # create_all requires the SQLAlchemy instance to be initialized with the app
+        db.create_all()
+        print("Tables created successfully.")
+
     migrate.init_app(app, db)
     
     # register the blueprints with app 

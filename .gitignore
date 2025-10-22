@@ -6,3 +6,4 @@ usernames_passwords.csv
 app/database/connection.py
 app/database/connection.py
 usernames_passwords.csv
+.env
