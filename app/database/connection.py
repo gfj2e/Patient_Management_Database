@@ -91,11 +91,6 @@ DB_NAME = os.getenv("DB_NAME", "patient_mgmt")
 USE_CLOUD = os.getenv("USE_CLOUD", "false").lower() == "true"
 
 def init_connection_engine(app):
-    """
-    Initializes the SQLAlchemy engine using either:
-    - Google Cloud SQL Connector (if USE_CLOUD=true)
-    - Local MySQL (if USE_CLOUD=false)
-    """
     if USE_CLOUD:
         print("Using Google Cloud SQL connection...")
         app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://"
@@ -113,8 +108,8 @@ def init_connection_engine(app):
         print("Using local MySQL connection...")
         #UNCOMMENT YOUR LOCAL CONNECTION BELOW
 
-        # garrett and karigan local
-        # app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://root:{DB_PASS}@localhost/patient_mgmt"
+        # karigan local
+        # app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://root:password@localhost/patient_mgmt"
         # anlee local
         # app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://root:Hien2003!!@127.0.0.1:3306/patient_mgmt"
         # heather local
