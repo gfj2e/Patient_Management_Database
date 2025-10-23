@@ -215,3 +215,7 @@
     justify-content: flex-start;
 }
 
+.flip-card h3 {
+    color: #0a3096;
+    margin-bottom: 10px;
+}
