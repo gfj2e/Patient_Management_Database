@@ -5,10 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Billing Management</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='patient_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin_styles.css') }}">
+
 </head>
 
 <body>
-<header class="navbar">
+<header class="navbar-admin">
     <div class="logo">
         <a href="{{ url_for('main.index') }}">CuraCloud</a>
     </div>
@@ -35,7 +37,7 @@
     </div>
 
     <div class="content">
-        <div class="welcome-section">
+        <div class="welcome-section-admin">
             <div class="welcome-message">Billing Overview</div>
             <div class="welcome-subtitle">View and manage all billing records.</div>
         </div>
@@ -53,7 +55,7 @@
       <input type="number" step="0.01" name="amount" placeholder="Amount ($)" required>
       <input type="date" name="billing_date" required>
       <input type="text" name="notes" placeholder="Notes" required>
-      <button type="submit" class="btn-primary">Add Billing</button>
+      <button type="submit" class="btn-primary-admin">Add Billing</button>
   </form>
 </div>
 

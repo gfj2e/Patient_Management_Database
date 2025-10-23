@@ -1,0 +1,147 @@
+/* Admin styling */
+.navbar-admin{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, #122e00 0%, #123b02 100%);
+    padding: 15px 30px;
+    color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.welcome-section-admin{
+    background: linear-gradient(135deg, #122e00 0%, #123b02 100%);
+    color: white;
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.card-header-admin{
+    background: linear-gradient(135deg, #122e00 0%, #123b02 100%);
+    color: white;
+    padding: 15px 20px;
+    font-weight: 600;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+    .btn-primary-admin {
+    background: #0c2203;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.btn-primary-admin:hover {
+    background: #2f800f;
+}
+
+.send-message-section .btn-admin-doctor {
+    align-self: flex-start;
+    margin-top: 10px;
+}
+
+.billing-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.billing-table th {
+    background: #f8f9ff;
+    padding: 15px;
+    text-align: left;
+    font-weight: 600;
+    color: #123b02;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.billing-table td {
+    padding: 15px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+/* billing */
+.billing-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 25px;
+    background-color: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.billing-table th, .billing-table td {
+    text-align: left;
+    padding: 14px 18px;
+}
+
+.billing-table th {
+    background: linear-gradient(135deg, #133b04 0%, #123b02 100%);
+    color: white;
+    font-size: 16px;
+}
+
+.billing-table tr:nth-child(even) {
+    background-color: #d9e6d4;
+}
+
+.billing-table tr:hover {
+    background-color: #7a976f;
+    transition: 0.2s;
+}
+
+.btn-danger {
+    background-color: #123b02;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.btn-danger:hover {
+    background-color: #215c09;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 25px;
+    background-color: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.data-table th, .data-table td {
+    text-align: left;
+    padding: 14px 18px;
+}
+
+.data-table th {
+    background:  #a5bb9b;
+    padding: 15px;
+    text-align: left;
+    font-weight: 600;
+    color: #250046;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.data-table tr:nth-child(even) {
+    background-color: #e8ece6;
+}
+
+.data-table tr:hover {
+    background-color: #8ea185;
+    transition: 0.2s;
+}

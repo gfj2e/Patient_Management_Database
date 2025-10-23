@@ -4,6 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="{{ url_for('static', filename='patient_styles.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='doctor_styles.css') }}">
         <title>Doctor - Appointments</title>
     </head>
     
@@ -28,9 +29,10 @@
                 flex-direction: column;
                 gap:20px;
             }
+
         </style>
     <body>
-    <header class="navbar">
+    <header class="navbar-doctor">
         <div class="logo">
             <a href="{{ url_for('main.index') }}">CuraCloud</a>
         </div>
@@ -62,7 +64,7 @@
         </div>
 
         <div class="content">
-            <div class="welcome-section">
+            <div class="welcome-section-doctor">
                 <div class="welcome-message">Appointments for Dr. {{ doctor.first_name }} {{ doctor.last_name }}</div>
                 <div class="welcome-subtitle">Manage your medical appointments.</div>
             </div>
@@ -74,7 +76,7 @@
 
     <!-- Today's Appointments -->
     <!-- <div class="dashboard-card">
-        <div class="card-header">Today's Appointments</div>
+        <div class="card-header-doctor">Today's Appointments</div>
         <div class="card-content">
             {% if todays_appointments %}
             <table border="1" cellpadding="5" cellspacing="0">
@@ -107,7 +109,7 @@
 
     <!-- Upcoming Appointments -->
     <!-- <div class="dashboard-card">
-        <div class="card-header">Upcoming Appointments</div>
+        <div class="card-header-doctor">Upcoming Appointments</div>
         <div class="card-content">
             {% if upcoming_appointments %}
             <table border="1" cellpadding="5" cellspacing="0">
@@ -140,7 +142,7 @@
 
     <!-- Past Appointments -->
     <!-- <div class="dashboard-card">
-        <div class="card-header">Past Appointments</div>
+        <div class="card-header-doctor">Past Appointments</div>
         <div class="card-content">
             {% if past_appointments %}
             <table border="1" cellpadding="5" cellspacing="0">
@@ -172,7 +174,7 @@
     </div> -->
 
 <!-- TODAY’S APPOINTMENTS -->
-<div class="card-section-header">Today's Appointments</div>
+<div class="card-header-doctor">Today's Appointments</div>
 <div class="appointments-grid">
     {% if todays_appointments %}
         {% for appt in todays_appointments %}
@@ -184,7 +186,7 @@
                     <h3>{{ appt.patient.first_name }} {{ appt.patient.last_name }}</h3>
                     <p><strong>Date:</strong> {{ appt.appointment_time.strftime("%B %d, %Y") }}</p>
                     <p><strong>Time:</strong> {{ appt.appointment_time.strftime("%I:%M %p") }}</p><br>
-                    <button class="btn-primary toggle-btn">Hover for Patient Details</button>
+                    <button class="btn-primary-doctor toggle-btn">Hover for Patient Details</button>
                 </div>
 
                 <!-- BACK: Patient Info -->
@@ -206,7 +208,7 @@
 </div>
 
 <!-- UPCOMING APPOINTMENTS -->
-<div class="card-section-header">Upcoming Appointments</div>
+<div class="card-header-doctor">Upcoming Appointments</div>
 <div class="appointments-grid">
     {% if upcoming_appointments %}
         {% for appt in upcoming_appointments %}
@@ -218,7 +220,7 @@
                     <h3>{{ appt.patient.first_name }} {{ appt.patient.last_name }}</h3>
                     <p><strong>Date:</strong> {{ appt.appointment_time.strftime("%B %d, %Y") }}</p>
                     <p><strong>Time:</strong> {{ appt.appointment_time.strftime("%I:%M %p") }}</p><br>
-                    <button class="btn-primary toggle-btn">Hover for Patient Details</button>
+                    <button class="btn-primary-doctor toggle-btn">Hover for Patient Details</button>
                 </div>
 
                 <!-- BACK: Patient Info -->
@@ -244,7 +246,7 @@
 
 
 <!-- PAST APPOINTMENTS -->
-<div class="card-section-header">Past Appointments</div>
+<div class="card-header-doctor">Past Appointments</div>
 <div class="appointments-grid">
     {% if past_appointments %}
         {% for appt in past_appointments %}
@@ -256,7 +258,7 @@
                     <h3>{{ appt.patient.first_name }} {{ appt.patient.last_name }}</h3>
                     <p><strong>Date:</strong> {{ appt.appointment_time.strftime("%B %d, %Y") }}</p>
                     <p><strong>Time:</strong> {{ appt.appointment_time.strftime("%I:%M %p") }}</p><br>
-                    <button class="btn-primary toggle-btn">Hover for Patient Details</button>
+                    <button class="btn-primary-doctor toggle-btn">Hover for Patient Details</button>
                 </div>
 
                 <!-- BACK: Patient Info -->
@@ -308,7 +310,7 @@
         </div>
     </div>
     
-    <div class="footer">
+    <div class="footer-doctor-page">
         <div>© Powered by Coin Flippers</div>
     </div>
     </body>

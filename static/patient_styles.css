@@ -407,97 +407,6 @@ body {
     }
 }
 
-
-
-/* // stuffs for patient list */
-/* https://www.w3schools.com/howto/howto_css_flip_card.asp */
- .patient-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 25px;
-      margin-top: 30px;
-    }
-
-    .flip-card {
-      background-color: transparent;
-      width: 100%;
-      height: 260px;
-      perspective: 1000px;
-      cursor: pointer;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-
-    .flip-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 25px rgba(37, 0, 70, 0.15);
-    }
-
-    .flip-card-inner {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
-      transform-style: preserve-3d;
-    }
-
-    .flip-card:hover .flip-card-inner {
-      transform: rotateY(180deg);
-    }
-
-    .flip-card-front, .flip-card-back {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      border-radius: 12px;
-      backface-visibility: hidden;
-      overflow: hidden;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-    }
-
-    .flip-card-front {
-      background: #ffffff;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-    }
-
-    .flip-card-back {
-      background: linear-gradient(135deg, #250046 0%, #3a0066 100%);
-      color: white;
-      transform: rotateY(180deg);
-      padding: 20px;
-      overflow-y: auto;
-    }
-
-    .flip-card h3 {
-      color: #250046;
-      margin-bottom: 10px;
-    }
-
-    .flip-card p {
-      margin: 6px 0;
-      color: #555;
-      text-align: center;
-    }
-
-    .view-btn {
-      margin-top: 12px;
-      background: #250046;
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-
-    .view-btn:hover {
-      background: #3a0066;
-    }
-
     .back-details p {
       margin: 5px 0;
       color: rgba(255,255,255,0.9);
@@ -606,36 +515,7 @@ body {
 /* admin dr page stuff */
 /* billing */
 
-/* billing */
-.billing-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 25px;
-    background-color: white;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
 
-.billing-table th, .billing-table td {
-    text-align: left;
-    padding: 14px 18px;
-}
-
-.billing-table th {
-    background: linear-gradient(135deg, #4a00a3 0%, #6a11cb 100%);
-    color: white;
-    font-size: 16px;
-}
-
-.billing-table tr:nth-child(even) {
-    background-color: #f8f6ff;
-}
-
-.billing-table tr:hover {
-    background-color: #eee4ff;
-    transition: 0.2s;
-}
 
 .warning-header h2{
   font-weight:bold;
@@ -843,25 +723,7 @@ body {
     font-size: 14px;
 }
 
-.billing-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
 
-.billing-table th {
-    background: #f8f9ff;
-    padding: 15px;
-    text-align: left;
-    font-weight: 600;
-    color: #250046;
-    border-bottom: 2px solid #e0e0e0;
-}
-
-.billing-table td {
-    padding: 15px;
-    border-bottom: 1px solid #f0f0f0;
-}
 
 .status-paid {
     color: #28a745;
@@ -1315,38 +1177,6 @@ body {
 
 .status-active { background: #10b981; color: white; }
 
-/* for doctor-side messaging */
-.send-message-section {
-    background: white;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    margin-top: 30px;
-}
-
-.send-message-section h3 {
-    color: #250046;
-    margin-bottom: 15px;
-}
-
-.send-message-section form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.send-message-section select,
-.send-message-section textarea {
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 15px;
-}
-
-.send-message-section .btn-primary {
-    align-self: flex-start;
-    margin-top: 10px;
-}
 
 
 /* add delete dr */
