@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
-from google.cloud.sql.connector import Connector
-connector = Connector()
+# from google.cloud.sql.connector import Connector
+# connector = Connector()
 db = SQLAlchemy()
 
 # Connects to a local MySQL server using SQLAlchemy server connector
@@ -8,7 +8,6 @@ db = SQLAlchemy()
 def init_connection_engine(app):
     db_user = "root"                # Replace these credentials
     db_password = "password"
-    # db_password = "andy"
     db_name = "patient_mgmt"
     db_host = "localhost"
 
@@ -28,3 +27,60 @@ def init_connection_engine(app):
             print(f"Failed to connect to database: {str(e)}")
             app.config['DB_CONNECTED'] = False
             return app
+
+
+
+
+
+
+
+
+
+# from flask_sqlalchemy import SQLAlchemy
+# import os
+# from dotenv import load_dotenv
+
+# # Load .env file variables
+# load_dotenv()
+
+# db = SQLAlchemy()
+
+# # Environment variables
+# INSTANCE_CONNECTION_NAME = os.getenv("INSTANCE_CONNECTION_NAME")
+# DB_USER = os.getenv("DB_USER", "root")
+# DB_PASS = os.getenv("DB_PASS", "")
+# DB_NAME = os.getenv("DB_NAME", "patient_mgmt")
+
+# # Toggle for cloud vs local connection
+# USE_CLOUD = os.getenv("USE_CLOUD", "false").lower() == "true"
+
+# def init_connection_engine(app):
+#     """
+#     Initializes the SQLAlchemy engine using either:
+#     - Google Cloud SQL Connector (if USE_CLOUD=true)
+#     - Local MySQL (if USE_CLOUD=false)
+#     """
+#     if USE_CLOUD:
+#         print("Using Google Cloud SQL connection...")
+#         from google.cloud.sql.connector import Connector  # import only if needed
+#         connector = Connector()
+
+#         app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://"
+#         app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+#             "creator": lambda: connector.connect(
+#                 INSTANCE_CONNECTION_NAME,
+#                 "pymysql",
+#                 user=DB_USER,
+#                 password=DB_PASS,
+#                 db=DB_NAME,
+#                 ip_type="public"
+#             )
+#         }
+#     else:
+#         print("Using local MySQL connection...")
+#         # Heather’s local setup
+#         app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{DB_USER}:{DB_PASS}@127.0.0.1:3306/{DB_NAME}"
+
+#     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+#     db.init_app(app)
+#     print("Database engine initialized successfully.")
