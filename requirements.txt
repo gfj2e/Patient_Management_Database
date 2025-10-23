@@ -1,12 +1,13 @@
 flask
 Flask-SQLAlchemy
 flask-login
-cloud-sql-python-connector[pymysql]
 Flask-Migrate
 Faker
 python-dotenv
 flask-bcrypt
-google-cloud-sql-connector
+pymysql
+# google-cloud-sql-connector
+# cloud-sql-python-connector[pymysql]
 
 
 # MAC INSTRUCTIONS

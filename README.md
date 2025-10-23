@@ -31,16 +31,18 @@ CREATE DATABASE IF NOT EXISTS patient_mgmt;
 ```
 ### 3. Install Dependencies
 
-Open a terminal in the project’s root folder and install dependencies:
-```bash
-pip install -r requirements.txt
-```
 It’s recommended to use a virtual environment:
 ```bash
 python -m venv venv
 venv\Scripts\activate        # On Windows
 source venv/bin/activate     # On macOS/Linux
 ```
+
+Open a terminal in the project’s root folder and install dependencies:
+```bash
+pip install -r requirements.txt
+```
+
 ### 4. Seed the Database
 
 Run the database seeding script to populate sample records:
