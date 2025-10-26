@@ -64,10 +64,10 @@ class Doctor(db.Model):
     email: Mapped[str] = mapped_column(String(255), nullable=False, unique=False)
     
     patients = relationship("Patient", back_populates="doctor")
-    appointments = relationship("Appointment", back_populates="doctor")
+    appointments = relationship("Appointment", back_populates="doctor", cascade="all, delete-orphan")
     prescriptions = relationship("Prescription", back_populates="doctor")
-    messages = relationship("Message", back_populates="doctor")
-    login = relationship("Doctor_Login", back_populates="doctor", uselist=False)
+    messages = relationship("Message", back_populates="doctor", cascade="all, delete-orphan")
+    login = relationship("Doctor_Login", back_populates="doctor", uselist=False, cascade="all, delete-orphan")
     
     is_accepting_new_patients: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     
@@ -93,15 +93,15 @@ class Patient(db.Model):
     race: Mapped[Race] = mapped_column(SQLEnum(Race), nullable=True)
     
     doctor = relationship("Doctor", back_populates="patients")
-    appointments = relationship("Appointment", back_populates="patient")
-    test_results = relationship("Test_Result", back_populates="patient")
-    prescriptions = relationship("Prescription", back_populates="patient")
-    billing = relationship("Billing", back_populates="patient")
-    messages = relationship("Message", back_populates="patient")
-    insurance = relationship("Insurance", back_populates="patient")
-    login = relationship("Patient_Login", back_populates="patient", uselist=False)
+    appointments = relationship("Appointment", back_populates="patient", cascade="all, delete-orphan")
+    test_results = relationship("Test_Result", back_populates="patient", cascade="all, delete-orphan")
+    prescriptions = relationship("Prescription", back_populates="patient", cascade="all, delete-orphan")
+    billing = relationship("Billing", back_populates="patient", cascade="all, delete-orphan")
+    messages = relationship("Message", back_populates="patient", cascade="all, delete-orphan")
+    insurance = relationship("Insurance", back_populates="patient", cascade="all, delete-orphan")
+    login = relationship("Patient_Login", back_populates="patient", uselist=False, cascade="all, delete-orphan")
     
-    doctor_id: Mapped[int] = mapped_column(ForeignKey("doctors.doctor_id"))
+    doctor_id: Mapped[int] = mapped_column(ForeignKey("doctors.doctor_id"), nullable=True)
     
 class Appointment(db.Model):
     __tablename__ = "appointments"
@@ -153,7 +153,7 @@ class Prescription(db.Model):
     patient = relationship("Patient", back_populates="prescriptions")
     
     patient_id: Mapped[int] = mapped_column(ForeignKey("patients.patient_id"), nullable=False)
-    doctor_id: Mapped[int] = mapped_column(ForeignKey("doctors.doctor_id"), nullable=False)
+    doctor_id: Mapped[int] = mapped_column(ForeignKey("doctors.doctor_id"), nullable=True)
     
 class Billing(db.Model):
     __tablename__ = "billing"
@@ -178,7 +178,7 @@ class Message(db.Model):
     patient = relationship("Patient", back_populates="messages")
     
     patient_id: Mapped[int] = mapped_column(ForeignKey("patients.patient_id"), nullable=False)
-    doctor_id: Mapped[int] = mapped_column(ForeignKey("doctors.doctor_id"), nullable=False)
+    doctor_id: Mapped[int] = mapped_column(ForeignKey("doctors.doctor_id"), nullable=True)
     
 class Insurance(db.Model):
     __tablename__ = "insurance"

@@ -1,6 +1,8 @@
 from flask import Blueprint, render_template, redirect, request, url_for, flash
 from flask_login import login_required, current_user, logout_user
 from ..database.models import Doctor_Login, Appointment, Patient, Message
+from ..database.connection import db
+from sqlalchemy import select
 from datetime import datetime, date
 
 
@@ -13,17 +15,16 @@ def doctor_home():
     if current_user.is_authenticated and isinstance(current_user, Doctor_Login):
         doctor = current_user.doctor
         doctor_name = f"{doctor.first_name} {doctor.last_name}"
-
-        upcoming_appointments = Appointment.query.filter(
-            Appointment.doctor_id == doctor.doctor_id,
+        
+        upcoming_appointments = db.session.execute(
+            select(Appointment).where(Appointment.doctor_id == doctor.doctor_id,
             Appointment.appointment_time >= datetime.now()
-        ).order_by(Appointment.appointment_time).all()
-
-        patients = Patient.query.filter_by(doctor_id=doctor.doctor_id).all()
-
+            ).order_by(Appointment.appointment_time)
+        ).scalars().all()
+        
+        patients = db.session.execute(select(Patient).where(Patient.doctor_id == doctor.doctor_id)).scalars().all()
 
         messages_count = len(doctor.messages)
-
 
         return render_template("doctor_home.html", 
                                doctor=doctor, 
@@ -43,29 +44,26 @@ def doctor_home():
 def doctor_appointments():
     if current_user.is_authenticated and isinstance(current_user, Doctor_Login):
         doctor = current_user.doctor
-        now = datetime.now()
-
-
-        # Today's appointments
-        todays_appointments = Appointment.query.filter(
-            Appointment.doctor_id == doctor.doctor_id,
+        
+        todays_appointments = db.session.execute(
+            select(Appointment).where(Appointment.doctor_id == doctor.doctor_id,
             Appointment.appointment_time.between(
                 datetime.combine(date.today(), datetime.min.time()),
                 datetime.combine(date.today(), datetime.max.time())
-            )
-        ).order_by(Appointment.appointment_time).all()
-
-        # Upcoming appointments (after today)
-        upcoming_appointments = Appointment.query.filter(
-            Appointment.doctor_id == doctor.doctor_id,
+            )).order_by(Appointment.appointment_time)
+        ).scalars().all()
+        
+        upcoming_appointments = db.session.execute(
+            select(Appointment).where(Appointment.doctor_id == doctor.doctor_id,
             Appointment.appointment_time > datetime.combine(date.today(), datetime.max.time())
-        ).order_by(Appointment.appointment_time).all()
-
-        # Past appointments (before today)
-        past_appointments = Appointment.query.filter(
-            Appointment.doctor_id == doctor.doctor_id,
+            ).order_by(Appointment.appointment_time)
+        ).scalars().all()
+        
+        past_appointments = db.session.execute(
+            select(Appointment).where(Appointment.doctor_id == doctor.doctor_id,
             Appointment.appointment_time < datetime.combine(date.today(), datetime.min.time())
-        ).order_by(Appointment.appointment_time.desc()).all()
+            ).order_by(Appointment.appointment_time.desc())
+        ).scalars().all()
 
         return render_template(
             "doctor_appointments.html",
@@ -99,7 +97,7 @@ def doctor_patients():
 @login_required
 def doctor_patientlist():
     # Assuming `current_user` is a Doctor
-    patients = Patient.query.filter_by(doctor_id=current_user.doctor_id).all()
+    patients = db.session.execute(select(Patient).where(Patient.doctor_id == current_user.doctor_id)).scalars().all()
     return render_template("doctor_patientlist.html", patients=patients)
 
 @doctor_bp.route("/doctor/messages")
@@ -107,8 +105,9 @@ def doctor_patientlist():
 def doctor_messages():
     if current_user.is_authenticated and isinstance(current_user, Doctor_Login):
         doctor = current_user.doctor
-        messages = Message.query.filter_by(doctor_id=doctor.doctor_id).all()
-        patients = Patient.query.filter_by(doctor_id=doctor.doctor_id).all()
+        messages = doctor.messages
+        patients = doctor.patients
+        
         return render_template("doctor_messages.html", doctor=doctor, messages=messages, patients=patients)
     else:
         flash("You must be logged in as a doctor to view this page")
@@ -117,9 +116,6 @@ def doctor_messages():
 @doctor_bp.route("/send_message", methods=["POST"])
 @login_required
 def send_message():
-    from ..database.models import Message, Patient
-    from ..database.connection import db
-
     patient_id = request.form.get("patient_id")
     content = request.form.get("content")
 

@@ -7,7 +7,7 @@ db = SQLAlchemy()
 # Use your own login credentials to connect to your server
 def init_connection_engine(app):
     db_user = "root"                # Replace these credentials
-    db_password = "password"
+    db_password = "Gfj2e_7719"
     db_name = "patient_mgmt"
     db_host = "localhost"
 

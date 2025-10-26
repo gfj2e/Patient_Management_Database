@@ -2,6 +2,8 @@ from flask import Blueprint, render_template, redirect, url_for, flash
 from flask_login import login_required, current_user
 from ..database.models import (Patient_Login, Appointment, Patient, Test_Result, 
                                TestStatus, Prescription, Billing)
+from ..database.connection import db
+from sqlalchemy import select
 from datetime import datetime
 
 patient_bp = Blueprint("patient", __name__, template_folder="templates")
@@ -13,21 +15,24 @@ def patient_home():
         patient = current_user.patient
         patient_name = f"{patient.first_name} {patient.last_name}"
         
-        upcoming_appointments = Appointment.query.filter(
-            Appointment.patient_id == patient.patient_id,
+        upcoming_appointments = db.session.execute(
+            select(Appointment).where(Appointment.patient_id == patient.patient_id,
             Appointment.appointment_time >= datetime.now()
-        ).order_by(Appointment.appointment_time).all()
+            ).order_by(Appointment.appointment_time)
+        ).scalars().all()
         
         message_count = len(patient.messages)
         
-        billing = Billing.query.filter(
-        Billing.patient_id == patient.patient_id
-        ).order_by(Billing.billing_date.asc()).first()
+        billing = db.session.execute(
+            select(Billing).where(Billing.patient_id == patient.patient_id
+            ).order_by(Billing.billing_date.asc())
+        ).scalar()
         
-        lab_results = Test_Result.query.filter(
-            Test_Result.patient_id == patient.patient_id,
+        lab_results = db.session.execute(
+            select(Test_Result).where(Test_Result.patient_id == patient.patient_id,
             Test_Result.test_status == TestStatus.COMPLETED
-        ).order_by(Test_Result.result_time.desc()).all()
+            ).order_by(Test_Result.result_time.desc())
+        ).scalars().all()
         
         print(f"Patient ID: {patient.patient_id}")
         print(f"Lab results found: {len(lab_results)}")
