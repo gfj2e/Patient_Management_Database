@@ -6,6 +6,7 @@ Faker
 python-dotenv
 flask-bcrypt
 pymysql
+flask-socketio
 # google-cloud-sql-connector
 # cloud-sql-python-connector[pymysql]
 

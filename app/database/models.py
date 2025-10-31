@@ -41,8 +41,14 @@ class Race(PyEnum):
     
 class TestStatus(PyEnum):
     PENDING = "Pending"
-    COMPLETED = "Completed"
+    COMPLETED = "Normal"
     CANCELLED = "Cancelled"
+    ABNORMAL = "ABNORMAL"
+    
+class RefillStatus(PyEnum):
+    PENDING = "Pending"
+    APPROVED = "Approved"
+    DENIED = "Denied"
     
 # Defining the tables
 # General format of defining a column is
@@ -67,6 +73,7 @@ class Doctor(db.Model):
     appointments = relationship("Appointment", back_populates="doctor", cascade="all, delete-orphan")
     prescriptions = relationship("Prescription", back_populates="doctor")
     messages = relationship("Message", back_populates="doctor", cascade="all, delete-orphan")
+    prescription_refill_requests = relationship("PrescriptionRefillRequest", back_populates="doctor", cascade="all, delete-orphan")
     login = relationship("Doctor_Login", back_populates="doctor", uselist=False, cascade="all, delete-orphan")
     
     is_accepting_new_patients: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
@@ -99,6 +106,7 @@ class Patient(db.Model):
     billing = relationship("Billing", back_populates="patient", cascade="all, delete-orphan")
     messages = relationship("Message", back_populates="patient", cascade="all, delete-orphan")
     insurance = relationship("Insurance", back_populates="patient", cascade="all, delete-orphan")
+    prescription_refill_requests = relationship("PrescriptionRefillRequest", back_populates="patient", cascade="all, delete-orphan")
     login = relationship("Patient_Login", back_populates="patient", uselist=False, cascade="all, delete-orphan")
     
     doctor_id: Mapped[int] = mapped_column(ForeignKey("doctors.doctor_id"), nullable=True)
@@ -131,7 +139,6 @@ class Test_Result(db.Model):
     result_value: Mapped[str] = mapped_column(String(255), nullable=True)
     unit_of_measure: Mapped[str] = mapped_column(String(255), nullable=True)
     reference_range: Mapped[str] = mapped_column(String(255), nullable=True)
-    is_abnormal: Mapped[bool] = mapped_column(Boolean, default=False)
     
     result_notes: Mapped[str] = mapped_column(Text, nullable=True)
     
@@ -151,9 +158,27 @@ class Prescription(db.Model):
     
     doctor = relationship("Doctor", back_populates="prescriptions")
     patient = relationship("Patient", back_populates="prescriptions")
+    prescription_refill_requests = relationship("PrescriptionRefillRequest", back_populates="prescription", cascade="all, delete-orphan")
     
     patient_id: Mapped[int] = mapped_column(ForeignKey("patients.patient_id"), nullable=False)
     doctor_id: Mapped[int] = mapped_column(ForeignKey("doctors.doctor_id"), nullable=True)
+    
+class PrescriptionRefillRequest(db.Model):
+    __tablename__ = "prescription_refill_requests"
+    
+    refill_request_id: Mapped[int] = mapped_column(primary_key=True)
+    request_date: Mapped[datetime] = mapped_column(DateTime, server_default=func.UTC_TIMESTAMP())
+    status: Mapped[RefillStatus] = mapped_column(SQLEnum(RefillStatus), default=RefillStatus.PENDING)
+    
+    notes: Mapped[str] = mapped_column(Text, nullable=True)
+    
+    patient = relationship("Patient", back_populates="prescription_refill_requests")
+    doctor = relationship("Doctor", back_populates="prescription_refill_requests")
+    prescription = relationship("Prescription", back_populates="prescription_refill_requests")
+    
+    patient_id: Mapped[int] = mapped_column(ForeignKey('patients.patient_id'), nullable=False)
+    doctor_id: Mapped[int] = mapped_column(ForeignKey('doctors.doctor_id'), nullable=False)
+    prescription_id: Mapped[int] = mapped_column(ForeignKey('prescriptions.prescription_id'), nullable=False) 
     
 class Billing(db.Model):
     __tablename__ = "billing"
@@ -208,7 +233,6 @@ class User_Login(db.Model, UserMixin):
 
     date_created: Mapped[datetime] = mapped_column(server_default=func.UTC_TIMESTAMP())
     type: Mapped[str] = mapped_column(String(20))
-    
     
     __mapper_args__ = {
         "polymorphic_identity": "user_login",
