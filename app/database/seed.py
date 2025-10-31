@@ -227,7 +227,6 @@ def insert_test_data(patient_ident: int, doctor_ident: int) -> None:
             result_value="WBC: 6.5, RBC: 4.2, Hgb: 12.8, Plt: 240",
             unit_of_measure="K/uL, M/uL, g/dL, K/uL",
             reference_range="WBC: 4.5-11.0, RBC: 4.0-5.2, Hgb: 12.0-16.0, Plt: 150-450",
-            is_abnormal = False,
             result_notes="Results within normal limits",
             patient_id=1
         ),
@@ -328,7 +327,6 @@ def insert_lisa_walters_data():
             result_value="2.1",
             unit_of_measure="mIU/L",
             reference_range="0.4 - 4.0",
-            is_abnormal=False,
             result_notes="TSH level is within the normal range.",
             patient_id=patient_id
         ),
@@ -340,13 +338,12 @@ def insert_lisa_walters_data():
         ),
         Test_Result(
             test_name="Thyroid Stimulating Hormone (TSH)",
-            test_status=TestStatus.COMPLETED,
+            test_status=TestStatus.ABNORMAL,
             ordered_date=datetime(2025, 8, 15),
             result_time=datetime(2025, 8, 17),
             result_value="2.1",
             unit_of_measure="mIU/L",
             reference_range="0.4 - 4.0",
-            is_abnormal=True,
             result_notes="TSH level is within the normal range.",
             patient_id=patient_id
         ),
