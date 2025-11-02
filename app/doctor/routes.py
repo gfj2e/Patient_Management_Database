@@ -22,7 +22,7 @@ def doctor_home():
             ).order_by(Appointment.appointment_time)
         ).scalars().all()
         
-        patients = db.session.execute(select(Patient).where(Patient.doctor_id == doctor.doctor_id)).scalars().all()
+        patients = doctor.patients
 
         messages_count = len(doctor.messages)
 
@@ -36,8 +36,6 @@ def doctor_home():
     else:
         flash("You must be logged in as a doctor to view this page")
         return redirect(url_for('auth.login'))
-
-
 
 @doctor_bp.route("/doctor/appointments")
 @login_required
@@ -97,7 +95,8 @@ def doctor_patients():
 @login_required
 def doctor_patientlist():
     # Assuming `current_user` is a Doctor
-    patients = db.session.execute(select(Patient).where(Patient.doctor_id == current_user.doctor_id)).scalars().all()
+    doctor = current_user.doctor
+    patients = doctor.patients
     return render_template("doctor_patientlist.html", patients=patients)
 
 @doctor_bp.route("/doctor/messages")
@@ -134,7 +133,6 @@ def send_message():
 
     flash("Message sent successfully!", "success")
     return redirect(url_for("doctor.doctor_messages"))
-
 
 @auth_bp.route("/logout")
 def logout():

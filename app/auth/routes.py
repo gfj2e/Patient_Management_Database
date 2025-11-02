@@ -4,11 +4,12 @@ from sqlalchemy import select
 from ..extensions import bcrypt
 from ..database.models import *
 from ..database.connection import db
-from datetime import datetime, date
+from datetime import datetime, date, timedelta, timezone
 from decimal import Decimal
+from .mailer import send_reset_email
 import uuid
-import traceback
 import random
+import secrets
 
 auth_bp = Blueprint("auth", __name__, template_folder="templates")
 
@@ -149,9 +150,95 @@ def login():
 
     return render_template("login.html", role=role, title="Login")
 
+@auth_bp.route("/reset_password", methods=["GET", "POST"])
+def reset_password():
+    if current_user.is_authenticated:
+        if isinstance(current_user, Patient_Login):
+            return redirect(url_for('patient.patient_home'))
+        elif isinstance(current_user, Doctor_Login):
+            return redirect(url_for('doctor.doctor_home'))
+        else:
+            return redirect(url_for('main.index'))
+    
+    role = request.args.get("role")
+    if role != "patient":
+        flash("Must be a patient to reset password", "error")
+        return redirect(url_for('auth.login'))
+    
+    if request.method == "POST":
+        username = request.form.get["username"]
+        
+        user = db.session.execute(select(Patient_Login).where(username == Patient_Login.user_name)).scalar()
+        
+        if not user:
+            flash("Error.", "error")
+            return redirect(url_for('auth.reset_password', role='patient'))
+        
+        token = secrets.token_urlsafe(36)
+        user.reset_token = token
+        user.reset_token_expires = datetime.now(timezone.utc) + timedelta(hours=1)
+        db.session.commit()
+        
+        reset_link = url_for('auth.reset_with_token', token=token, _external=True) 
+        
+        try:
+            email_sent = send_reset_email(user.patient.email, reset_link)
+            if email_sent:
+                flash("Password email sent", "success")
+                print(f"Reset email sent to {user.email}")
+            else:
+                flash("Failed to send reset email. Try again later", "error")
+                print(f"Failed to send reset to {user.email}")
+        except Exception as e:
+            flash("Error sending email.", "error")
+            print(f"Exception in sending an email: {e}")
+        
+        return redirect(url_for('auth.login', role='patient'))
+
+    
+    return render_template('reset_password.html')
+
+@auth_bp.route('/reset/<token>', methods=["GET", "POST"])
+def reset_with_token(token):
+    if current_user.is_authenticated:
+        if isinstance(current_user, Patient_Login):
+            return redirect(url_for('patient.patient_home'))
+        elif isinstance(current_user, Doctor_Login):
+            return redirect(url_for('doctor.doctor_home'))
+        else:
+            return redirect(url_for('main.index'))
+        
+    role = request.args.get("role")
+    if role != "patient":
+        flash("Must be a patient to reset password", "error")
+        return redirect(url_for('auth.login'))
+
+    user = db.session.execute(select(Patient_Login).where(Patient_Login.reset_token == token)).scalar()
+    if not user:
+        flash("Invalid or expired token", "error")
+        return redirect(url_for('auth.reset_password'))
+    
+    if user.reset_token_expires is None or user.reset_token_expires < datetime.now(timezone.utc):
+        flash("This reset link has expired. Please request a new one.", "error")
+        user.reset_token = None
+        user.reset_token_expires = None
+        db.session.commit()
+        return redirect(url_for('auth.reset_password', role='patient'))
+    
+    if request.method == "POST":
+        new_password = request.form.get["password"]
+        user.password = bcrypt.generate_password_hash(new_password).decode("utf-8")
+        user.reset_token = None
+        user.reset_token_expires = None
+        db.session.commit()
+        flash("Password has been reset", "success")
+        return redirect(url_for('auth.login'))
+    
+    return render_template('reset_with_token.html')
+
 @auth_bp.route('/logout')
 @login_required
 def logout():
     logout_user()
-    flash('You have been logged out successfully.', 'info')
+    flash("You have been logged out successfully.", "info")
     return redirect(url_for("main.index"))

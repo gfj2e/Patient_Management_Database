@@ -1,15 +1,18 @@
 from flask_sqlalchemy import SQLAlchemy
+from dotenv import load_dotenv
+import os
 # from google.cloud.sql.connector import Connector
 # connector = Connector()
+load_dotenv()
 db = SQLAlchemy()
 
 # Connects to a local MySQL server using SQLAlchemy server connector
 # Use your own login credentials to connect to your server
 def init_connection_engine(app):
-    db_user = "root"                # Replace these credentials
-    db_password = "Gfj2e_7719"
-    db_name = "patient_mgmt"
-    db_host = "localhost"
+    db_user = os.getenv("DB_USER")              # Replace these credentials
+    db_password = os.getenv("DB_PASSWORD")
+    db_name = os.getenv("DB_NAME")
+    db_host = os.getenv("DB_HOST")
 
     app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{db_user}:{db_password}@{db_host}/{db_name}"
     # app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://root:Hien2003!!@127.0.0.1:3306/patient_mgmt"

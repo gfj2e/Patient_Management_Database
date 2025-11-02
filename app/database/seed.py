@@ -1,6 +1,6 @@
 from ..database.models import *
 from ..database.connection import db
-from sqlalchemy import insert
+from sqlalchemy import insert, select
 from faker import Faker
 from datetime import date, datetime, timedelta
 import uuid
@@ -98,8 +98,7 @@ def seed_database() -> None:
             gender = random.choice(list(Gender)),
             height = str(random.uniform(150.0, 200.0)),
             marriage_status = random.choice(list(MaritalStatus)),
-            race = random.choice(list(Race)),
-            doctor_id = random.choice(doctors).doctor_id
+            race = random.choice(list(Race))
         )
         patients.append(patient)
     db.session.add_all(patients)
@@ -107,11 +106,10 @@ def seed_database() -> None:
     
     # Patient with id 1 will be assigned the fake data with prescriptions, test_results,
     # and appointments
-    insert_test_data(patients[0].patient_id, patients[0].doctor_id)
     
     # The doctors and patients are also to be linked to user accounts for them
     
-    login_dic = [{}]
+    login_dic = []
     doctor_logins = []
     for doctor in doctors:
         password = ''.join(random.sample(string.ascii_lowercase, 8))
@@ -134,6 +132,30 @@ def seed_database() -> None:
     db.session.add_all(doctor_logins)
     db.session.commit()
     
+    db.session.execute(insert(doctor_patient_association).values([{"doctor_id": 1, "patient_id": 1}]))
+    db.session.commit()
+    
+    # Now call insert_test_data with patient 1 and doctor 1
+    insert_test_data(patients[0].patient_id, 1)  # Use hardcoded doctor ID 1
+    
+    doctor_ids = db.session.execute(select(Doctor.doctor_id)).scalars().all()
+    patient_ids = db.session.execute(select(Patient.patient_id)).scalars().all()
+    
+    if not doctor_ids or not patient_ids:
+        print("No doctors or patients found. Skipping association seeding.")
+        exit()
+    else:
+        associations = []
+        for patient_id in patient_ids:
+            num_doctors = fake.random_int(min=1, max=3)
+            selected_doctors = fake.random_elements(elements=doctor_ids, length=num_doctors, unique=True)
+            for doctor_id in selected_doctors:
+                associations.append({"doctor_id": doctor_id, "patient_id": patient_id})
+
+        if associations:
+            db.session.execute(insert(doctor_patient_association).values(associations))
+            db.session.commit()
+        
     patient_logins = []
     for patient in patients:
         password = ''.join(random.sample(string.ascii_lowercase, 8))

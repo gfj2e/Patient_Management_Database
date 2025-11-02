@@ -1,6 +1,6 @@
 from .connection import db
 from sqlalchemy import (func, String, Text, ForeignKey, Boolean, Date, 
-                        Enum as SQLEnum, DECIMAL, DateTime, SmallInteger)
+                        Enum as SQLEnum, DECIMAL, DateTime, SmallInteger, Table, Column)
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from sqlalchemy.orm import Mapped
@@ -56,6 +56,13 @@ class RefillStatus(PyEnum):
 # For example:
 # first_name: Mapped[str] = mapped_column(String(50), nullable=False)
 
+doctor_patient_association = db.Table(
+    "doctor_patient_association",
+    db.metadata,
+    Column("doctor_id", db.Integer, ForeignKey("doctors.doctor_id")),
+    Column("patient_id", db.Integer, ForeignKey("patients.patient_id"))
+)
+
 class Doctor(db.Model):
     __tablename__ = "doctors"
 
@@ -69,7 +76,7 @@ class Doctor(db.Model):
     phone_number: Mapped[str] = mapped_column(String(25), nullable=False, unique=False)
     email: Mapped[str] = mapped_column(String(255), nullable=False, unique=False)
     
-    patients = relationship("Patient", back_populates="doctor")
+    patients = relationship("Patient", secondary=doctor_patient_association, back_populates="doctors")
     appointments = relationship("Appointment", back_populates="doctor", cascade="all, delete-orphan")
     prescriptions = relationship("Prescription", back_populates="doctor")
     messages = relationship("Message", back_populates="doctor", cascade="all, delete-orphan")
@@ -99,7 +106,7 @@ class Patient(db.Model):
     marriage_status: Mapped[MaritalStatus] = mapped_column(SQLEnum(MaritalStatus), nullable=True)
     race: Mapped[Race] = mapped_column(SQLEnum(Race), nullable=True)
     
-    doctor = relationship("Doctor", back_populates="patients")
+    doctors = relationship("Doctor", secondary=doctor_patient_association, back_populates="patients")
     appointments = relationship("Appointment", back_populates="patient", cascade="all, delete-orphan")
     test_results = relationship("Test_Result", back_populates="patient", cascade="all, delete-orphan")
     prescriptions = relationship("Prescription", back_populates="patient", cascade="all, delete-orphan")
@@ -109,7 +116,6 @@ class Patient(db.Model):
     prescription_refill_requests = relationship("PrescriptionRefillRequest", back_populates="patient", cascade="all, delete-orphan")
     login = relationship("Patient_Login", back_populates="patient", uselist=False, cascade="all, delete-orphan")
     
-    doctor_id: Mapped[int] = mapped_column(ForeignKey("doctors.doctor_id"), nullable=True)
     
 class Appointment(db.Model):
     __tablename__ = "appointments"
@@ -243,6 +249,8 @@ class Patient_Login(User_Login):
     __tablename__ = "patient_login"
     
     id: Mapped[int] = mapped_column(ForeignKey("user_login.id"), primary_key=True)
+    reset_token: Mapped[str] = mapped_column(String(36), nullable=True, unique=True)
+    reset_token_expires: Mapped[datetime] = mapped_column(DateTime, nullable=True)
     patient_id: Mapped[int] = mapped_column(ForeignKey("patients.patient_id"), nullable=False)
     
     patient = relationship("Patient", back_populates="login", uselist=False)
@@ -255,6 +263,7 @@ class Doctor_Login(User_Login):
     __tablename__ = "doctor_login"
     
     id: Mapped[int] = mapped_column(ForeignKey("user_login.id"), primary_key=True)
+    reset_token: Mapped[str] = mapped_column(String(36), nullable=True, unique=True)
     doctor_id: Mapped[int] = mapped_column(ForeignKey("doctors.doctor_id"))
     
     doctor = relationship("Doctor", back_populates="login", uselist=False)
