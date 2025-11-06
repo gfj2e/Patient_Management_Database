@@ -699,7 +699,15 @@ def insert_comprehensive_patient_data():
             notes="Supplement for vitamin D deficiency.",
             patient_id=patient_3_id,
             doctor_id=doctor_3_id
-        )
+        ),
+        Prescription(
+            medication_name="test",
+            dosage="75mcg",
+            frequency_taken="Once daily on empty stomach",
+            notes="For hypothyroidism. Take 30-60 minutes before breakfast.",
+            patient_id=patient_3_id,
+            doctor_id=doctor_3_id
+        ),
     ]
     db.session.add_all(prescriptions_p3)
     
