@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='patient_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='doctor_styles.css') }}">
     <title>Doctor - Patient List</title>
 </head>
 <body>
-    <header class="navbar">
+    <header class="navbar-doctor">
         <div class="logo"><a href="{{ url_for('main.index') }}">CuraCloud</a></div>
         <div class="nav-buttons">
             <div class="right-header">
@@ -35,7 +36,7 @@
         </div>
 
         <div class="content">
-            <div class="welcome-section">
+            <div class="welcome-section-doctor">
                 <div class="welcome-message">Patients of Dr. {{ doctor.first_name }} {{ doctor.last_name }}</div>
                 <div class="welcome-subtitle">View and manage your patients.</div>
             </div>
@@ -84,7 +85,7 @@
             <p><strong>DOB:</strong> {{ patient.dob.strftime('%Y-%m-%d') if patient.dob else 'N/A' }}</p>
         </div>
         <div class="card-action">
-            <button class="btn-primary" onclick="togglePatientDetails('{{ patient.patient_id }}')">
+            <button class="btn-primary-doctor" onclick="togglePatientDetails('{{ patient.patient_id }}')">
                 View Details
             </button>
         </div>
@@ -141,7 +142,7 @@ function togglePatientDetails(id) {
         </div>
     </div>
 
-    <div class="footer">
+    <div class="footer-doctor-page">
         <div>© Powered by Coin Flippers</div>
     </div>
 </body>

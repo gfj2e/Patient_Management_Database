@@ -4,6 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="{{ url_for('static', filename='patient_styles.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='patient_styles.css') }}">
         <title>Patient Portal </title>
     </head>
     
@@ -28,6 +29,7 @@
                 flex-direction: column;
                 gap:20px;
             }
+            
         </style>
     <body>
     <header class="navbar">
@@ -54,7 +56,7 @@
                 <li><a href="{{ url_for('patient.prescriptions') }}">Prescriptions</a></li>
                 <li><a href="{{ url_for('patient.billing') }}">Billing & Payments</a></li>
                 <li><a href="{{ url_for('patient.lab_results') }}">Lab Results</a></li>
-                <li><a href="{{ url_for('patient.messages') }}">Messages</a></li>
+                <li><a href="{{ url_for('patient.patient_messages') }}">Messages</a></li>
                 <li><a href="{{ url_for('patient.patient_info') }}">My Health</a></li>
             </ul>
         </div>
@@ -71,8 +73,32 @@
                         <div class="card-header">
                             <div class="card-icon-patient"> 💊 </div><h3>Current Medication</h3></div>
                         <div class="card-content">
+                            {% if prescriptions %}
+                                {% for prescription in prescriptions %}
+
+                                <div class="prescription-item">
+                                    <div class="prescription-header">
+                                        <span class="medication-name"> {{ prescription.medication_name }}</span>
+                                    </div>
+
+                                    <div class="prescription-details">
+                                        <p><strong>Dosage: </strong> {{prescription.dosage}}</p>
+                                        <p><strong>Frequency: </strong> {{prescription.frequency_taken}}</p>
+
+                                        {% if prescription.notes %}
+                                        <p><strong>Notes: </strong> {{ prescription.notes}}</p>
+                                        {% endif %}
+
+                                        <p><strong>Prescribed by: </strong> Dr. {{ prescription.doctor.first_name}} {{ prescription.doctor.last_name }} </p>
+
+                                    </div>
+                                </div>
+
+                                {% endfor %}
+                            {% else %}
                             <p class="card-text">You have no medications on file</p>
 
+                            {% endif %}
                             <div class="card-action">
                                 <button class="glow-btn">View Details</button>
                             </div>
@@ -81,31 +107,141 @@
 
                     <div class="dashboard-card">
                         <div class="card-header">
-                            <div class="card-icon-patient">🩺</div><h3> Request a Refill</h3>
+                            <div class="card-icon-patient">🩺</div><h3> Requested Refills</h3>
                         </div>
                             <div class="card-content">
-                                <p class="card-text">Choose Prescription</p>
-                                <div class="card-action">
-                                    <button class="glow-btn">View Details</button>
-                                </div>
+                                {% if refills %}
+                                    {% for refill in refills %}
+
+                                    <div class="prescription-item">
+                                        <div class="prescription-header">
+                                            <span class="medication-name"> {{ refill.prescription.medication_name }}</span>
+                                            <span class="refill-status status-{{ refill.status.value.lower() }}"> {{ refill.status.value }} </span>
+                                        </div>
+                                        <div class = "prescription-details">
+                                            <p><strong>Request Date:</strong> {{ refill.request_date.strftime('%m/%d/%Y') }} </p>
+
+                                            {% if refill.notes %}
+                                                <p><strong>Notes: </strong> {{ refill.notes }}</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+
+                                    {% endfor %}
+                                    {% else %}
+                                    <p class="card-text">No Prescriptions to refill</p>
+                                
+                                {% endif %}
                             </div>
                     </div>
 
                     
                 </div>
 
-                    <div class="quick-actions">
-                    <div class="action-card">
+
+            <div class="quick-actions">
+                    <div class="action-card" onclick="openRefillModal()">
                         <div class="action-icon">📅</div>
-                        <div>Refill Prescription </div>
+                        <div>Refill Prescription</div>
                     </div>
-                 
-                    <div class="action-card">
+                    <div class="action-card" onclick="openContactModal()">
                         <div class="action-icon">💬</div>
                         <div>Contact Office</div>
                     </div>
                 </div>
             </div>
+
+            <!-- Refill Modal -->
+            <div id="prescription-refill-popup" class="modal" aria-hidden="true">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Request Prescription Refill</h3>
+                        <span class="close" onclick="closeRefillModal()">&times;</span>
+                    </div>
+                    <div id="selected-prescription-info" aria-hidden="true" style="background-color: #e8f5e8; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
+                        <strong>Selected: </strong><span id="selected-med-name"></span> - <span id="selected-med-dosage"></span>
+                    </div>
+                    <p>Select a medication to request a refill:</p>
+                    <div id="prescription-options">
+                        {% for prescription in prescriptions %}
+                        <div class="prescription-option" data-prescription-id="{{ prescription.prescription_id }}" 
+                             data-med-name="{{ prescription.medication_name }}" 
+                             data-dosage="{{ prescription.dosage }}"
+                             onclick="selectPrescription(this)">
+                            <strong>{{ prescription.medication_name }}</strong> - {{ prescription.dosage }}
+                            <div style="font-size: 0.9em; color: #666;">
+                                {{ prescription.frequency_taken }}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="modal-actions">
+                        <button class="btn-secondary" onclick="closeRefillModal()">Cancel</button>
+                        <button class="btn-primary" id="submitRefillBtn" onclick="submitRefillRequest()" disabled>Request Refill</button>
+                    </div>
+                </div>
+            </div>
+
+                <!-- Contact Us Modal -->
+                <div id="contact-us-popup" class="modal" aria-hidden="true">
+                    <div class="modal-content" style="max-width: 800px;">
+                        <div class="modal-header">
+                            <h3>Contact Our Offices</h3>
+                            <span class="close" onclick="closeContactModal()">&times;</span>
+                        </div>
+                        <div class="contact-info-grid">
+                            <!--Contact information-->
+                            <div class="contact-card">
+                                <h3>McMinnville</h3>
+                                <ul>
+                                    <li>Phone: 931-426-0554</li>
+                                    <li>Email: mcminn.curacloud@gmail.com</li>
+                                    <li>Fax: 931-980-7118</li>
+                                    <li>Address: 1559 Sparta St, McMinnville, TN 37110</li>
+                                </ul>
+                            </div>
+                            <div class="contact-card">
+                                <h3>Murfreesboro</h3>
+                                <ul>
+                                    <li>Phone: 615-293-3631</li>
+                                    <li>Email: mboro.curacloud@gmail.com</li>
+                                    <li>Fax: 615-879-2571</li>
+                                    <li>Address: 1700 Medical Center Pkwy, Murfreesboro, TN 37129</li>
+                                </ul>
+                            </div>
+                            <div class="contact-card">
+                                <h3>Nashville</h3>
+                                <ul>
+                                    <li>Phone: 615-915-7378</li>
+                                    <li>Email: nash.curacloud@gmail.com</li>
+                                    <li>Fax: 615-329-9742</li>
+                                    <li>Address: 4220 Harding Pike, Nashville, TN 37205</li>
+                                </ul>
+                            </div>
+                            <div class="contact-card">
+                                <h3>Franklin</h3>
+                                <ul>
+                                    <li>Phone: 629-612-1103</li>
+                                    <li>Email: franklin.curacloud@gmail.com</li>
+                                    <li>Fax: 629-484-7376</li>
+                                    <li>Address: 4321 Carothers Pkwy, Franklin, TN 37067</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <br><hr style="width: 90%; border-top: 1px dotted purple; margin:20px auto"><br>
+                        <div class="emergency-num">
+                            <!--Emergency contact info-->
+                            <h3>Emergency</h3>
+                            <p>If you are experiencing an emergency, please dial 911 </p>
+                            <h3>Mental Health and Suicide Prevention</h3>
+                            <p>If you are experiencing a mental-health crisis please dial 988</p>
+                        </div>
+                        <div class="modal-actions">
+                            <button class="btn-secondary" onclick="closeContactModal()">Close</button>
+                        </div>
+                    </div>
+                </div>
+
 
             <br><br> <hr>
             <div class="warning-content">
@@ -133,5 +269,6 @@
     <div class="footer">
         <div>© Powered by Coin Flippers</div>
     </div>
+     <script src="{{ url_for('static', filename='scripts.js') }}"></script>
     </body>
 </html>

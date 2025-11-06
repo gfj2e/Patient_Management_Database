@@ -1,6 +1,6 @@
 from .connection import db
 from sqlalchemy import (func, String, Text, ForeignKey, Boolean, Date, 
-                        Enum as SQLEnum, DECIMAL, DateTime, SmallInteger)
+                        Enum as SQLEnum, DECIMAL, DateTime, SmallInteger, Table, Column)
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from sqlalchemy.orm import Mapped
@@ -41,14 +41,27 @@ class Race(PyEnum):
     
 class TestStatus(PyEnum):
     PENDING = "Pending"
-    COMPLETED = "Completed"
+    COMPLETED = "Normal"
     CANCELLED = "Cancelled"
+    ABNORMAL = "ABNORMAL"
+    
+class RefillStatus(PyEnum):
+    PENDING = "Pending"
+    APPROVED = "Approved"
+    DENIED = "Denied"
     
 # Defining the tables
 # General format of defining a column is
 #! column_name: Mapped[python var] = mapped_column(SQLAlchemy var, different properties)
 # For example:
 # first_name: Mapped[str] = mapped_column(String(50), nullable=False)
+
+doctor_patient_association = db.Table(
+    "doctor_patient_association",
+    db.metadata,
+    Column("doctor_id", db.Integer, ForeignKey("doctors.doctor_id")),
+    Column("patient_id", db.Integer, ForeignKey("patients.patient_id"))
+)
 
 class Doctor(db.Model):
     __tablename__ = "doctors"
@@ -63,11 +76,12 @@ class Doctor(db.Model):
     phone_number: Mapped[str] = mapped_column(String(25), nullable=False, unique=False)
     email: Mapped[str] = mapped_column(String(255), nullable=False, unique=False)
     
-    patients = relationship("Patient", back_populates="doctor")
-    appointments = relationship("Appointment", back_populates="doctor")
+    patients = relationship("Patient", secondary=doctor_patient_association, back_populates="doctors")
+    appointments = relationship("Appointment", back_populates="doctor", cascade="all, delete-orphan")
     prescriptions = relationship("Prescription", back_populates="doctor")
-    messages = relationship("Message", back_populates="doctor")
-    login = relationship("Doctor_Login", back_populates="doctor", uselist=False)
+    messages = relationship("Message", back_populates="doctor", cascade="all, delete-orphan")
+    prescription_refill_requests = relationship("PrescriptionRefillRequest", back_populates="doctor", cascade="all, delete-orphan")
+    login = relationship("Doctor_Login", back_populates="doctor", uselist=False, cascade="all, delete-orphan")
     
     is_accepting_new_patients: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     
@@ -92,16 +106,16 @@ class Patient(db.Model):
     marriage_status: Mapped[MaritalStatus] = mapped_column(SQLEnum(MaritalStatus), nullable=True)
     race: Mapped[Race] = mapped_column(SQLEnum(Race), nullable=True)
     
-    doctor = relationship("Doctor", back_populates="patients")
-    appointments = relationship("Appointment", back_populates="patient")
-    test_results = relationship("Test_Result", back_populates="patient")
-    prescriptions = relationship("Prescription", back_populates="patient")
-    billing = relationship("Billing", back_populates="patient")
-    messages = relationship("Message", back_populates="patient")
-    insurance = relationship("Insurance", back_populates="patient")
-    login = relationship("Patient_Login", back_populates="patient", uselist=False)
+    doctors = relationship("Doctor", secondary=doctor_patient_association, back_populates="patients")
+    appointments = relationship("Appointment", back_populates="patient", cascade="all, delete-orphan")
+    test_results = relationship("Test_Result", back_populates="patient", cascade="all, delete-orphan")
+    prescriptions = relationship("Prescription", back_populates="patient", cascade="all, delete-orphan")
+    billing = relationship("Billing", back_populates="patient", cascade="all, delete-orphan")
+    messages = relationship("Message", back_populates="patient", cascade="all, delete-orphan")
+    insurance = relationship("Insurance", back_populates="patient", cascade="all, delete-orphan")
+    prescription_refill_requests = relationship("PrescriptionRefillRequest", back_populates="patient", cascade="all, delete-orphan")
+    login = relationship("Patient_Login", back_populates="patient", uselist=False, cascade="all, delete-orphan")
     
-    doctor_id: Mapped[int] = mapped_column(ForeignKey("doctors.doctor_id"))
     
 class Appointment(db.Model):
     __tablename__ = "appointments"
@@ -131,7 +145,6 @@ class Test_Result(db.Model):
     result_value: Mapped[str] = mapped_column(String(255), nullable=True)
     unit_of_measure: Mapped[str] = mapped_column(String(255), nullable=True)
     reference_range: Mapped[str] = mapped_column(String(255), nullable=True)
-    is_abnormal: Mapped[bool] = mapped_column(Boolean, default=False)
     
     result_notes: Mapped[str] = mapped_column(Text, nullable=True)
     
@@ -151,9 +164,27 @@ class Prescription(db.Model):
     
     doctor = relationship("Doctor", back_populates="prescriptions")
     patient = relationship("Patient", back_populates="prescriptions")
+    prescription_refill_requests = relationship("PrescriptionRefillRequest", back_populates="prescription", cascade="all, delete-orphan")
     
     patient_id: Mapped[int] = mapped_column(ForeignKey("patients.patient_id"), nullable=False)
-    doctor_id: Mapped[int] = mapped_column(ForeignKey("doctors.doctor_id"), nullable=False)
+    doctor_id: Mapped[int] = mapped_column(ForeignKey("doctors.doctor_id"), nullable=True)
+    
+class PrescriptionRefillRequest(db.Model):
+    __tablename__ = "prescription_refill_requests"
+    
+    refill_request_id: Mapped[int] = mapped_column(primary_key=True)
+    request_date: Mapped[datetime] = mapped_column(DateTime, server_default=func.UTC_TIMESTAMP())
+    status: Mapped[RefillStatus] = mapped_column(SQLEnum(RefillStatus), default=RefillStatus.PENDING)
+    
+    notes: Mapped[str] = mapped_column(Text, nullable=True)
+    
+    patient = relationship("Patient", back_populates="prescription_refill_requests")
+    doctor = relationship("Doctor", back_populates="prescription_refill_requests")
+    prescription = relationship("Prescription", back_populates="prescription_refill_requests")
+    
+    patient_id: Mapped[int] = mapped_column(ForeignKey('patients.patient_id'), nullable=False)
+    doctor_id: Mapped[int] = mapped_column(ForeignKey('doctors.doctor_id'), nullable=False)
+    prescription_id: Mapped[int] = mapped_column(ForeignKey('prescriptions.prescription_id'), nullable=False) 
     
 class Billing(db.Model):
     __tablename__ = "billing"
@@ -178,7 +209,7 @@ class Message(db.Model):
     patient = relationship("Patient", back_populates="messages")
     
     patient_id: Mapped[int] = mapped_column(ForeignKey("patients.patient_id"), nullable=False)
-    doctor_id: Mapped[int] = mapped_column(ForeignKey("doctors.doctor_id"), nullable=False)
+    doctor_id: Mapped[int] = mapped_column(ForeignKey("doctors.doctor_id"), nullable=True)
     
 class Insurance(db.Model):
     __tablename__ = "insurance"
@@ -209,7 +240,6 @@ class User_Login(db.Model, UserMixin):
     date_created: Mapped[datetime] = mapped_column(server_default=func.UTC_TIMESTAMP())
     type: Mapped[str] = mapped_column(String(20))
     
-    
     __mapper_args__ = {
         "polymorphic_identity": "user_login",
         "polymorphic_on": "type"
@@ -219,6 +249,8 @@ class Patient_Login(User_Login):
     __tablename__ = "patient_login"
     
     id: Mapped[int] = mapped_column(ForeignKey("user_login.id"), primary_key=True)
+    reset_token: Mapped[str] = mapped_column(String(36), nullable=True, unique=True)
+    reset_token_expires: Mapped[datetime] = mapped_column(DateTime, nullable=True)
     patient_id: Mapped[int] = mapped_column(ForeignKey("patients.patient_id"), nullable=False)
     
     patient = relationship("Patient", back_populates="login", uselist=False)
@@ -231,6 +263,7 @@ class Doctor_Login(User_Login):
     __tablename__ = "doctor_login"
     
     id: Mapped[int] = mapped_column(ForeignKey("user_login.id"), primary_key=True)
+    reset_token: Mapped[str] = mapped_column(String(36), nullable=True, unique=True)
     doctor_id: Mapped[int] = mapped_column(ForeignKey("doctors.doctor_id"))
     
     doctor = relationship("Doctor", back_populates="login", uselist=False)

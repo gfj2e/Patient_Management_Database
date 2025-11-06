@@ -51,14 +51,14 @@
                     <li><a href="{{ url_for('patient.prescriptions') }}">Prescriptions</a></li>
                     <li><a href="{{ url_for('patient.billing') }}">Billing & Payments</a></li>
                     <li><a href="{{ url_for('patient.lab_results') }}">Lab Results</a></li>
-                    <li><a href="{{ url_for('patient.messages') }}">Messages</a></li>
+                    <li><a href="{{ url_for('patient.patient_messages') }}">Messages</a></li>
                     <li><a href="{{ url_for('patient.patient_info') }}">My Health</a></li>
                 </ul>
             </div>
 
             <div class="content">
                 <div class="welcome-section-patient">
-                    <div class = "welcome-message">Messages</div>
+                    <div class = "welcome-message">Messages for {{ patient.first_name }} {{ patient.last_name}}</div>
                     <div class = "welcome-subtitle">View your doctors messages and notes!</div>
                 </div>    
 
@@ -107,14 +107,15 @@
                         <label for = "content">Message:</label>
                         <textarea name = "content" id = "content" rows = "3" placeholder = "Type your message..." required></textarea>
 
-                        <button type = "submit" class = "btn-primary">Send</button>
+                        <button type = "submit" class = "btn-primary-patient">Send</button>
                     </form>
                 </div>
                     </div>
                 </div>
                 
-                <div class = "footer">
+                <div class="footer">
                     <div>© Powered by Coin Flippers</div>
+                    <div class="footer-links"></div>
                 </div>
             </div>
         </div>

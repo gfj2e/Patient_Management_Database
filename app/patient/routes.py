@@ -1,9 +1,10 @@
-from flask import Blueprint, render_template, redirect, request, url_for, flash
+from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_required, current_user
-from ..database.models import (Patient_Login, Appointment, Patient, Message, Doctor, Test_Result, 
-                               TestStatus, Prescription, Billing)
+from ..database.models import (Patient_Login, Appointment, Patient, Message, Test_Result, 
+                               TestStatus, Prescription, Billing, Doctor, PrescriptionRefillRequest, RefillStatus)
 from ..database.connection import db
-from datetime import datetime
+from sqlalchemy import select
+from datetime import datetime, date
 
 patient_bp = Blueprint("patient", __name__, template_folder="templates")
 
@@ -14,21 +15,24 @@ def patient_home():
         patient = current_user.patient
         patient_name = f"{patient.first_name} {patient.last_name}"
         
-        upcoming_appointments = Appointment.query.filter(
-            Appointment.patient_id == patient.patient_id,
+        upcoming_appointments = db.session.execute(
+            select(Appointment).where(Appointment.patient_id == patient.patient_id,
             Appointment.appointment_time >= datetime.now()
-        ).order_by(Appointment.appointment_time).all()
+            ).order_by(Appointment.appointment_time)
+        ).scalars().all()
         
         message_count = len(patient.messages)
         
-        billing = Billing.query.filter(
-        Billing.patient_id == patient.patient_id
-        ).order_by(Billing.billing_date.asc()).first()
+        billing = db.session.execute(
+            select(Billing).where(Billing.patient_id == patient.patient_id
+            ).order_by(Billing.billing_date.asc())
+        ).scalar()
         
-        lab_results = Test_Result.query.filter(
-            Test_Result.patient_id == patient.patient_id,
+        lab_results = db.session.execute(
+            select(Test_Result).where(Test_Result.patient_id == patient.patient_id,
             Test_Result.test_status == TestStatus.COMPLETED
-        ).order_by(Test_Result.result_time.desc()).all()
+            ).order_by(Test_Result.result_time.desc())
+        ).scalars().all()
         
         print(f"Patient ID: {patient.patient_id}")
         print(f"Lab results found: {len(lab_results)}")
@@ -52,32 +56,103 @@ def patient_home():
 @patient_bp.route("/appointments")
 @login_required
 def appointments():
-    return render_template("appointments.html")  
+    if current_user.is_authenticated and isinstance(current_user, Patient_Login):
+        patient = current_user.patient
+        
+        # Upcoming appointments
+        upcoming_appointments = db.session.execute(
+            select(Appointment).where(Appointment.patient_id == patient.patient_id,
+            Appointment.appointment_time >= datetime.now()
+            ).order_by(Appointment.appointment_time)
+        ).scalars().all()
+    
+        # Appointment history
+        past_appointments = db.session.execute(
+            select(Appointment).where(Appointment.patient_id == patient.patient_id,
+            Appointment.appointment_time < datetime.combine(date.today(), datetime.min.time())
+            ).order_by(Appointment.appointment_time.desc())
+        ).scalars().all()
+    
+        # Doctors 
+        doctors = db.session.execute(select(Doctor)).scalars().all()
+    
+        return render_template("appointments.html",
+                           patient=patient,
+                           upcoming_appointments=upcoming_appointments,
+                           past_appointments=past_appointments,
+                           doctors=doctors)  
+    else:
+        flash("You must be logged in to view this page")
+        return redirect(url_for('auth.login'))
 
 @patient_bp.route("/prescriptions")
 @login_required
 def prescriptions():
-    return render_template("prescriptions.html")
+    if current_user.is_authenticated and isinstance(current_user, Patient_Login):
+        patient = current_user.patient
+        
+        prescriptions = patient.prescriptions
+        
+        refills = patient.prescription_refill_requests
+    
+        return render_template("prescriptions.html",
+                               patient=patient,
+                               prescriptions=prescriptions,
+                               refills=refills)
+    else:
+        flash("You must be logged in to view this page")
+        return redirect(url_for('auth.login'))
 
 @patient_bp.route("/billing")
 @login_required
 def billing():
-    return render_template("billing.html")
+    if current_user.is_authenticated and isinstance(current_user, Patient_Login):
+        patient = current_user.patient
+        
+        billing = db.session.execute(
+            select(Billing).where(Billing.patient_id == patient.patient_id
+            ).order_by(Billing.billing_date.asc())
+        ).scalar()
+    
+        return render_template("billing.html",
+                            patient=patient,
+                            billing=billing)
+    else:
+        flash("You must be logged in to view this page")
+        return redirect(url_for('auth.login'))
 
 @patient_bp.route("/lab-results")
 @login_required
 def lab_results():
-    return render_template("lab_results.html")
+    if current_user.is_authenticated and isinstance(current_user, Patient_Login):
+        patient = current_user.patient
+        
+        lab_results = db.session.execute(
+            select(Test_Result).where(Test_Result.patient_id == patient.patient_id
+            ).order_by(Test_Result.result_time.asc())
+        ).scalars().all()
+        
+        abnormal_results = db.session.execute(
+            select(Test_Result).where(Test_Result.patient_id == patient.patient_id,
+            Test_Result.test_status == TestStatus.ABNORMAL)
+        ).scalar()
+            
+        return render_template("lab_results.html",
+                            lab_results=lab_results,
+                            abnormal_results=abnormal_results)
+        
+    else:
+        flash("You must be logged in to view this page")
+        return redirect(url_for('auth.login'))
 
 @patient_bp.route("/messages")
 @login_required
-def messages():
+def patient_messages():
     if current_user.is_authenticated and isinstance(current_user, Patient_Login):
         patient = current_user.patient
-        messages = Message.query.filter_by(patient_id = patient.patient_id).all()
-        
-        doctor = patient.doctor
-        doctors = [doctor] if doctor else []
+        messages = patient.messages
+        doctors = patient.doctors
+        # doctors = [doctor] if doctor else []
         
         return render_template("messages.html", patient = patient, messages = messages, doctors = doctors)
     else:
@@ -92,7 +167,7 @@ def send_message():
 
     if not doctor_id or not content:
         flash("Please select a doctor and enter a message.", "danger")
-        return redirect(url_for("patient.messages"))
+        return redirect(url_for("patient.patient_messages"))
     
     new_message = Message(
         content = content,
@@ -104,8 +179,7 @@ def send_message():
     db.session.commit()
 
     flash("Message sent successfully!", "success")
-    return redirect(url_for("patient.messages"))
-    
+    return redirect(url_for("patient.patient_messages"))
 
 @patient_bp.route("/patient_info")
 @login_required
@@ -115,8 +189,39 @@ def patient_info():
         patient_name = f"{patient.first_name} {patient.last_name}"
         
         return render_template("patient_info.html", 
-                             patient=patient,
-                             patient_name=patient_name)
+                                patient=patient,
+                                patient_name=patient_name)
     else:
         flash("You must be logged in as a patient to view this page.", "danger")
         return redirect(url_for('auth.login'))
+    
+@patient_bp.route("/request_refill", methods=["POST"])
+@login_required
+def request_refill():
+    if not current_user.is_authenticated and isinstance(current_user, Patient_Login):
+        return jsonify({"success": False, "message": "Authentication error."}), 403
+    
+    patient = current_user.patient
+    prescription_id = request.form.get("prescription_id")
+    notes = request.form.get("notes", "")
+    
+    if not prescription_id:
+        return jsonify({"success": False, "message": "Prescription ID is missing."}), 400
+    
+    prescription = db.session.get(Prescription, int(prescription_id))
+    if not prescription or prescription.patient_id != patient.patient_id:
+        return jsonify({"success": False, "message": "Invalid prescription selected"}), 403
+    
+    new_refill_request = PrescriptionRefillRequest(
+        patient=patient.patient_id,
+        doctor_id=prescription.doctor_id,
+        prescription_id=prescription.prescription_id,
+        status=RefillStatus.PENDING,
+        notes=notes
+    )
+
+    db.session.add(new_refill_request)
+    db.session.commit()
+    flash("Refill requjest successfully submitted", "success")
+    
+    return jsonify({"success": True, "message": "Refill request submitted"})

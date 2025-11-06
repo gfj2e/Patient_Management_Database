@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
 from ..database.models import Admin_Login, Patient, Doctor, Billing
 from ..database.connection import db
+from sqlalchemy import select, func
 from app.database.seed import SPECIALTIES
 from datetime import date, datetime
 
@@ -11,10 +12,9 @@ admin_bp = Blueprint("admin", __name__, template_folder="templates")
 @login_required
 def admin_home():
     if current_user.is_authenticated and isinstance(current_user, Admin_Login):
-        patients_count = Patient.query.count()
-        doctors_count = Doctor.query.count()
-        # billing_pending_count = Billing.query.filter_by(status="Pending").count()
-        billing_total_count = Billing.query.count()
+        patients_count = db.session.scalar(select(db.func.count()).select_from(Patient))
+        doctors_count = db.session.scalar(select(db.func.count()).select_from(Doctor))
+        billing_total_count = db.session.scalar(select(db.func.count()).select_from(Billing))
 
         return render_template(
             "admin_home.html",
@@ -27,16 +27,11 @@ def admin_home():
         flash("You must be logged in as an admin to view this page.")
         return redirect(url_for("auth.login"))
 
-
-
-
-
-
 @admin_bp.route("/admin/patients")
 @login_required
 def admin_patients():
     if current_user.is_authenticated and isinstance(current_user, Admin_Login):
-        patients = Patient.query.all()
+        patients = db.session.execute(select(Patient)).scalars().all()
         return render_template("admin_patients.html", patients=patients)
     else:
         flash("You must be logged in as an admin to view this page.")
@@ -50,7 +45,7 @@ def add_patient():
     phone = request.form.get("phone_number")
     gender = request.form.get("gender")
     address = request.form.get("address")
-    last_patient = Patient.query.order_by(Patient.patient_id.desc()).first()
+    last_patient = db.session.execute(select(Patient).order_by(Patient.patient_id.desc())).scalar()
     next_id = (last_patient.patient_id + 1) if last_patient else 1
     patient_code = f"P{next_id:04d}"
     dob_str = request.form.get("dob")
@@ -61,7 +56,7 @@ def add_patient():
     marriage_status = "Single"
     race = "OTHER_MIXED"
     #default_doctor = Doctor.query.first()
-    default_doctor = Doctor.query.order_by(db.func.rand()).first()
+    default_doctor = db.session.execute(select(Doctor).order_by(db.func.rand())).scalar()
     doctor_id = default_doctor.doctor_id if default_doctor else None
 
     new_patient = Patient(
@@ -87,21 +82,17 @@ def add_patient():
 
 @admin_bp.route("/delete_patient/<int:patient_id>", methods=["POST"])
 def delete_patient(patient_id):
-    patient = Patient.query.get_or_404(patient_id)
+    patient = db.get_or_404(Patient, patient_id)
     db.session.delete(patient)
     db.session.commit()
     flash("Patient deleted successfully!", "success")
     return redirect(url_for("admin.admin_patients"))
 
-
-
-
-
 @admin_bp.route("/admin/doctors")
 @login_required
 def admin_doctors():
     if current_user.is_authenticated and isinstance(current_user, Admin_Login):
-        doctors = Doctor.query.all()
+        doctors = db.session.execute(select(Doctor)).scalars().all()
         return render_template("admin_doctors.html", doctors=doctors,specialties=SPECIALTIES)
     else:
         flash("You must be logged in as an admin to view this page.")
@@ -141,22 +132,20 @@ def add_doctor():
 
 @admin_bp.route("/delete_doctor/<int:doctor_id>", methods=["POST"])
 def delete_doctor(doctor_id):
-    doctor = Doctor.query.get_or_404(doctor_id)
+    doctor = db.get_or_404(Doctor, doctor_id)
     db.session.delete(doctor)
     db.session.commit()
     flash("Doctor deleted successfully.", "info")
     return redirect(url_for("admin.admin_doctors"))
 
-
-
-
-
 @admin_bp.route("/admin/billing")
 @login_required
 def admin_billing():
     if current_user.is_authenticated and isinstance(current_user, Admin_Login):
-        billing_records = Billing.query.all()
-        patients = Patient.query.all()
+
+        billing_records = db.session.execute(select(Billing)).scalars().all()
+        
+        patients = db.session.execute(select(Patient)).scalars().all()
         return render_template("admin_billing.html", billing_records=billing_records, patients=patients)
     else:
         flash("You must be logged in as an admin to view this page.")

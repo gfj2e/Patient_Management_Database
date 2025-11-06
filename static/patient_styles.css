@@ -407,97 +407,6 @@ body {
     }
 }
 
-
-
-/* // stuffs for patient list */
-/* https://www.w3schools.com/howto/howto_css_flip_card.asp */
- .patient-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 25px;
-      margin-top: 30px;
-    }
-
-    .flip-card {
-      background-color: transparent;
-      width: 100%;
-      height: 260px;
-      perspective: 1000px;
-      cursor: pointer;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-
-    .flip-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 25px rgba(37, 0, 70, 0.15);
-    }
-
-    .flip-card-inner {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
-      transform-style: preserve-3d;
-    }
-
-    .flip-card:hover .flip-card-inner {
-      transform: rotateY(180deg);
-    }
-
-    .flip-card-front, .flip-card-back {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      border-radius: 12px;
-      backface-visibility: hidden;
-      overflow: hidden;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-    }
-
-    .flip-card-front {
-      background: #ffffff;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-    }
-
-    .flip-card-back {
-      background: linear-gradient(135deg, #250046 0%, #3a0066 100%);
-      color: white;
-      transform: rotateY(180deg);
-      padding: 20px;
-      overflow-y: auto;
-    }
-
-    .flip-card h3 {
-      color: #250046;
-      margin-bottom: 10px;
-    }
-
-    .flip-card p {
-      margin: 6px 0;
-      color: #555;
-      text-align: center;
-    }
-
-    .view-btn {
-      margin-top: 12px;
-      background: #250046;
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-
-    .view-btn:hover {
-      background: #3a0066;
-    }
-
     .back-details p {
       margin: 5px 0;
       color: rgba(255,255,255,0.9);
@@ -606,36 +515,7 @@ body {
 /* admin dr page stuff */
 /* billing */
 
-/* billing */
-.billing-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 25px;
-    background-color: white;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
 
-.billing-table th, .billing-table td {
-    text-align: left;
-    padding: 14px 18px;
-}
-
-.billing-table th {
-    background: linear-gradient(135deg, #4a00a3 0%, #6a11cb 100%);
-    color: white;
-    font-size: 16px;
-}
-
-.billing-table tr:nth-child(even) {
-    background-color: #f8f6ff;
-}
-
-.billing-table tr:hover {
-    background-color: #eee4ff;
-    transition: 0.2s;
-}
 
 .warning-header h2{
   font-weight:bold;
@@ -843,36 +723,25 @@ body {
     font-size: 14px;
 }
 
-.billing-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
 
-.billing-table th {
-    background: #f8f9ff;
-    padding: 15px;
-    text-align: left;
-    font-weight: 600;
-    color: #250046;
-    border-bottom: 2px solid #e0e0e0;
-}
-
-.billing-table td {
-    padding: 15px;
-    border-bottom: 1px solid #f0f0f0;
-}
 
 .status-paid {
     color: #28a745;
     font-weight: 600;
 }
 
+.status-approved {
+    color: #155724;
+    font-weight: 600;
+}
 .status-pending {
     color: #ffc107;
     font-weight: 600;
 }
-
+.status-denied {
+    color: #721c24;
+    font-weight: 600;
+}
 .status-overdue {
     color: #dc3545;
     font-weight: 600;
@@ -1315,38 +1184,6 @@ body {
 
 .status-active { background: #10b981; color: white; }
 
-/* for doctor-side messaging */
-.send-message-section {
-    background: white;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    margin-top: 30px;
-}
-
-.send-message-section h3 {
-    color: #250046;
-    margin-bottom: 15px;
-}
-
-.send-message-section form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.send-message-section select,
-.send-message-section textarea {
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 15px;
-}
-
-.send-message-section .btn-primary {
-    align-self: flex-start;
-    margin-top: 10px;
-}
 
 
 /* add delete dr */
@@ -1497,3 +1334,204 @@ body {
     height: 30px; 
 }
 
+/* Modal popup stles */
+.modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal[aria-hidden="true"] {
+    display: none;
+}
+
+.modal[aria-hidden="false"] {
+    display: block;
+}
+
+.modal-content {
+    background-color: white;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 10px;
+    width: 50%;
+    max-width: 500px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.close {
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #666;
+}
+
+.close:hover {
+    color: #000;
+}
+
+.prescription-option {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    margin: 10px 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.prescription-option:hover {
+    background-color: #f5f5f5;
+    border-color: #007bff;
+}
+
+.prescription-option.selected {
+    background-color: #e3f2fd;
+    border-color: #007bff;
+}
+
+.modal-actions {
+    margin-top: 20px;
+    text-align: right;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-primary:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+[aria-hidden="true"] {
+    display: none;
+}
+
+/* Contact modal popup */
+.contact-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.contact-card {
+  background: #ffffffee;
+  padding: 30px 20px;
+  box-shadow: 2px 2px 8px #c9c9c9;
+  margin: 10px;
+  color: #000000;
+  text-align: center;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+}
+
+.contact-card h3 {
+  margin-bottom: 15px;
+  color: #540581;
+}
+
+.contact-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.contact-card li {
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+/****************************************/
+
+/*Emergency number header*/
+.emergency-num{
+  color:rgb(169, 0, 0);
+  text-align: center;
+}
+.emergency-num h3{
+  margin-top: 20px;
+  
+}
+
+.emergency-num p{
+  margin-top: 10px;
+ 
+}
+
+/****************************************/
+
+/* Messages */
+.send-message-section {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    margin-top: 30px;
+}
+
+.send-message-section h3 {
+    color: #00001d;
+    margin-bottom: 15px;
+}
+
+.send-message-section form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.send-message-section select,
+.send-message-section textarea {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+}
+
+.send-message-section .btn-primary-patient {
+    align-self: flex-start;
+    margin-top: 10px;
+}
+
+.btn-primary-patient {
+    background: linear-gradient(135deg, #250046 0%, #3a0066 100%);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.btn-primary-patient:hover {
+    background: #136fbb;
+}

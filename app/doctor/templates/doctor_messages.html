@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='patient_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='doctor_styles.css') }}">
     <title>Doctor - Messages</title>
 </head>
 <body>
-    <header class="navbar">
+    <header class="navbar-doctor">
         <div class="logo"><a href="{{ url_for('main.index') }}">CuraCloud</a></div>
         <div class="nav-buttons">
             <div class="right-header">
@@ -35,7 +36,7 @@
         </div>
 
         <div class="content">
-            <div class="welcome-section">
+            <div class="welcome-section-doctor">
                 <div class="welcome-message">Messages for Dr. {{ doctor.first_name }} {{ doctor.last_name }}</div>
                 <div class="welcome-subtitle">View all messages from patients.</div>
             </div>
@@ -87,7 +88,7 @@
         <label for="content">Message:</label>
         <textarea name="content" id="content" rows="3" placeholder="Type your message..." required></textarea>
 
-        <button type="submit" class="btn-primary">Send</button>
+        <button type="submit" class="btn-primary-doctor">Send</button>
     </form>
 </div>
 
@@ -97,7 +98,7 @@
 
     
 
-    <div class="footer">
+    <div class="footer-doctor-page">
         <div>© Powered by Coin Flippers</div>
     </div>
 </body>

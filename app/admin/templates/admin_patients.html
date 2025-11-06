@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='patient_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin_styles.css') }}">
+
     <title>Admin - Patients</title>
 </head>
 <body>
-    <header class="navbar">
+    <header class="navbar-admin">
         <div class="logo">
             <a href="{{ url_for('main.index') }}">CuraCloud</a>
         </div>
@@ -34,7 +36,7 @@
         </div>
 
         <div class="content">
-            <div class="welcome-section">
+            <div class="welcome-section-admin">
                 <div class="welcome-message">Patient Records</div>
                 <div class="welcome-subtitle">View and manage all registered patients.</div>
             </div>
@@ -47,7 +49,7 @@
                     <input type="text" name="last_name" placeholder="Last Name" required>
                     <input type="email" name="email" placeholder="Email" required>
                     <input type="text" name="phone_number" placeholder="Phone">
-                    <input type="date" name="dob" required>
+                    <input type="date" name="dob" placeholder="Date of Birth" required>
                     <select name="gender" required>
                         <option value="">Gender</option>
                         <option value="Male">Male</option>
@@ -55,7 +57,7 @@
                         <option value="Other">Other</option>
                     </select>
                     <input type="text" name="address" placeholder="Address">
-                    <button type="submit" class="btn-primary">Add Patient</button>
+                    <button type="submit" class="btn-primary-admin">Add Patient</button>
                 </form>
             </div>
 

@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='patient_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='doctor_styles.css') }}">
     <title>Doctor - Home</title>
 
 </head>
 <body>
-    <header class="navbar">
+    <header class="navbar-doctor">
         <!-- <div class="logo">CuraCloud</div> -->
         <div class="logo">
             <a href="{{ url_for('main.index') }}">CuraCloud</a>
@@ -44,7 +45,7 @@
         </div>
     
         <div class="content">
-            <div class="welcome-section">
+            <div class="welcome-section-doctor">
                 <div class="welcome-message">Hello, Dr. {{ doctor_name }}!</div>
                 <div class="welcome-subtitle">Welcome to your CuraCloud Doctor Portal.</div>
             </div>
@@ -56,7 +57,7 @@
 
 
                     <div class="dashboard-card">
-                        <div class="card-header">Upcoming Appointments</div>
+                        <div class="card-header-doctor">Upcoming Appointments</div>
                             <div class="card-content">
                                 <div class="appointments-section">
                                     {% if appointments %}
@@ -79,7 +80,7 @@
 
                             <div class="card-action">
                                 <a href="{{ url_for('doctor.doctor_appointments') }}">
-                                    <button class="btn-primary">View Appointments</button>
+                                    <button class="btn-primary-doctor">View Appointments</button>
                                 </a>
                             </div>
                         </div>
@@ -87,45 +88,45 @@
 
                     
                     <div class="dashboard-card">
-                        <div class="card-header">Messages</div>
+                        <div class="card-header-doctor">Messages</div>
                         <div class="card-content">
                             <p class="card-text">You have {{ messages_count }} message{% if messages_count != 1 %}s{% endif %}.</p>
                             <div class="card-action">
                                 <a href="{{ url_for('doctor.doctor_messages') }}">
-                                    <button class="btn-primary">View Messages</button>
+                                    <button class="btn-primary-doctor">View Messages</button>
                                 </a>
                             </div>
                         </div>
                     </div>
                     
                     <div class="dashboard-card">
-                        <div class="card-header">Patient List</div>
+                        <div class="card-header-doctor">Patient List</div>
                         <div class="card-content">
                             <p class="card-text">You have {{ patients|length }} patient(s).</p>
                             <div class="card-action">
                                 <a href="{{ url_for('doctor.doctor_patients') }}">
-                                    <button class="btn-primary">View Patients</button>
+                                    <button class="btn-primary-doctor">View Patients</button>
                                 </a>
                             </div>
                         </div>
                     </div>
                     
                     <!-- <div class="dashboard-card">
-                        <div class="card-header">Lab Results</div>
+                        <div class="card-header-doctor">Lab Results</div>
                         <div class="card-content">
                             <p class="card-text">No new lab results available.</p>
                             <div class="card-action">
-                                <button class="btn-primary">View History</button>
+                                <button class="btn-primary-doctor">View History</button>
                             </div>
                         </div>
                     </div> -->
 
                     <div class="dashboard-card">
-                        <div class="card-header">Prescription Refill Requests</div>
+                        <div class="card-header-doctor">Prescription Refill Requests</div>
                         <div class="card-content">
                             <!-- <p class="card-text">Want to view your prescriptions?</p> -->
                             <div class="card-action">
-                                <button class="btn-primary">View Requests</button>
+                                <button class="btn-primary-doctor">View Requests</button>
                             </div>
                         </div>
                     </div>
@@ -155,7 +156,7 @@
         </div>
     </div>
 
-    <div class="footer">
+    <div class="footer-doctor-page">
         <div>© Powered by Coin Flippers</div>
         <div class="footer-links"></div>
     </div>
@@ -181,10 +182,10 @@
             });
             
             // Add click handlers to dashboard card buttons
-            const dashboardButtons = document.querySelectorAll('.dashboard-card .btn-primary');
+            const dashboardButtons = document.querySelectorAll('.dashboard-card .btn-primary-doctor');
             dashboardButtons.forEach(button => {
                 button.addEventListener('click', function() {
-                    const cardHeader = this.closest('.dashboard-card').querySelector('.card-header').textContent;
+                    const cardHeader = this.closest('.dashboard-card').querySelector('.card-header-doctor').textContent;
             //        (`Action for: ${cardHeadealertr}`);
                 });
             });

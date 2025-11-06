@@ -1,0 +1,247 @@
+/* Admin styling */
+.navbar-admin{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, #122e00 0%, #123b02 100%);
+    padding: 15px 30px;
+    color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.welcome-section-admin{
+    background: linear-gradient(135deg, #122e00 0%, #123b02 100%);
+    color: white;
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.card-header-admin{
+    background: linear-gradient(135deg, #122e00 0%, #123b02 100%);
+    color: white;
+    padding: 15px 20px;
+    font-weight: 600;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+    .btn-primary-admin {
+    background: #0c2203;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.btn-primary-admin:hover {
+    background: #2f800f;
+}
+
+.send-message-section .btn-admin-doctor {
+    align-self: flex-start;
+    margin-top: 10px;
+}
+
+.billing-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.billing-table th {
+    background: #f8f9ff;
+    padding: 15px;
+    text-align: left;
+    font-weight: 600;
+    color: #123b02;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.billing-table td {
+    padding: 15px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+/* billing */
+.billing-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 25px;
+    background-color: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.billing-table th, .billing-table td {
+    text-align: left;
+    padding: 14px 18px;
+}
+
+.billing-table th {
+    background: linear-gradient(135deg, #133b04 0%, #123b02 100%);
+    color: white;
+    font-size: 16px;
+}
+
+.billing-table tr:nth-child(even) {
+    background-color: #d9e6d4;
+}
+
+.billing-table tr:hover {
+    background-color: #7a976f;
+    transition: 0.2s;
+}
+
+.btn-danger {
+    background-color: #123b02;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.btn-danger:hover {
+    background-color: #215c09;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 25px;
+    background-color: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.data-table th, .data-table td {
+    text-align: left;
+    padding: 14px 18px;
+}
+
+.data-table th {
+    background:  #122e00;
+    padding: 15px;
+    text-align: left;
+    font-weight: 600;
+    color: #ffffff;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.data-table tr:nth-child(even) {
+    background-color: #e8ece6;
+}
+
+.data-table tr:hover {
+    background-color: #8ea185;
+    transition: 0.2s;
+}
+
+/* add delete dr */
+.add-doctor-section {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    margin-bottom: 25px;
+}
+
+.add-doctor-section h3 {
+    color: #0d0d0e;
+    margin-bottom: 15px;
+}
+
+.add-doctor-section form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.add-doctor-section input {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    flex: 1 1 150px;
+}
+
+
+.add-doctor-section select {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    flex: 1 1 150px;
+    font-size: 15px;
+    color: #333;
+    background-color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.add-doctor-section select:hover {
+    border-color: #3a0066;
+}
+
+.add-doctor-section select:focus {
+    outline: none;
+    border-color: #4a00a3;
+    box-shadow: 0 0 5px rgba(74, 0, 163, 0.2);
+}
+.add-doctor-section select {
+    appearance: none;
+    background: #fff url("data:image/svg+xml;utf8,<svg fill='%234a00a3' height='12' viewBox='0 0 24 24' width='12' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>") no-repeat right 12px center;
+    background-size: 14px;
+}
+
+.add-doctor-section form {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    flex-wrap: nowrap;       /* no wrapping */
+    overflow-x: auto;        /* scroll horizontally if needed */
+    white-space: nowrap;     /* prevent line breaks */
+    padding-bottom: 5px;
+}
+
+/* compact field styling */
+.add-doctor-section input,
+.add-doctor-section select {
+    display: inline-block;
+    padding: 5px 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    height: 30px;
+    width: 130px;
+    flex-shrink: 0;          /* prevent shrinking */
+}
+
+.add-doctor-section select {
+    width: 150px;            /* slightly wider for dropdown */
+}
+
+.add-doctor-section button {
+    height: 30px;
+    padding: 0 14px;
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+/* Hide scrollbar but keep horizontal scrolling for the doctor form */
+.add-doctor-section form::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Edge */
+}
+
+.add-doctor-section form {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;     /* Firefox */
+}

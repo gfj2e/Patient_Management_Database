@@ -1,6 +1,9 @@
 from flask import Blueprint, render_template, redirect, request, url_for, flash
 from flask_login import login_required, current_user, logout_user
-from ..database.models import Doctor_Login, Appointment, Patient, Message
+from ..database.models import (Doctor_Login, Appointment, Patient, Message, 
+                               PrescriptionRefillRequest, RefillStatus)
+from ..database.connection import db
+from sqlalchemy import select
 from datetime import datetime, date
 
 
@@ -13,17 +16,16 @@ def doctor_home():
     if current_user.is_authenticated and isinstance(current_user, Doctor_Login):
         doctor = current_user.doctor
         doctor_name = f"{doctor.first_name} {doctor.last_name}"
-
-        upcoming_appointments = Appointment.query.filter(
-            Appointment.doctor_id == doctor.doctor_id,
+        
+        upcoming_appointments = db.session.execute(
+            select(Appointment).where(Appointment.doctor_id == doctor.doctor_id,
             Appointment.appointment_time >= datetime.now()
-        ).order_by(Appointment.appointment_time).all()
-
-        patients = Patient.query.filter_by(doctor_id=doctor.doctor_id).all()
-
+            ).order_by(Appointment.appointment_time)
+        ).scalars().all()
+        
+        patients = doctor.patients
 
         messages_count = len(doctor.messages)
-
 
         return render_template("doctor_home.html", 
                                doctor=doctor, 
@@ -36,36 +38,31 @@ def doctor_home():
         flash("You must be logged in as a doctor to view this page")
         return redirect(url_for('auth.login'))
 
-
-
 @doctor_bp.route("/doctor/appointments")
 @login_required
 def doctor_appointments():
     if current_user.is_authenticated and isinstance(current_user, Doctor_Login):
         doctor = current_user.doctor
-        now = datetime.now()
-
-
-        # Today's appointments
-        todays_appointments = Appointment.query.filter(
-            Appointment.doctor_id == doctor.doctor_id,
+        
+        todays_appointments = db.session.execute(
+            select(Appointment).where(Appointment.doctor_id == doctor.doctor_id,
             Appointment.appointment_time.between(
                 datetime.combine(date.today(), datetime.min.time()),
                 datetime.combine(date.today(), datetime.max.time())
-            )
-        ).order_by(Appointment.appointment_time).all()
-
-        # Upcoming appointments (after today)
-        upcoming_appointments = Appointment.query.filter(
-            Appointment.doctor_id == doctor.doctor_id,
+            )).order_by(Appointment.appointment_time)
+        ).scalars().all()
+        
+        upcoming_appointments = db.session.execute(
+            select(Appointment).where(Appointment.doctor_id == doctor.doctor_id,
             Appointment.appointment_time > datetime.combine(date.today(), datetime.max.time())
-        ).order_by(Appointment.appointment_time).all()
-
-        # Past appointments (before today)
-        past_appointments = Appointment.query.filter(
-            Appointment.doctor_id == doctor.doctor_id,
+            ).order_by(Appointment.appointment_time)
+        ).scalars().all()
+        
+        past_appointments = db.session.execute(
+            select(Appointment).where(Appointment.doctor_id == doctor.doctor_id,
             Appointment.appointment_time < datetime.combine(date.today(), datetime.min.time())
-        ).order_by(Appointment.appointment_time.desc()).all()
+            ).order_by(Appointment.appointment_time.desc())
+        ).scalars().all()
 
         return render_template(
             "doctor_appointments.html",
@@ -99,7 +96,8 @@ def doctor_patients():
 @login_required
 def doctor_patientlist():
     # Assuming `current_user` is a Doctor
-    patients = Patient.query.filter_by(doctor_id=current_user.doctor_id).all()
+    doctor = current_user.doctor
+    patients = doctor.patients
     return render_template("doctor_patientlist.html", patients=patients)
 
 @doctor_bp.route("/doctor/messages")
@@ -107,8 +105,9 @@ def doctor_patientlist():
 def doctor_messages():
     if current_user.is_authenticated and isinstance(current_user, Doctor_Login):
         doctor = current_user.doctor
-        messages = Message.query.filter_by(doctor_id=doctor.doctor_id).all()
-        patients = Patient.query.filter_by(doctor_id=doctor.doctor_id).all()
+        messages = doctor.messages
+        patients = doctor.patients
+        
         return render_template("doctor_messages.html", doctor=doctor, messages=messages, patients=patients)
     else:
         flash("You must be logged in as a doctor to view this page")
@@ -117,9 +116,6 @@ def doctor_messages():
 @doctor_bp.route("/send_message", methods=["POST"])
 @login_required
 def send_message():
-    from ..database.models import Message, Patient
-    from ..database.connection import db
-
     patient_id = request.form.get("patient_id")
     content = request.form.get("content")
 
@@ -139,6 +135,47 @@ def send_message():
     flash("Message sent successfully!", "success")
     return redirect(url_for("doctor.doctor_messages"))
 
+@doctor_bp.route("/doctor/refills")
+@login_required
+def doctor_refills():
+    if current_user.is_authenticated and isinstance(current_user, Doctor_Login):
+        doctor = current_user.doctor
+        
+        pending_refills = db.session.execute(
+            select(PrescriptionRefillRequest).where(
+                PrescriptionRefillRequest.doctor_id == doctor.doctor_id,
+                PrescriptionRefillRequest.status == RefillStatus.PENDING
+            ).order_by(PrescriptionRefillRequest.request_date.asc())
+        ).scalars().all()
+    
+        return render_template("doctor_refills.html", doctor=doctor, refills=pending_refills)
+    
+    else:
+        flash("You must be logged in as a doctor to view this page")
+        return redirect(url_for('auth.login'))
+
+@doctor_bp.route("/doctor/handle_refill/<int:request_id>", methods=["POST"])
+@login_required
+def handle_refill(request_id):
+    if current_user.is_authenticated and isinstance(current_user, Doctor_Login):
+        doctor = current_user.doctor
+        
+        refills_request = db.session.get(PrescriptionRefillRequest, request_id)
+        action = request.form.get("action")
+        
+        if not refills_request or refills_request.doctor_id != doctor.doctor_id:
+            flash("Invalid request.", "danger")
+            return redirect(url_for('doctor.doctor_refills'))
+        
+        if action == "approve":
+            refills_request.status = RefillStatus.APPROVED
+            flash(f"Refill for {refills_request.prescription.medication_name} has been approved.", "success")
+        elif action == "deny":
+            refills_request.status = RefillStatus.DENIED
+            flash(f"Refill for {refills_request.prescription.medication_name} has been denied.", "warning")
+            
+        db.session.commit()
+        return redirect(url_for('doctor.doctor_refills'))
 
 @auth_bp.route("/logout")
 def logout():
