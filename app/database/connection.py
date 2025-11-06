@@ -70,7 +70,7 @@
 
 
 from flask_sqlalchemy import SQLAlchemy
-from google.cloud.sql.connector import Connector
+# from google.cloud.sql.connector import Connector
 import os
 from dotenv import load_dotenv
 
@@ -78,7 +78,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Initialize Google Cloud connector and SQLAlchemy
-connector = Connector()
+# connector = Connector()
 db = SQLAlchemy()
 
 # Environment variables from .env
@@ -118,7 +118,7 @@ def init_connection_engine(app):
         # anlee local
         # app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://root:Hien2003!!@127.0.0.1:3306/patient_mgmt"
         # heather local
-        app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://root@127.0.0.1:3306/patient_mgmt"
+        # app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://root@127.0.0.1:3306/patient_mgmt"
 
 
 
