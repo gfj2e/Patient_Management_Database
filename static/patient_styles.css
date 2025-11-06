@@ -1486,3 +1486,52 @@ body {
   margin-top: 10px;
  
 }
+
+/****************************************/
+
+/* Messages */
+.send-message-section {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    margin-top: 30px;
+}
+
+.send-message-section h3 {
+    color: #00001d;
+    margin-bottom: 15px;
+}
+
+.send-message-section form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.send-message-section select,
+.send-message-section textarea {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+}
+
+.send-message-section .btn-primary-patient {
+    align-self: flex-start;
+    margin-top: 10px;
+}
+
+.btn-primary-patient {
+    background: linear-gradient(135deg, #250046 0%, #3a0066 100%);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.btn-primary-patient:hover {
+    background: #136fbb;
+}
