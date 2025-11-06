@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, redirect, request, url_for, flash
 from flask_login import login_required, current_user, logout_user
-from ..database.models import Doctor_Login, Appointment, Patient, Message
+from ..database.models import (Doctor_Login, Appointment, Patient, Message, 
+                               PrescriptionRefillRequest, RefillStatus)
 from ..database.connection import db
 from sqlalchemy import select
 from datetime import datetime, date
@@ -133,6 +134,48 @@ def send_message():
 
     flash("Message sent successfully!", "success")
     return redirect(url_for("doctor.doctor_messages"))
+
+@doctor_bp.route("/doctor/refills")
+@login_required
+def doctor_refills():
+    if current_user.is_authenticated and isinstance(current_user, Doctor_Login):
+        doctor = current_user.doctor
+        
+        pending_refills = db.session.execute(
+            select(PrescriptionRefillRequest).where(
+                PrescriptionRefillRequest.doctor_id == doctor.doctor_id,
+                PrescriptionRefillRequest.status == RefillStatus.PENDING
+            ).order_by(PrescriptionRefillRequest.request_date.asc())
+        ).scalars().all()
+    
+        return render_template("doctor_refills.html", doctor=doctor, refills=pending_refills)
+    
+    else:
+        flash("You must be logged in as a doctor to view this page")
+        return redirect(url_for('auth.login'))
+
+@doctor_bp.route("/doctor/handle_refill/<int:request_id>", methods=["POST"])
+@login_required
+def handle_refill(request_id):
+    if current_user.is_authenticated and isinstance(current_user, Doctor_Login):
+        doctor = current_user.doctor
+        
+        refills_request = db.session.get(PrescriptionRefillRequest, request_id)
+        action = request.form.get("action")
+        
+        if not refills_request or refills_request.doctor_id != doctor.doctor_id:
+            flash("Invalid request.", "danger")
+            return redirect(url_for('doctor.doctor_refills'))
+        
+        if action == "approve":
+            refills_request.status = RefillStatus.APPROVED
+            flash(f"Refill for {refills_request.prescription.medication_name} has been approved.", "success")
+        elif action == "deny":
+            refills_request.status = RefillStatus.DENIED
+            flash(f"Refill for {refills_request.prescription.medication_name} has been denied.", "warning")
+            
+        db.session.commit()
+        return redirect(url_for('doctor.doctor_refills'))
 
 @auth_bp.route("/logout")
 def logout():

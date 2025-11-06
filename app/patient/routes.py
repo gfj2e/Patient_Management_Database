@@ -1,7 +1,7 @@
-from flask import Blueprint, render_template, redirect, url_for, flash
+from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_required, current_user
 from ..database.models import (Patient_Login, Appointment, Patient, Test_Result, 
-                               TestStatus, Prescription, Billing, Doctor)
+                               TestStatus, Prescription, Billing, Doctor, PrescriptionRefillRequest, RefillStatus)
 from ..database.connection import db
 from sqlalchemy import select
 from datetime import datetime, date
@@ -172,3 +172,34 @@ def patient_info():
     else:
         flash("You must be logged in as a patient to view this page.", "danger")
         return redirect(url_for('auth.login'))
+    
+@patient_bp.route("/request_refill", methods=["POST"])
+@login_required
+def request_refill():
+    if not current_user.is_authenticated and isinstance(current_user, Patient_Login):
+        return jsonify({"success": False, "message": "Authentication error."}), 403
+    
+    patient = current_user.patient
+    prescription_id = request.form.get("prescription_id")
+    notes = request.form.get("notes", "")
+    
+    if not prescription_id:
+        return jsonify({"success": False, "message": "Prescription ID is missing."}), 400
+    
+    prescription = db.session.get(Prescription, int(prescription_id))
+    if not prescription or prescription.patient_id != patient.patient_id:
+        return jsonify({"success": False, "message": "Invalid prescription selected"}), 403
+    
+    new_refill_request = PrescriptionRefillRequest(
+        patient=patient.patient_id,
+        doctor_id=prescription.doctor_id,
+        prescription_id=prescription.prescription_id,
+        status=RefillStatus.PENDING,
+        notes=notes
+    )
+
+    db.session.add(new_refill_request)
+    db.session.commit()
+    flash("Refill requjest successfully submitted", "success")
+    
+    return jsonify({"success": True, "message": "Refill request submitted"})
