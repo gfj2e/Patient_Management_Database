@@ -38,7 +38,7 @@
                 <li><a href="{{ url_for('doctor.doctor_appointments') }}">Appointments</a></li>
                 <li><a href="{{ url_for('doctor.doctor_messages') }}">Messages</a></li>
                 <li><a href="{{ url_for('doctor.doctor_patients') }}">Patient List</a></li>
-                <li><a href="#">Prescription Refill Requests</a></li>
+                <li><a href="{{ url_for('doctor.doctor_refills') }}">Prescription Refill Requests</a></li>
                 <!-- <li><a href="#">Lab Results</a></li> -->
                 <!--<li><a href="#">My Health</a></li> -->
             </ul>
@@ -126,7 +126,9 @@
                         <div class="card-content">
                             <!-- <p class="card-text">Want to view your prescriptions?</p> -->
                             <div class="card-action">
-                                <button class="btn-primary-doctor">View Requests</button>
+                                <a href="{{ url_for('doctor.doctor_refills') }}">
+                                    <button class="btn-primary-doctor">View Requests</button>
+                                </a>
                             </div>
                         </div>
                     </div>

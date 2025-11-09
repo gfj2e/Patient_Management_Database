@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor - Prescription Refills</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='patient_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='doctor_styles.css') }}">
+</head>
+<body>
+    <header class="navbar-doctor">
+        <div class="logo">
+            <a href="{{ url_for('main.index') }}">CuraCloud</a>
+        </div>
+        <div class="nav-buttons">
+            <div class="right-header">
+                <div class="profile-icon">
+                    <img id="admin-profile-icon" src="{{ url_for('static', filename='images/user.png') }}" alt="doctor profile icon">
+                </div>
+                <a href="{{ url_for('auth.logout') }}">
+                    <button class="logout-btn">Logout</button>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="side-menu">
+            <ul>
+                <li><a href="{{ url_for('doctor.doctor_home') }}">Home</a></li>
+                <li><a href="{{ url_for('doctor.doctor_appointments') }}">Appointments</a></li>
+                <li><a href="{{ url_for('doctor.doctor_messages') }}">Messages</a></li>
+                <li><a href="{{ url_for('doctor.doctor_patients') }}">Patient List</a></li>
+                <li><a href="{{ url_for('doctor.doctor_refills') }}" class="active">Prescription Refill Requests</a></li>
+            </ul>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <div class="welcome-section-doctor">
+                <div class="welcome-message">Prescription Refill Requests</div>
+                <div class="welcome-subtitle">Review and manage pending prescription refills.</div>
+            </div>
+
+            {% if refill_requests %}
+            <table class="doctor-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Patient</th>
+                        <th>Medication</th>
+                        <th>Status</th>
+                        <th>Requested On</th>
+                        <th>Notes</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for request in refill_requests %}
+                    <tr>
+                        <td>{{ request.refill_request_id }}</td>
+                        <td>{{ request.patient.first_name }} {{ request.patient.last_name }}</td>
+                        <td>{{ request.prescription.medication_name }}</td>
+                        <td>{{ request.status.value }}</td>
+                        <td>{{ request.request_date.strftime("%b %d, %Y") }}</td>
+                        <td>{{ request.notes or "—" }}</td>
+                        <td>
+                            {% if request.status == RefillStatus.PENDING %}
+                            <form method="POST" action="{{ url_for('doctor.update_refill_status', request_id=request.refill_request_id) }}">
+                                <button type="submit" name="action" value="approve" class="approve-btn">Approve</button>
+                                <button type="submit" name="action" value="deny" class="deny-btn">Deny</button>
+                            </form>
+                            {% else %}
+                            <em>{{ request.status.value }}</em>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>No refill requests at the moment.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="footer-doctor-page">
+        <div>© Powered by Coin Flippers</div>
+    </div>
+</body>
+</html>
