@@ -124,8 +124,14 @@
                     <div class="dashboard-card">
                         <div class="card-header-doctor">Prescription Refill Requests</div>
                         <div class="card-content">
-                            <!-- <p class="card-text">Want to view your prescriptions?</p> -->
-                            <div class="card-action">
+                            <p class="card-text">
+                                {% if pending_refill_count > 0 %}
+                                    You have {{ pending_refill_count }} pending request{% if pending_refill_count != 1 %}s{% endif %}.
+                                {% else %}
+                                    You have no pending refill requests.
+                                {% endif %}
+                            </p>                            
+                                <div class="card-action">
                                 <a href="{{ url_for('doctor.doctor_refills') }}">
                                     <button class="btn-primary-doctor">View Requests</button>
                                 </a>

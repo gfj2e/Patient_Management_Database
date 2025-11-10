@@ -351,3 +351,24 @@
     border-radius: 10px;
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
 }
+
+.refill-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.notes-box {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 3px;
+    font-size: 14px;
+    resize: vertical;
+}
+
+.refill-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}

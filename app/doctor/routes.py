@@ -27,12 +27,22 @@ def doctor_home():
 
         messages_count = len(doctor.messages)
 
+        pending_refill_count = db.session.execute(
+            select(PrescriptionRefillRequest)
+            .where(
+                PrescriptionRefillRequest.doctor_id == doctor.doctor_id,
+                PrescriptionRefillRequest.status == RefillStatus.PENDING
+            )
+        ).scalars().all()
+        pending_refill_count = len(pending_refill_count)
+
         return render_template("doctor_home.html", 
                                doctor=doctor, 
                                doctor_name=doctor_name, 
                                appointments=upcoming_appointments,
                                patients=list(patients),
-                               messages_count=messages_count
+                               messages_count=messages_count,
+                               pending_refill_count=pending_refill_count
                                )
     else:
         flash("You must be logged in as a doctor to view this page")
@@ -156,7 +166,7 @@ def doctor_refills():
         ).scalars().all()
     
         # return render_template("doctor_refills.html", doctor=doctor, refills=pending_refills)
-        return render_template("doctor_refills.html", doctor=doctor, refill_requests=pending_refills, past_refills=past_refills)
+        return render_template("doctor_refills.html", doctor=doctor, refill_requests=pending_refills, past_refills=past_refills )
     
     else:
         flash("You must be logged in as a doctor to view this page")
@@ -165,25 +175,31 @@ def doctor_refills():
 @doctor_bp.route("/doctor/handle_refill/<int:request_id>", methods=["POST"])
 @login_required
 def handle_refill(request_id):
-    if current_user.is_authenticated and isinstance(current_user, Doctor_Login):
-        doctor = current_user.doctor
-        
-        refills_request = db.session.get(PrescriptionRefillRequest, request_id)
-        action = request.form.get("action")
-        
-        if not refills_request or refills_request.doctor_id != doctor.doctor_id:
-            flash("Invalid request.", "danger")
-            return redirect(url_for('doctor.doctor_refills'))
-        
-        if action == "approve":
-            refills_request.status = RefillStatus.APPROVED
-            flash(f"Refill for {refills_request.prescription.medication_name} has been approved.", "success")
-        elif action == "deny":
-            refills_request.status = RefillStatus.DENIED
-            flash(f"Refill for {refills_request.prescription.medication_name} has been denied.", "warning")
-            
-        db.session.commit()
-        return redirect(url_for('doctor.doctor_refills'))
+    refill = PrescriptionRefillRequest.query.get_or_404(request_id)
+    action = request.form.get("action")
+    custom_notes = request.form.get("custom_notes") or ""
+
+    doctor_name = f"{current_user.doctor.first_name} {current_user.doctor.last_name}"
+
+
+    if action == "approve":
+        refill.status = RefillStatus.APPROVED
+        refill.notes = (
+            f"Approved by Dr. {doctor_name} on {datetime.now().strftime('%b %d, %Y %I:%M %p')}."
+            f"<br><strong>Message:</strong> {custom_notes}"
+        )        
+        flash("Refill approved successfully!", "success")
+
+    elif action == "deny":
+        refill.status = RefillStatus.DENIED
+        refill.notes = (
+            f"Denied by Dr. {doctor_name} on {datetime.now().strftime('%b %d, %Y %I:%M %p')}."
+            f"<br><strong>Message:</strong> {custom_notes}"
+        )
+        flash("Refill denied.", "warning")
+
+    db.session.commit()
+    return redirect(url_for("doctor.doctor_refills"))
 
 @auth_bp.route("/logout")
 def logout():

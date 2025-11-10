@@ -52,13 +52,16 @@
             <p><strong>Medication:</strong> {{ refill.prescription.medication_name }}</p>
             <p><strong>Status:</strong> {{ refill.status.value }}</p>
             <p><strong>Requested On:</strong> {{ refill.request_date.strftime("%b %d, %Y") }}</p>
-            <p><strong>Notes:</strong> {{ refill.notes or "—" }}</p>
+            <p><strong>Notes:</strong> {{ (refill.notes | safe) or "—" }}</p>
             <div class="action-buttons">
                 {% if refill.status.name == "PENDING" %}
-                <form method="POST" action="{{ url_for('doctor.handle_refill', request_id=refill.refill_request_id) }}">
-                    <button type="submit" name="action" value="approve" class="approve-btn">Approve</button>
-                    <button type="submit" name="action" value="deny" class="deny-btn">Deny</button>
-                </form>
+                    <form method="POST" action="{{ url_for('doctor.handle_refill', request_id=refill.refill_request_id) }}" class="refill-form">
+                        <textarea name="custom_notes" placeholder="Add notes" rows="2" class="notes-box"></textarea>
+                        <div class="refill-buttons">
+                            <button type="submit" name="action" value="approve" class="approve-btn">Approve</button>
+                            <button type="submit" name="action" value="deny" class="deny-btn">Deny</button>
+                        </div>
+                    </form>
                 {% else %}
                 <em>{{ refill.status.value }}</em>
                 {% endif %}
@@ -79,7 +82,7 @@
             <p><strong>Medication:</strong> {{ refill.prescription.medication_name }}</p>
             <p><strong>Status:</strong> {{ refill.status.value }}</p>
             <p><strong>Requested On:</strong> {{ refill.request_date.strftime("%b %d, %Y") }}</p>
-            <p><strong>Notes:</strong> {{ refill.notes or "—" }}</p>
+            <p><strong>Notes:</strong> {{ (refill.notes | safe) or "—" }}</p>
             <div class="action-buttons">
                 <em>{{ refill.status.value }}</em>
             </div>
