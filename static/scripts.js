@@ -85,3 +85,69 @@ window.onclick = function(event) {
         closeContactModal();
     }
 }
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    const modal = document.getElementById("editModal");
+    const closeModal = document.getElementById("closeModal");
+    const editButtons = document.querySelectorAll(".edit-btn");
+    const editForm = document.getElementById("editForm");
+
+    editButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+            document.getElementById("edit-id").value = btn.dataset.id;
+            document.getElementById("edit-first").value = btn.dataset.first;
+            document.getElementById("edit-last").value = btn.dataset.last;
+            document.getElementById("edit-email").value = btn.dataset.email;
+            document.getElementById("edit-phone").value = btn.dataset.phone;
+            document.getElementById("edit-dob").value = btn.dataset.dob;
+            document.getElementById("edit-address").value = btn.dataset.address;
+            document.getElementById("edit-gender").value = btn.dataset.gender;
+            
+            editForm.action = `/admin/edit_patient/${btn.dataset.id}`;
+            modal.style.display = "flex";
+        });
+    });
+
+    closeModal.addEventListener("click", () => {
+        modal.style.display = "none";
+    });
+
+    window.onclick = function(event) {
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    };
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    const dropdownBtn = document.querySelector(".dropdown-btn");
+    const dropdownContent = document.querySelector(".dropdown-content");
+
+    if (dropdownBtn && dropdownContent) {
+        dropdownBtn.addEventListener("click", function(e) {
+            e.stopPropagation();
+            dropdownContent.style.display =
+                dropdownContent.style.display === "block" ? "none" : "block";
+        });
+
+        // Close when clicking outside
+        document.addEventListener("click", function(e) {
+            if (!dropdownContent.contains(e.target) && e.target !== dropdownBtn) {
+                dropdownContent.style.display = "none";
+            }
+        });
+
+        // Update button text based on selected checkboxes
+        dropdownContent.addEventListener("change", function() {
+            const checked = dropdownContent.querySelectorAll("input[type='checkbox']:checked");
+            if (checked.length === 0) {
+                dropdownBtn.textContent = "Select Doctor(s)";
+            } else if (checked.length === 1) {
+                dropdownBtn.textContent = checked[0].parentElement.textContent.trim();
+            } else {
+                dropdownBtn.textContent = `${checked.length} doctors selected`;
+            }
+        });
+    }
+});
