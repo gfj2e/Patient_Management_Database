@@ -37,53 +37,60 @@
         </div>
 
         <!-- Content -->
-        <div class="content">
-            <div class="welcome-section-doctor">
-                <div class="welcome-message">Prescription Refill Requests</div>
-                <div class="welcome-subtitle">Review and manage pending prescription refills.</div>
-            </div>
-
-            {% if refill_requests %}
-            <table class="doctor-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Patient</th>
-                        <th>Medication</th>
-                        <th>Status</th>
-                        <th>Requested On</th>
-                        <th>Notes</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for request in refill_requests %}
-                    <tr>
-                        <td>{{ request.refill_request_id }}</td>
-                        <td>{{ request.patient.first_name }} {{ request.patient.last_name }}</td>
-                        <td>{{ request.prescription.medication_name }}</td>
-                        <td>{{ request.status.value }}</td>
-                        <td>{{ request.request_date.strftime("%b %d, %Y") }}</td>
-                        <td>{{ request.notes or "—" }}</td>
-                        <td>
-                            {% if request.status == RefillStatus.PENDING %}
-                            <form method="POST" action="{{ url_for('doctor.update_refill_status', request_id=request.refill_request_id) }}">
-                                <button type="submit" name="action" value="approve" class="approve-btn">Approve</button>
-                                <button type="submit" name="action" value="deny" class="deny-btn">Deny</button>
-                            </form>
-                            {% else %}
-                            <em>{{ request.status.value }}</em>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            {% else %}
-            <p>No refill requests at the moment.</p>
-            {% endif %}
-        </div>
+ <div class="content">
+    <div class="welcome-section-doctor">
+        <div class="welcome-message">Prescription Refill Requests</div>
+        <div class="welcome-subtitle">Review and manage pending prescription refills.</div>
     </div>
+
+<div class="card-header-doctor">Current Refill Requests</div>
+    {% if refill_requests %}
+    <div class="appointments-grid">
+        {% for refill in refill_requests %}
+        <div class="appointment-card">
+            <h3>{{ refill.patient.first_name }} {{ refill.patient.last_name }}</h3>
+            <p><strong>Medication:</strong> {{ refill.prescription.medication_name }}</p>
+            <p><strong>Status:</strong> {{ refill.status.value }}</p>
+            <p><strong>Requested On:</strong> {{ refill.request_date.strftime("%b %d, %Y") }}</p>
+            <p><strong>Notes:</strong> {{ refill.notes or "—" }}</p>
+            <div class="action-buttons">
+                {% if refill.status.name == "PENDING" %}
+                <form method="POST" action="{{ url_for('doctor.handle_refill', request_id=refill.refill_request_id) }}">
+                    <button type="submit" name="action" value="approve" class="approve-btn">Approve</button>
+                    <button type="submit" name="action" value="deny" class="deny-btn">Deny</button>
+                </form>
+                {% else %}
+                <em>{{ refill.status.value }}</em>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="no-appointments-text">No refill requests at the moment.</p>
+    {% endif %}
+        <br>
+    <div class="card-header-doctor">Past Refill Requests</div>
+    {% if past_refills %}
+    <div class="appointments-grid">
+        {% for refill in past_refills %}
+        <div class="appointment-card">
+            <h3>{{ refill.patient.first_name }} {{ refill.patient.last_name }}</h3>
+            <p><strong>Medication:</strong> {{ refill.prescription.medication_name }}</p>
+            <p><strong>Status:</strong> {{ refill.status.value }}</p>
+            <p><strong>Requested On:</strong> {{ refill.request_date.strftime("%b %d, %Y") }}</p>
+            <p><strong>Notes:</strong> {{ refill.notes or "—" }}</p>
+            <div class="action-buttons">
+                <em>{{ refill.status.value }}</em>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="no-appointments-text">No past refill requests.</p>
+    {% endif %}
+</div>
+</div>
 
     <div class="footer-doctor-page">
         <div>© Powered by Coin Flippers</div>

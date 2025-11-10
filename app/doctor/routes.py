@@ -147,8 +147,16 @@ def doctor_refills():
                 PrescriptionRefillRequest.status == RefillStatus.PENDING
             ).order_by(PrescriptionRefillRequest.request_date.asc())
         ).scalars().all()
+
+        past_refills = db.session.execute(
+            select(PrescriptionRefillRequest).where(
+                PrescriptionRefillRequest.doctor_id == doctor.doctor_id,
+                PrescriptionRefillRequest.status != RefillStatus.PENDING
+            ).order_by(PrescriptionRefillRequest.request_date.desc())
+        ).scalars().all()
     
-        return render_template("doctor_refills.html", doctor=doctor, refills=pending_refills)
+        # return render_template("doctor_refills.html", doctor=doctor, refills=pending_refills)
+        return render_template("doctor_refills.html", doctor=doctor, refill_requests=pending_refills, past_refills=past_refills)
     
     else:
         flash("You must be logged in as a doctor to view this page")
