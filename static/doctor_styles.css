@@ -372,3 +372,29 @@
     justify-content: center;
     gap: 10px;
 }
+
+.completed-card {
+    min-height: 390px; 
+    padding: 25px 25px;  
+    width: 360px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.appointment-card {
+    display: flex;
+    flex-direction: column;
+}
+
+.appointment-card .test-info {
+    flex: 1;
+}
+
+.fixed-actions {
+    margin-top: auto;
+    padding-top: 15px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}

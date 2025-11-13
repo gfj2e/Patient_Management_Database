@@ -3,100 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doctor - Prescription Refills</title>
+    <title>Doctor - Test Results</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='patient_styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='doctor_styles.css') }}">
 </head>
+
 <body>
-    <header class="navbar-doctor">
-        <div class="logo">
-            <a href="{{ url_for('main.index') }}">CuraCloud</a>
-        </div>
-        <div class="nav-buttons">
-            <div class="right-header">
-                <div class="profile-icon">
-                    <img id="admin-profile-icon" src="{{ url_for('static', filename='images/user.png') }}" alt="doctor profile icon">
-                </div>
-                <a href="{{ url_for('auth.logout') }}">
-                    <button class="logout-btn">Logout</button>
-                </a>
+<header class="navbar-doctor">
+    <div class="logo">
+        <a href="{{ url_for('main.index') }}">CuraCloud</a>
+    </div>
+    <div class="nav-buttons">
+        <div class="right-header">
+            <div class="profile-icon">
+                <img id="admin-profile-icon" src="{{ url_for('static', filename='images/user.png') }}" alt="doctor profile icon">
             </div>
+            <a href="{{ url_for('auth.logout') }}">
+                <button class="logout-btn">Logout</button>
+            </a>
         </div>
-    </header>
+    </div>
+</header>
 
-    <div class="container">
-        <!-- Sidebar -->
-        <div class="side-menu">
-            <ul>
-                <li><a href="{{ url_for('doctor.doctor_home') }}">Home</a></li>
-                <li><a href="{{ url_for('doctor.doctor_appointments') }}">Appointments</a></li>
-                <li><a href="{{ url_for('doctor.doctor_messages') }}">Messages</a></li>
-                <li><a href="{{ url_for('doctor.doctor_patients') }}">Patient List</a></li>
-                <li><a href="{{ url_for('doctor.doctor_refills') }}" class="active">Prescription Refill Requests</a></li>
-            </ul>
-        </div>
+<div class="container">
 
-        <!-- Content -->
- <div class="content">
-    <div class="welcome-section-doctor">
-        <div class="welcome-message">Prescription Refill Requests</div>
-        <div class="welcome-subtitle">Review and manage pending prescription refills.</div>
+    <!-- Sidebar -->
+    <div class="side-menu">
+        <ul>
+            <li><a href="{{ url_for('doctor.doctor_home') }}">Home</a></li>
+            <li><a href="{{ url_for('doctor.doctor_appointments') }}">Appointments</a></li>
+            <li><a href="{{ url_for('doctor.doctor_messages') }}">Messages</a></li>
+            <li><a href="{{ url_for('doctor.doctor_patients') }}">Patient List</a></li>
+            <li><a href="{{ url_for('doctor.doctor_refills') }}">Prescription Refill Requests</a></li>
+            <li><a href="{{ url_for('doctor.doctor_test_results') }}" class="active">Test Results</a></li>
+        </ul>
     </div>
 
-<div class="card-header-doctor">Current Refill Requests</div>
-    {% if refill_requests %}
-    <div class="appointments-grid">
-        {% for refill in refill_requests %}
-        <div class="appointment-card">
-            <h3>{{ refill.patient.first_name }} {{ refill.patient.last_name }}</h3>
-            <p><strong>Medication:</strong> {{ refill.prescription.medication_name }}</p>
-            <p><strong>Status:</strong> {{ refill.status.value }}</p>
-            <p><strong>Requested On:</strong> {{ refill.request_date.strftime("%b %d, %Y") }}</p>
-            <p><strong>Notes:</strong> {{ (refill.notes | safe) or "—" }}</p>
-            <div class="action-buttons">
-                {% if refill.status.name == "PENDING" %}
-                    <form method="POST" action="{{ url_for('doctor.handle_refill', request_id=refill.refill_request_id) }}" class="refill-form">
-                        <textarea name="custom_notes" placeholder="Add notes" rows="2" class="notes-box"></textarea>
-                        <div class="refill-buttons">
-                            <button type="submit" name="action" value="approve" class="approve-btn">Approve</button>
-                            <button type="submit" name="action" value="deny" class="deny-btn">Deny</button>
-                        </div>
-                    </form>
-                {% else %}
-                <em>{{ refill.status.value }}</em>
+    <!-- Content -->
+    <div class="content">
+
+        <div class="welcome-section-doctor">
+            <div class="welcome-message">Patient Test Results</div>
+            <div class="welcome-subtitle">View, update, and manage laboratory results.</div>
+        </div>
+
+        <!-- Add Button -->
+        <div style="text-align: right; margin-bottom: 15px;">
+            <a href="{{ url_for('doctor.add_test_result') }}">
+                <button class="approve-btn">+ Add New Test Result</button>
+            </a>
+        </div>
+
+        <!-- CURRENT Test Results -->
+        <div class="card-header-doctor">Recent Test Results</div>
+
+        {% if test_results %}
+        <div class="appointments-grid">
+
+            {% for test in test_results %}
+            <div class="appointment-card">
+
+                <h3>{{ test.test_name }}</h3>
+
+                <p><strong>Patient:</strong> 
+                    {{ test.patient.first_name }} {{ test.patient.last_name }}
+                </p>
+
+                <p><strong>Result:</strong> {{ test.result }}</p>
+
+                {% if test.notes %}
+                <p><strong>Notes:</strong> {{ test.notes }}</p>
                 {% endif %}
+
+                <p><strong>Status:</strong> {{ test.test_status.value }}</p>
+                <p><strong>Date:</strong> 
+                    {{ test.result_time.strftime("%b %d, %Y %I:%M %p") }}
+                </p>
+
+                <div class="action-buttons">
+                    <a href="{{ url_for('doctor.update_test_result', test_id=test.test_id) }}">
+                        <button class="approve-btn">Edit</button>
+                    </a>
+
+                    <form method="POST" 
+                          action="{{ url_for('doctor.delete_test_result', test_id=test.test_id) }}"
+                          style="display:inline;">
+                        <button class="deny-btn" onclick="return confirm('Delete this test result?')">
+                            Delete
+                        </button>
+                    </form>
+                </div>
+
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
+
+        {% else %}
+        <p class="no-appointments-text">No test results available.</p>
+        {% endif %}
+
     </div>
-    {% else %}
-    <p class="no-appointments-text">No refill requests at the moment.</p>
-    {% endif %}
-        <br>
-    <div class="card-header-doctor">Past Refill Requests</div>
-    {% if past_refills %}
-    <div class="appointments-grid">
-        {% for refill in past_refills %}
-        <div class="appointment-card">
-            <h3>{{ refill.patient.first_name }} {{ refill.patient.last_name }}</h3>
-            <p><strong>Medication:</strong> {{ refill.prescription.medication_name }}</p>
-            <p><strong>Status:</strong> {{ refill.status.value }}</p>
-            <p><strong>Requested On:</strong> {{ refill.request_date.strftime("%b %d, %Y") }}</p>
-            <p><strong>Notes:</strong> {{ (refill.notes | safe) or "—" }}</p>
-            <div class="action-buttons">
-                <em>{{ refill.status.value }}</em>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-    {% else %}
-    <p class="no-appointments-text">No past refill requests.</p>
-    {% endif %}
-</div>
 </div>
 
-    <div class="footer-doctor-page">
-        <div>© Powered by Coin Flippers</div>
-    </div>
+<div class="footer-doctor-page">
+    <div>© Powered by Coin Flippers</div>
+</div>
+
 </body>
 </html>

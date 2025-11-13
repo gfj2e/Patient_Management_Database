@@ -3,7 +3,7 @@ from flask_login import login_required, current_user, logout_user
 
 from utils.logger import log_event
 from ..database.models import (Doctor_Login, Appointment, Patient, Message, 
-                               PrescriptionRefillRequest, RefillStatus)
+                               PrescriptionRefillRequest, RefillStatus, Test_Result, TestStatus)
 from ..database.connection import db
 from sqlalchemy import select
 from datetime import datetime, date
@@ -230,6 +230,129 @@ def handle_refill(request_id):
 
 
     return redirect(url_for("doctor.doctor_refills"))
+
+@doctor_bp.route("/doctor/test-results")
+@login_required
+def doctor_test_results():
+    if not isinstance(current_user, Doctor_Login):
+        flash("Not authorized.", "danger")
+        return redirect(url_for("auth.login"))
+
+    doctor = current_user.doctor
+
+    # All patient IDs for this doctor
+    doctor_patient_ids = [p.patient_id for p in doctor.patients]
+
+    # PENDING results
+    pending_results = db.session.execute(
+        select(Test_Result)
+        .where(
+            Test_Result.patient_id.in_(doctor_patient_ids),
+            Test_Result.test_status == TestStatus.PENDING
+        )
+        .order_by(Test_Result.ordered_date.desc())
+    ).scalars().all()
+
+    # COMPLETED results
+    completed_results = db.session.execute(
+        select(Test_Result)
+        .where(
+            Test_Result.patient_id.in_(doctor_patient_ids),
+            Test_Result.test_status == TestStatus.COMPLETED
+        )
+        .order_by(Test_Result.result_time.desc())
+    ).scalars().all()
+
+    return render_template(
+        "doctor_test_results.html",
+        doctor=doctor,
+        pending_results=pending_results,
+        completed_results=completed_results
+    )
+
+
+@doctor_bp.route("/doctor/test-results/add", methods=["GET", "POST"])
+@login_required
+def add_test_result():
+    if not isinstance(current_user, Doctor_Login):
+        flash("Not authorized.", "danger")
+        return redirect(url_for("auth.login"))
+
+    doctor = current_user.doctor
+    patients = doctor.patients
+
+    if request.method == "POST":
+        patient_id = request.form.get("patient_id")
+        test_name = request.form.get("test_name")
+        result_value = request.form.get("result_value")
+        unit = request.form.get("unit_of_measure")
+        reference_range = request.form.get("reference_range")
+        notes = request.form.get("result_notes")
+
+        new_test = Test_Result(
+            patient_id=patient_id,
+            test_name=test_name,
+            test_status=TestStatus.PENDING,
+            ordered_date=datetime.now(),
+            result_value=result_value,
+            unit_of_measure=unit,
+            reference_range=reference_range,
+            result_notes=notes
+        )
+
+        db.session.add(new_test)
+        db.session.commit()
+
+        flash("Test result added successfully!", "success")
+        return redirect(url_for("doctor.doctor_test_results"))
+
+    return render_template("doctor_add_test_result.html", doctor=doctor, patients=patients)
+
+
+@doctor_bp.route("/doctor/test-results/update/<int:test_id>", methods=["GET", "POST"])
+@login_required
+def update_test_result(test_id):
+    test = db.session.get(Test_Result, test_id)
+    if not test:
+        flash("Test result not found.", "danger")
+        return redirect(url_for("doctor.doctor_test_results"))
+
+    if request.method == "POST":
+        test.test_name = request.form.get("test_name")
+        test.result_value = request.form.get("result_value")
+        test.unit_of_measure = request.form.get("unit_of_measure")
+        test.reference_range = request.form.get("reference_range")
+        test.result_notes = request.form.get("result_notes")
+        test.test_status = request.form.get("test_status")
+
+        if test.test_status == TestStatus.COMPLETED:
+            test.result_time = datetime.now()
+
+        db.session.commit()
+
+        flash("Test result updated!", "success")
+        return redirect(url_for("doctor.doctor_test_results"))
+
+    return render_template("doctor_update_test_result.html", test=test)
+
+
+@doctor_bp.route("/doctor/test-results/delete/<int:test_id>", methods=["POST"])
+@login_required
+def delete_test_result(test_id):
+    test = db.session.get(Test_Result, test_id)
+
+    if not test:
+        flash("Test result not found.", "danger")
+        return redirect(url_for("doctor.doctor_test_results"))
+
+    db.session.delete(test)
+    db.session.commit()
+
+    log_event("test_result_deleted", f"Doctor deleted test result ID {test_id}")
+
+    flash("Test result deleted.", "info")
+    return redirect(url_for("doctor.doctor_test_results"))
+
 
 @auth_bp.route("/logout")
 def logout():
