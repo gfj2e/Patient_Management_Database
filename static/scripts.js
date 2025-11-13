@@ -55,9 +55,6 @@ function submitRefillRequest() {
         alert('Please select a medication first.');
         return;
     }
-
-    // Here you would typically make an AJAX call to your backend
-    // For now, we'll just show a confirmation and close the modal
     alert(`Refill request submitted for ${selectedMedicationName} - ${selectedDosage}`);
     
     
@@ -86,6 +83,150 @@ window.onclick = function(event) {
     }
 }
 
+// Download Modal Functions
+let selectedResultId = null;
+
+function openDownloadModal() {
+    document.getElementById('downloadModal').style.display = 'block';
+    selectedResultId = null;
+    document.getElementById('downloadPdfBtn').disabled = true;
+    
+    // Fetch lab results
+    fetch('/get-lab-results-json')
+        .then(response => response.json())
+        .then(data => {
+            const resultsList = document.getElementById('resultsList');
+            resultsList.innerHTML = '';
+            
+            if (data.success && data.results && data.results.length > 0) {
+                data.results.forEach(result => {
+                    const resultDiv = document.createElement('div');
+                    resultDiv.className = 'result-item';
+                    resultDiv.onclick = function() { selectResult(result.test_id, this); };
+                    resultDiv.innerHTML = `
+                        <strong>${result.test_name}</strong>
+                        <br>
+                        <small>Date: ${result.ordered_date}</small>
+                        <br>
+                        <small>Status: ${result.test_status}</small>
+                    `;
+                    resultsList.appendChild(resultDiv);
+                });
+            } else {
+                resultsList.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">No lab results available</p>';
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching results:', error);
+            document.getElementById('resultsList').innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">Error loading results</p>';
+        });
+}
+
+function closeDownloadModal() {
+    console.log('closeDownloadModal called');
+    const modal = document.getElementById('downloadModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+    selectedTestId = null;
+    
+    const downloadBtn = document.getElementById('downloadPdfBtn');
+    if (downloadBtn) {
+        downloadBtn.disabled = true;
+    }
+    
+    // Clear selection
+    const items = document.querySelectorAll('.result-item');
+    items.forEach(item => item.classList.remove('selected'));
+}
+
+
+function selectResult(testId, element) {
+    selectedResultId = testId;
+    
+    // Clear previous selection
+    const items = document.querySelectorAll('.result-item');
+    items.forEach(item => item.classList.remove('selected'));
+    
+    // Set new selection
+    element.classList.add('selected');
+    document.getElementById('downloadPdfBtn').disabled = false;
+}
+
+function downloadSelectedResult() {
+    if (!selectedResultId) {
+        alert('Please select a lab result to download.');
+        return;
+    }
+    
+    // Redirect to download endpoint
+    window.location.href = `/download-lab-report/${selectedResultId}`;
+    
+    // Close modal after a short delay
+    setTimeout(() => {
+        closeDownloadModal();
+    }, 500);
+}
+
+// Details Modal Functions
+let currentDetailsTestId = null;
+
+function openDetailsModal(button) {
+    const modal = document.getElementById('detailsModal');
+    currentDetailsTestId = button.getAttribute('data-test-id');
+    
+    // Populate the modal with data from button attributes
+    document.getElementById('detailsTestNameValue').textContent = button.getAttribute('data-test-name');
+    document.getElementById('detailsTestIdValue').textContent = button.getAttribute('data-test-id');
+    document.getElementById('detailsStatusValue').textContent = button.getAttribute('data-test-status');
+    document.getElementById('detailsOrderedDateValue').textContent = button.getAttribute('data-ordered-date');
+    document.getElementById('detailsResultTimeValue').textContent = button.getAttribute('data-result-time');
+    document.getElementById('detailsResultValueValue').textContent = button.getAttribute('data-result-value');
+    document.getElementById('detailsUnitValue').textContent = button.getAttribute('data-unit-measure');
+    document.getElementById('detailsReferenceRangeValue').textContent = button.getAttribute('data-reference-range');
+    
+    // Show or hide notes section
+    const notes = button.getAttribute('data-result-notes');
+    const notesSection = document.getElementById('detailsNotesSection');
+    if (notes && notes.trim() !== '') {
+        document.getElementById('detailsNotesValue').textContent = notes;
+        notesSection.style.display = 'block';
+    } else {
+        notesSection.style.display = 'none';
+    }
+    
+    // Update header title
+    document.getElementById('detailsTestName').textContent = button.getAttribute('data-test-name') + ' Details';
+    
+    // Show modal
+    modal.style.display = 'block';
+}
+
+function closeDetailsModal() {
+    document.getElementById('detailsModal').style.display = 'none';
+    currentDetailsTestId = null;
+}
+
+function downloadFromDetails() {
+    if (!currentDetailsTestId) {
+        alert('Error: No test selected.');
+        return;
+    }
+    
+    window.location.href = `/download-lab-report/${currentDetailsTestId}`;
+    
+    setTimeout(() => {
+        closeDetailsModal();
+    }, 500);
+}
+
+// Close details modal when clicking outside
+window.addEventListener('click', function(event) {
+    const detailsModal = document.getElementById('detailsModal');
+    if (event.target === detailsModal) {
+        closeDetailsModal();
+    }
+});
 
 document.addEventListener("DOMContentLoaded", function() {
     const modal = document.getElementById("editModal");
@@ -151,3 +292,4 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 });
+

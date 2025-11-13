@@ -7,6 +7,7 @@ python-dotenv
 flask-bcrypt
 pymysql
 flask-socketio
+reportlab
 # google-cloud-sql-connector
 # cloud-sql-python-connector[pymysql]
 
