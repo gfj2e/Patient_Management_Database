@@ -280,3 +280,19 @@ class Admin_Login(User_Login):
     __mapper_args__ = {
         "polymorphic_identity": "admin_login"
     }
+
+class ActivityLog(db.Model):
+    __tablename__ = "activity_logs"
+
+    id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+    actor_role = db.Column(db.String(20), nullable=False)   # admin, doctor, patient, system
+    actor_id = db.Column(db.Integer, nullable=True)         # user ID
+
+    action_type = db.Column(db.String(50), nullable=False)  # login, add_patient, delete_patient, send_message, refill_request
+    target_type = db.Column(db.String(50), nullable=True)   # patient, doctor, billing, refill, message
+    target_id = db.Column(db.Integer, nullable=True)
+
+    # description with no private data
+    description = db.Column(db.String(255), nullable=False)

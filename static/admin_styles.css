@@ -351,3 +351,6 @@
 }
 
 
+.side-menu ul li a.active {
+    border-left: 4px solid #122e00; 
+}

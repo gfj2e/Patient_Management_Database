@@ -6,6 +6,9 @@ from ..database.connection import db
 from sqlalchemy import select, func
 from app.database.seed import SPECIALTIES
 from datetime import date, datetime
+from utils.logger import log_event
+from ..database.models import ActivityLog
+
 
 admin_bp = Blueprint("admin", __name__, template_folder="templates")
 
@@ -142,6 +145,13 @@ def add_patient():
     db.session.add(new_patient)
     db.session.commit()
 
+    log_event(
+    "add_patient",
+    f"Added patient {new_patient.first_name} {new_patient.last_name}",
+    target_type="patient",
+    target_id=new_patient.patient_id
+)
+
     flash("Patient added successfully!", "success")
     return redirect(url_for("admin.admin_patients"))
 
@@ -171,6 +181,14 @@ def edit_patient(patient_id):
         patient.doctors = assigned_doctors
 
         db.session.commit()
+
+        log_event(
+    "edit_patient",
+    f"Edited patient {patient.first_name} {patient.last_name}",
+    target_type="patient",
+    target_id=patient.patient_id
+)
+
         flash("Patient information updated successfully!", "success")
         return redirect(url_for("admin.admin_patients"))
 
@@ -181,6 +199,14 @@ def delete_patient(patient_id):
     patient = db.get_or_404(Patient, patient_id)
     db.session.delete(patient)
     db.session.commit()
+
+    log_event(
+    "delete_patient",
+    f"Deleted patient {patient.first_name} {patient.last_name}",
+    target_type="patient",
+    target_id=patient.patient_id
+)
+
     flash("Patient deleted successfully!", "success")
     return redirect(url_for("admin.admin_patients"))
 
@@ -195,6 +221,7 @@ def admin_doctors():
         return redirect(url_for("auth.login"))
     
 @admin_bp.route("/add_doctor", methods=["POST"])
+@login_required
 def add_doctor():
     first_name = request.form.get("first_name")
     last_name = request.form.get("last_name")
@@ -223,6 +250,13 @@ def add_doctor():
     db.session.add(new_doctor)
     db.session.commit()
 
+    log_event(
+    "add_doctor",
+    f"Added doctor {new_doctor.first_name} {new_doctor.last_name}",
+    target_type="doctor",
+    target_id=new_doctor.doctor_id
+)
+
     flash("Doctor added successfully!", "success")
     return redirect(url_for("admin.admin_doctors"))
 
@@ -231,6 +265,14 @@ def delete_doctor(doctor_id):
     doctor = db.get_or_404(Doctor, doctor_id)
     db.session.delete(doctor)
     db.session.commit()
+
+    log_event(
+    "delete_doctor",
+    f"Deleted doctor {doctor.first_name} {doctor.last_name}",
+    target_type="doctor",
+    target_id=doctor.doctor_id
+)
+
     flash("Doctor deleted successfully.", "info")
     return redirect(url_for("admin.admin_doctors"))
 
@@ -248,6 +290,7 @@ def admin_billing():
         return redirect(url_for("auth.login"))
 
 @admin_bp.route("/add_billing", methods=["POST"])
+@login_required
 def add_billing():
     patient_id = request.form.get("patient_id")
     amount = request.form.get("amount")
@@ -267,5 +310,21 @@ def add_billing():
     db.session.add(billing_entry)
     db.session.commit()
 
+    log_event(
+    "add_billing",
+    f"Added billing entry for patient ID {patient_id}",
+    target_type="billing",
+    target_id=billing_entry.billing_id
+)
+
     flash("Billing entry added successfully!", "success")
     return redirect(url_for("admin.admin_billing"))
+
+@admin_bp.route("/admin/logs")
+@login_required
+def system_logs():
+    logs = db.session.execute(
+        select(ActivityLog).order_by(ActivityLog.timestamp.desc())
+    ).scalars().all()
+
+    return render_template("admin_logs.html", logs=logs)
