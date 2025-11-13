@@ -24,7 +24,7 @@
         <ul>
           <li><a href="{{ url_for('main.index') }}">Home</a></li>
           <li><a href="{{ url_for('main.contact') }}">Contact Us</a></li>
-          <li><a href="{{ url_for('main.about') }}">About Us</a></li>
+          <li><a href="{{ url_for('main.about') }}" class="active">About Us</a></li>
           <li><a href="{{ url_for('main.services') }}">Services</a></li>
         </ul>
         </div>
@@ -35,23 +35,28 @@
           <div class="content">
 
                <div id="about-header">
-                   <h1>About us</h1>
+                   <h1>About Us</h1>
               </div>
 
               <!--Image and description-->
               <div class="about-img">
                 <!--About paragraph-->
                   <img id="dr-mike" src="{{ url_for('static', filename='images/dr-mike.png') }}" alt="Doctor Mike" />
-                 <h3>Why you should choose CuraCloud?</h3>
-                  <p id="about-paragraph">CuraCloud is an all-in-one, secure portal for patients and medical professionals to access essential health information with ease. 
-                    It helps patients focus on their health while providing healthcare providers with an efficient way to manage patient care and communication.
-                    CuraCloud saves time and optimizes convenience for everyone, offering quick acces to the information needed for informed decisions and effective healthcare management.
-                  </p>
+                 <!-- <h3>Why you should choose CuraCloud?</h3> -->
+                <div class="about-text-box">
+                    <p>
+                        CuraCloud was created with one mission: to make healthcare simpler and
+                        more connected. We help patients access their information easily while
+                        giving healthcare providers intuitive tools to manage care efficiently.
+                        Our goal is to improve communication, save time, and support better
+                        health outcomes for everyone.
+                    </p>
+                </div>
               </div>
               <hr style="width: 75%; margin: 30px auto; border-top: 1px dotted purple" >
 
               <!--Why they should work with us-->
-              <h3 id="benefit-title">Benefits of using a healthcare portal</h3>
+              <h3 id="benefit-title">Benefits of Using a Healthcare Portal</h3>
               <div class="benefits">
                     <div class="benefit">
                       <img class="benefit-icon" src="{{ url_for('static', filename='images/chemical.png') }}" alt="Lab icon"/>
@@ -74,7 +79,9 @@
                         <P>Save time with a faster, more efficient way to stay informed and connected with your healthcare provider.</P>
                       </div>
                 </div>
+                <hr style="width: 75%; margin: 30px auto; border-top: 1px dotted purple">
             </div>
+            
       </div>
 
 <footer>

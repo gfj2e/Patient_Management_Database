@@ -33,6 +33,7 @@
                 <li><a href="{{ url_for('admin.admin_patients') }}">Patients</a></li>
                 <li><a href="{{ url_for('admin.admin_doctors') }}">Doctors</a></li>
                 <li><a href="{{ url_for('admin.admin_billing') }}">Billing</a></li>
+                <li><a href="{{ url_for('admin.system_logs') }}">System Logs</a></li>
             </ul>
         </div>
 
@@ -88,7 +89,9 @@
                     <div class="card-content">
                         <p class="card-text">Monitor activity and changes.</p>
                         <div class="card-action">
-                            <button class="btn-primary-admin">View Logs</button>
+                            <a href="{{ url_for('admin.system_logs') }}">
+                                <button class="btn-primary-admin">View Logs</button>
+                            </a>
                         </div>
                     </div>
                 </div>

@@ -21,7 +21,7 @@
     <!--SideMenu-->
     <div class="side-menu">
       <ul>
-        <li><a href="{{ url_for('main.index') }}">Home</a></li>
+        <li><a href="{{ url_for('main.index') }}" class="active">Home</a></li>
         <li><a href="{{ url_for('main.contact') }}">Contact Us</a></li>
         <li><a href="{{ url_for('main.about') }}">About Us</a></li>
         <li><a href="{{ url_for('main.services') }}">Services</a></li>
@@ -38,42 +38,57 @@
         <img src="{{ url_for('static', filename='images/health3.png') }}" alt="Person looking at a computer">
       <br><br>
       <div class="intro">
-      <p >CuraCloud is a patient portal management system designed to enhance communication between patients and medical professionals while promoting better outcomes for patients’ health. 
+      <p >
+        CuraCloud streamlines communication between patients and healthcare providers. Patients can easily access appointments, records, lab results, and secure messages, while medical professionals can efficiently manage patient information—all in one secure, user-friendly system.
+        <!-- CuraCloud is a patient portal management system designed to enhance communication between patients and medical professionals while promoting better outcomes for patients’ health. 
         It offers features that allow patients to easily access their appointments, medical records, and lab results, as well as communicate directly with their healthcare provider. 
         For medical professionals, CuraCloud provides an efficient system to manage their patients and their information, lab results, and organize appointments, all in one secure and user-friendly system. </p>
-      
+       -->
         </div>
         </div>
 
-
+<hr style="width: 75%; margin: 30px auto; border-top: 1px dotted purple">
       
-      <div class="features">
-        <!--Appointment scheduling-->
-        <div class="feature">
-            <img src="{{ url_for('static', filename='images/schedule.png') }}" alt="Calendar icon">
-            <p>View and manage appointments with ease.</p>
-        </div>
-        <!--Billing Information-->
-        <div class="feature">
-          <img src="{{ url_for('static', filename='images/open.png') }}" alt="billing statement icon"/>
-          <p>Review current and past billing statements.</p>
-        </div>
-        <!--Prescription information-->
-        <div class="feature">
-          <img src="{{ url_for('static', filename='images/medicine.png') }}" alt="Pill bottle icon"/>
-          <p>View current and past prescriptions and request refills</p>
-        </div>
-        <!--Lab testing-->
-        <div class="feature">
-          <img src="{{ url_for('static', filename='images/result.png') }}" alt="lab-icon"/>
-          <p>Access lab results along with healthcare provider's notes.</p>
-        </div>
-        <!--Profile photo-->
-        <div class="feature">
-          <img src="{{ url_for('static', filename='images/woman.png') }}" alt="profile-icon"/>
-          <p>Conveniently and securely access patient information.</p>
-        </div>
-      </div> 
+<div class="features-grid">
+
+    <div class="feature-card">
+        <img src="{{ url_for('static', filename='images/schedule.png') }}">
+        <h3>Appointments</h3>
+        <p>View and manage appointments with ease.</p>
+    </div>
+
+    <div class="feature-card">
+        <img src="{{ url_for('static', filename='images/open.png') }}">
+        <h3>Billing Statements</h3>
+        <p>Review current and past billing statements.</p>
+    </div>
+
+    <div class="feature-card">
+        <img src="{{ url_for('static', filename='images/medicine.png') }}">
+        <h3>Prescriptions</h3>
+        <p>View current and past prescriptions and request refills.</p>
+    </div>
+
+    <div class="feature-card">
+        <img src="{{ url_for('static', filename='images/result.png') }}">
+        <h3>Lab Results</h3>
+        <p>Access lab results along with healthcare provider's notes.</p>
+    </div>
+
+    <div class="feature-card">
+        <img src="{{ url_for('static', filename='images/woman.png') }}">
+        <h3>Profile Access</h3>
+        <p>Conveniently and securely access patient information.</p>
+    </div>
+
+<div class="feature-card">
+    <img src="{{ url_for('static', filename='images/message.png') }}" alt="Messaging icon">
+    <h3>Secure Messaging</h3>
+    <p>Communicate privately with your healthcare provider.</p>
+</div>
+
+</div>
+<hr style="width: 75%; margin: 30px auto; border-top: 1px dotted purple">
     </div>
   </div>
 

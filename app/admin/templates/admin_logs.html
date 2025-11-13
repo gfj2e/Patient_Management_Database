@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - System Logs</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='patient_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin_styles.css') }}">
+</head>
+
+<body>
+
+<header class="navbar-admin">
+    <div class="logo">
+        <a href="{{ url_for('main.index') }}">CuraCloud</a>
+    </div>
+    <div class="nav-buttons">
+        <div class="right-header">
+            <div class="profile-icon">
+                <img id="admin-profile-icon" src="{{ url_for('static', filename='images/user.png') }}" alt="Admin profile">
+            </div>
+            <a href="{{ url_for('auth.logout') }}">
+                <button class="logout-btn">Logout</button>
+            </a>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <div class="side-menu">
+        <ul>
+            <li><a href="{{ url_for('admin.admin_home') }}">Home</a></li>
+            <li><a href="{{ url_for('admin.admin_patients') }}">Patients</a></li>
+            <li><a href="{{ url_for('admin.admin_doctors') }}">Doctors</a></li>
+            <li><a href="{{ url_for('admin.admin_billing') }}">Billing</a></li>
+            <li><a href="{{ url_for('admin.system_logs') }}" class="active">System Logs</a></li>
+        </ul>
+    </div>
+
+    <div class="content">
+
+        <div class="welcome-section-admin">
+            <div class="welcome-message">System Activity Logs</div>
+            <div class="welcome-subtitle">Track all user actions across CuraCloud.</div>
+        </div>
+
+        <table class="billing-table">
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Actor Role</th>
+                    <th>Actor ID</th>
+                    <th>Action</th>
+                    <th>Target</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+
+            <tbody>
+            {% if logs %}
+                {% for log in logs %}
+                <tr>
+                    <td>{{ log.timestamp.strftime("%B %d, %Y %I:%M %p") }}</td>
+                    <td>{{ log.actor_role|capitalize }}</td>
+                    <td>{{ log.actor_id if log.actor_id else "System" }}</td>
+
+                    <td>{{ log.action_type.replace("_", " ")|capitalize }}</td>
+
+                    <td>
+                        {% if log.target_type %}
+                            {{ log.target_type|capitalize }} (ID: {{ log.target_id }})
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+
+                    <td>{{ log.description }}</td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="6" style="text-align:center;">No log entries found.</td>
+                </tr>
+            {% endif %}
+            </tbody>
+
+        </table>
+
+    </div>
+</div>
+
+<div class="footer">
+    <div>© Powered by Coin Flippers</div>
+</div>
+
+</body>
+</html>

@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='patient_styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='admin_styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 
     <title>Admin - Patients</title>
 </head>
@@ -32,6 +34,7 @@
                 <li><a href="{{ url_for('admin.admin_patients') }}" class="active">Patients</a></li>
                 <li><a href="{{ url_for('admin.admin_doctors') }}">Doctors</a></li>
                 <li><a href="{{ url_for('admin.admin_billing') }}">Billing</a></li>
+                <li><a href="{{ url_for('admin.system_logs') }}">System Logs</a></li>
             </ul>
         </div>
 
@@ -42,7 +45,7 @@
             </div>
 
 
-            <div class="add-doctor-section">
+            <!-- <div class="add-doctor-section">
                 <h3>Add New Patient</h3>
                 <form method="POST" action="{{ url_for('admin.add_patient') }}">
                     <input type="text" name="first_name" placeholder="First Name" required>
@@ -56,9 +59,26 @@
                         <option value="Female">Female</option>
                         <option value="Other">Other</option>
                     </select>
+
+                    <div class="dropdown-checkbox">
+                        <button type="button" class="dropdown-btn">Select Doctor(s)</button>
+                        <div class="dropdown-content">
+                            {% for doctor in doctors %}
+                            <label>
+                                <input type="checkbox" name="doctor_ids" value="{{ doctor.doctor_id }}">
+                                Dr. {{ doctor.first_name }} {{ doctor.last_name }} — {{ doctor.specialty }}
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
                     <input type="text" name="address" placeholder="Address">
                     <button type="submit" class="btn-primary-admin">Add Patient</button>
                 </form>
+            </div> -->
+
+
+            <div class="add-patient-header">
+                <button class="btn-primary-admin" id="openAddModal">+ Add Patient</button>
             </div>
 
 
@@ -92,21 +112,42 @@
                                     <td>{{ patient.phone_number or 'N/A' }}</td>
                                     <td>{{ patient.dob.strftime("%m/%d/%Y") }}</td>
                                     <td>
-                                        {% if patient.doctor %}
-                                            Dr. {{ patient.doctor.first_name }} {{ patient.doctor.last_name }}
+                                        {% if patient.doctors %}
+                                            {% for doc in patient.doctors %}
+                                                Dr. {{ doc.first_name }} {{ doc.last_name }}<br>
+                                            {% endfor %}
                                         {% else %}
                                             Not Assigned
                                         {% endif %}
                                     </td>
                                     <td>{{ patient.gender.value if patient.gender else "N/A" }}</td>
                                     <td>{{ patient.address or 'N/A' }}</td>
-                                    <td>
+
+                                    <td class="action-cell">
+                                        <button class="icon-btn edit-btn" 
+                                                title="Edit"
+                                                data-id="{{ patient.patient_id }}"
+                                                data-first="{{ patient.first_name }}"
+                                                data-last="{{ patient.last_name }}"
+                                                data-email="{{ patient.email }}"
+                                                data-phone="{{ patient.phone_number }}"
+                                                data-dob="{{ patient.dob.strftime('%Y-%m-%d') }}"
+                                                data-gender="{{ patient.gender.value if patient.gender else 'N/A' }}"
+                                                data-address="{{ patient.address }}"
+                                                data-doctors="{{ patient.doctors | map(attribute='doctor_id') | join(',') }}">
+                                            <i class="fas fa-pen"></i>
+                                        </button>
+
                                         <form method="POST" 
                                             action="{{ url_for('admin.delete_patient', patient_id=patient.patient_id) }}" 
                                             onsubmit="return confirm('Are you sure you want to delete this patient?');">
-                                            <button type="submit" class="btn-danger">Delete</button>
+                                            <button type="submit" class="icon-btn delete-btn" title="Delete">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
                                         </form>
                                     </td>
+
+
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -120,8 +161,181 @@
         </div>
     </div>
 
+    <div id="editModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>Edit Patient Information</h3>
+            <form id="editForm" method="POST">
+                <input type="hidden" name="patient_id" id="edit-id">
+                <input type="text" name="first_name" id="edit-first" placeholder="First Name" required>
+                <input type="text" name="last_name" id="edit-last" placeholder="Last Name" required>
+                <input type="email" name="email" id="edit-email" placeholder="Email" required>
+                <input type="text" name="phone_number" id="edit-phone" placeholder="Phone Number">
+                <input type="date" name="dob" id="edit-dob" required>
+                <select name="gender" id="edit-gender" required>
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+                <div class="dropdown-checkbox">
+                    <button type="button" class="dropdown-btn" id="editDoctorBtn">Select Doctor(s)</button>
+                    <!--TEST-->
+                    <!-- <p style="color:red">Loaded {{ doctors|length }} doctors</p> -->
+
+                    <div class="dropdown-content" id="editDoctorDropdown">
+                        {% for doctor in doctors %}
+                        <label>
+                            <input type="checkbox" name="doctor_ids" value="{{ doctor.doctor_id }}">
+                            Dr. {{ doctor.first_name }} {{ doctor.last_name }} — {{ doctor.specialty }}
+                        </label>
+                        {% endfor %}
+                    </div>
+                    
+                </div>
+                <input type="text" name="address" id="edit-address" placeholder="Address">
+
+                <div class="modal-buttons">
+                    <button type="submit" class="btn-primary-admin">Save Changes</button>
+                    <button type="button" class="btn-secondary-admin" id="closeModal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <div id="addModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3>Add New Patient</h3>
+        <form id="addForm" method="POST" action="{{ url_for('admin.add_patient') }}">
+            <input type="text" name="first_name" placeholder="First Name" required>
+            <input type="text" name="last_name" placeholder="Last Name" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="text" name="phone_number" placeholder="Phone">
+            <input type="date" name="dob" placeholder="Date of Birth" required>
+
+            <select name="gender" required>
+                <option value="">Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <div class="dropdown-checkbox">
+                <button type="button" class="dropdown-btn">Select Doctor(s)</button>
+                <div class="dropdown-content">
+                    {% for doctor in doctors %}
+                    <label>
+                        <input type="checkbox" name="doctor_ids" value="{{ doctor.doctor_id }}">
+                        Dr. {{ doctor.first_name }} {{ doctor.last_name }} — {{ doctor.specialty }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <input type="text" name="address" placeholder="Address">
+
+            <div class="modal-buttons">
+                <button type="submit" class="btn-primary-admin">Add Patient</button>
+                <button type="button" class="btn-secondary-admin" id="closeAddModal">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
     <div class="footer">
         <div>© Powered by Coin Flippers</div>
     </div>
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    document.querySelectorAll(".dropdown-checkbox").forEach(dropdown => {
+        const btn = dropdown.querySelector(".dropdown-btn");
+        const content = dropdown.querySelector(".dropdown-content");
+
+        btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            document.querySelectorAll(".dropdown-content").forEach(dc => {
+                if (dc !== content) dc.style.display = "none";
+            });
+            content.style.display = content.style.display === "block" ? "none" : "block";
+        });
+
+        document.addEventListener("click", (e) => {
+            if (!content.contains(e.target) && e.target !== btn) {
+                content.style.display = "none";
+            }
+        });
+
+        content.addEventListener("change", () => {
+            const checked = content.querySelectorAll("input[type='checkbox']:checked");
+            if (checked.length === 0) {
+                btn.textContent = "Select Doctor(s)";
+            } else if (checked.length === 1) {
+                btn.textContent = checked[0].parentElement.textContent.trim();
+            } else {
+                btn.textContent = `${checked.length} doctors selected`;
+            }
+        });
+    });
+
+    const editModal = document.getElementById("editModal");
+    const editButtons = document.querySelectorAll(".edit-btn");
+    const editForm = document.getElementById("editForm");
+    const closeModal = document.getElementById("closeModal");
+
+    editButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+            document.getElementById("edit-id").value = btn.dataset.id;
+            document.getElementById("edit-first").value = btn.dataset.first;
+            document.getElementById("edit-last").value = btn.dataset.last;
+            document.getElementById("edit-email").value = btn.dataset.email;
+            document.getElementById("edit-phone").value = btn.dataset.phone;
+            document.getElementById("edit-dob").value = btn.dataset.dob;
+            document.getElementById("edit-address").value = btn.dataset.address;
+            document.getElementById("edit-gender").value = btn.dataset.gender;
+
+            const doctorIds = btn.dataset.doctors ? btn.dataset.doctors.split(",") : [];
+            const checkboxes = editModal.querySelectorAll(".dropdown-content input[type='checkbox']");
+            checkboxes.forEach(cb => {
+                cb.checked = doctorIds.includes(cb.value);
+            });
+
+            editForm.action = `/admin/edit_patient/${btn.dataset.id}`;
+            editModal.style.display = "flex";
+        });
+    });
+
+    closeModal.addEventListener("click", () => {
+        editModal.style.display = "none";
+    });
+
+    window.onclick = function (event) {
+        if (event.target === editModal) {
+            editModal.style.display = "none";
+        }
+    };
+
+    const addModal = document.getElementById("addModal");
+    const openAddModal = document.getElementById("openAddModal");
+    const closeAddModal = document.getElementById("closeAddModal");
+
+    openAddModal.addEventListener("click", () => (addModal.style.display = "flex"));
+    closeAddModal.addEventListener("click", () => (addModal.style.display = "none"));
+
+    window.addEventListener("click", (event) => {
+        if (event.target === addModal) addModal.style.display = "none";
+    });
+});
+</script>
+
+
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+
 </body>
 </html>

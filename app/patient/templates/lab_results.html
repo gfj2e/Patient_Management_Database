@@ -26,6 +26,7 @@
             flex-direction: column;
             gap:20px;
         }
+
         </style>
     </head>
     <body>
@@ -74,95 +75,72 @@
                                     <tr>
                                         <th>Test Date</th>
                                         <th>Test Type</th>
-                                        <th>Ordering Doctor</th>
                                         <th>Status</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                            <tbody>
+                                    {% for result in lab_results %}
                                     <tr>
-                                        <td>mm/dd/yyyy</td>
-                                        <td>Test Name</td>
-                                        <td>Doctor Name</td>
-                                        <td class="status-normal">Normal</td>
-                                        <td><button class="lab-details">View Details</button></td>
+                                        <td>{{ result.ordered_date.strftime('%m/%d/%Y') if result.ordered_date else 'N/A' }}</td>
+                                        <td>{{ result.test_name }}</td>
+                                        <td class="status-{{ result.test_status.value.lower() }}">
+                                            {{ result.test_status.value }}
+                                        </td>
+                                        
+                                        <td><button class="lab-details" data-test-id="{{ result.test_id }}" data-test-name="{{ result.test_name }}" data-ordered-date="{{ result.ordered_date.strftime('%m/%d/%Y') if result.ordered_date else 'N/A' }}" data-result-time="{{ result.result_time.strftime('%m/%d/%Y %I:%M %p') if result.result_time else 'N/A' }}" data-result-value="{{ result.result_value or 'N/A' }}" data-unit-measure="{{ result.unit_of_measure or 'N/A' }}" data-reference-range="{{ result.reference_range or 'N/A' }}" data-test-status="{{ result.test_status.value }}" data-result-notes="{{ result.result_notes or '' }}" onclick="openDetailsModal(this)">View Details</button></td>
                                     </tr>
+                                    {% else %}
                                     <tr>
-                                        <td>mm/dd/yyyy</td>
-                                        <td>Test Name</td>
-                                        <td>Doctor Name</td>
-                                        <td class="status-abnormal">Abnormal</td>
-                                        <td><button class="lab-details">View Details</button></td>
+                                        <td colspan="5" style="text-align: center;">No lab results found.</td>
                                     </tr>
-                                    <tr>
-                                        <td>mm/dd/yyyy</td>
-                                        <td>Test Name</td>
-                                        <td>Doctor Name</td>
-                                        <td class="status-normal">Normal</td>
-                                        <td><button class="lab-details">View Details</button></td>
-                                    </tr>
-                                    <tr>
-                                        <td>mm/dd/yyyy</td>
-                                        <td>Test Name</td>
-                                        <td>Doctor Name</td>
-                                        <td class="status-pending">Pending</td>
-                                        <td><button class="lab-details">View Details</button></td>
-                                    </tr>
+                                    {% endfor %}
                                 </tbody>
                             </table>
                         </div>
                     </div>
 
                     <!--Detailed recent lab-->
+                    {% if lab_results %}
+                    {% set latest_result = lab_results[0] if lab_results else None %}
+                    {% if latest_result %}
                     <div class="dashboard-card">
                         <div class="card-header">
-                            <div class="card-icon-patient">🔬</div> <h3> Latest results mm/dd/yyy</h3></div>
+                            <div class="card-icon-patient">🔬</div> <h3> Latest results - {{ latest_result.ordered_date.strftime('%m/%d/%Y') if latest_result.ordered_data else 'N/A' }}</h3></div>
                         <div class="card-content">
                             <div class="test-panel">
-                                <div class="test-name">TEST NAME HERE</div>
+                            <div class="test-name">{{ latest_result.test_name }}</div>
+                                {% if latest_result.result_value %}
                                 <div class="test-results">
-                                    <div class="test-value">Testing value</div>
-                                    <div class="test-range">Normal Range: 4.5-11.0</div>
+                                    <div><strong>Result:</strong> {{ latest_result.result_value }}</div>
                                 </div>
+                                {% endif %}
+                                {% if latest_result.unit_of_measure %}
                                 <div class="test-results">
-                                    <div class="test-value">Testing value</div>
-                                    <div class="test-range">Normal Range: 4.5-11.0</div>
+                                    <div><strong>Units:</strong> {{ latest_result.unit_of_measure }}</div>
                                 </div>
+                                {% endif %}
+                                {% if latest_result.reference_range %}
                                 <div class="test-results">
-                                    <div class="test-value">Testing value</div>
-                                    <div class="test-range">Normal Range: 4.5-11.0</div>
+                                    <div><strong>Reference Range:</strong> {{ latest_result.reference_range }}</div>
                                 </div>
+                                {% endif %}
+                                {% if latest_result.result_notes %}
                                 <div class="test-results">
-                                    <div class="test-value">Testing value</div>
-                                    <div class="test-range">Normal Range: 4.5-11.0</div>
+                                    <div><strong>Notes:</strong> {{ latest_result.result_notes }}</div>
                                 </div>
-                            </div>
-                            <!--Pretend extra panel-->
-                            <div class="test-panel">
-                                <div class="test-name">TEST NAME HERE</div>
+                                {% endif %}
                                 <div class="test-results">
-                                    <div class="test-value">Testing value</div>
-                                    <div class="test-range">Normal Range: 4.5-11.0</div>
-                                </div>
-                                <div class="test-results">
-                                    <div class="test-value">Testing value</div>
-                                    <div class="test-range">Normal Range: 4.5-11.0</div>
-                                </div>
-                                <div class="test-results">
-                                    <div class="test-value">Testing value</div>
-                                    <div class="test-range">Normal Range: 4.5-11.0</div>
-                                </div>
-                                <div class="test-results">
-                                    <div class="test-value">Testing value</div>
-                                    <div class="test-range">Normal Range: 4.5-11.0</div>
+                                    <div><strong>Status:</strong> {{ latest_result.test_status.value }}</div>
                                 </div>
                             </div>
 
-                            <div class="card-action">
-                                <button class="glow-btn">Download Report</button>
-                            </div>
                         </div>
                     </div>
+                    {% endif %}
+                    {% endif %}
+
+
 
                     <div class="dashboard-card">
                         <div class="card-header">
@@ -170,18 +148,34 @@
                         <div class="card-content">
                             <div class="critical-alert">
                                 <strong>Important Notice</strong>
-                                <p>There was an abnormal result found in your \test name here\ that needs attention. Please contact your provider</p>
-                            </div>
+                                <p>There {% if abnormal_results|length > 1 %}are
+                                    {% else %}is{% endif %} {{ abnormal_results|length }} abnormal result
+                                     {% if abnormal_results|length > 1 %}s
+                                     {% endif %} that need
+                                     {% if abnormal_results|length == 1 %}s
+                                     {% endif %} attention. Please contact your provider.</p>                            </div>
 
+                            {% for result in abnormal_results %}
                             <div class="test-panel">
-                                <div class="test-name">Testing Name - mm/dd/yyyy</div>
+                                <div class="test-name">{{ result.test_name }} - {{ result.ordered_date.strftime('%m/%d/%Y') if result.ordered_date else 'N/A' }}</div>
+                                {% if result.result_value %}
                                 <div class="test-results">
-                                    <div>TSH</div>
-                                    <div class="test-value">testing value</div>
-                                    <div class="test-range">Normal Range: 0.0-0.0</div>
-                                    <div class="trend-up">↑ High</div>
+                                    <div><strong>Result:</strong> {{ result.result_value }}</div>
                                 </div>
+                                {% endif %}
+                                {% if result.reference_range %}
+                                <div class="test-results">
+                                    <div><strong>Reference Range:</strong> {{ result.reference_range }}</div>
+                                    <div class="trend-up">↑ Abnormal</div>
+                                </div>
+                                {% endif %}
+                                {% if result.result_notes %}
+                                <div class="test-results">
+                                    <div><strong>Notes:</strong> {{ result.result_notes }}</div>
+                                </div>
+                                {% endif %}
                             </div>
+                            {% endfor %}
 
                             <div class="card-action">
                                 <button class="glow-btn">Message Doctor</button>
@@ -191,17 +185,84 @@
                 </div>
 
                 <div class="quick-actions-lab">
-                    <div class="action-card-lab">
-                        <div class="action-icon">📊</div>
-                        <div>View All Results</div>
-                    </div>
-                    <div class="action-card-lab">
+                    <div class="action-card-lab" onclick="openDownloadModal()">
                         <div class="action-icon">📥</div>
                         <div>Download Reports</div>
+                    </div>
+                </div>
+                
+                <!-- Download Lab Results Modal -->
+                <div id="downloadModal" class="modal">
+                    <div class="modal-content">
+                        <div class="lab-modal-header">
+                            <h2>Download Lab Results</h2>
+                            <span class="close" onclick="closeDownloadModal()">&times;</span>
+                        </div>
+                        <div id="resultsList" class="results-list">
+                            <p style="text-align: center; color: #999; padding: 20px;">Loading results...</p>
+                        </div>
+                        <div class="lab-modal-actions">
+                            <button class="lab-modal-btn modal-btn-cancel" onclick="closeDownloadModal()">Cancel</button>
+                            <button class="lab-modal-btn modal-btn-download" id="downloadPdfBtn" onclick="downloadSelectedResult()" disabled>Download PDF</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lab Result Details Modal -->
+                <div id="detailsModal" class="details-modal">
+                    <div class="details-modal-content">
+                        <div class="details-modal-header">
+                            <h2 id="detailsTestName">Lab Result Details</h2>
+                            <span class="details-close" onclick="closeDetailsModal()">&times;</span>
+                        </div>
+                        <div class="details-grid">
+                            <div class="detail-item">
+                                <div class="detail-label">Test Name</div>
+                                <div class="detail-value" id="detailsTestNameValue">-</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Test Status</div>
+                                <div class="detail-value" id="detailsStatusValue">-</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Ordered Date</div>
+                                <div class="detail-value" id="detailsOrderedDateValue">-</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Result Date & Time</div>
+                                <div class="detail-value" id="detailsResultTimeValue">-</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Result Value</div>
+                                <div class="detail-value" id="detailsResultValueValue">-</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Unit of Measure</div>
+                                <div class="detail-value" id="detailsUnitValue">-</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Reference Range</div>
+                                <div class="detail-value" id="detailsReferenceRangeValue">-</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Test ID</div>
+                                <div class="detail-value" id="detailsTestIdValue">-</div>
+                            </div>
+                        </div>
+                        <div id="detailsNotesSection" class="details-notes" style="display: none;">
+                            <div class="details-notes-title">Clinical Notes</div>
+                            <div class="details-notes-content" id="detailsNotesValue">-</div>
+                        </div>
+                        <div class="details-modal-footer">
+                            <button class="details-btn details-btn-close" onclick="closeDetailsModal()">Close</button>
+                            <button class="details-btn details-btn-download" onclick="downloadFromDetails()">Download PDF</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+         <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+
     </body>
 </html>

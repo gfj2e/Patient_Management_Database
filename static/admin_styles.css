@@ -245,3 +245,112 @@
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;     /* Firefox */
 }
+
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    background: #fff;
+    border-radius: 10px;
+    padding: 25px;
+    width: 400px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.2s ease-in-out;
+}
+
+.modal-content input,
+.modal-content select {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+.btn-secondary-admin {
+    background: #ccc;
+    color: #000;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    margin: 0 6px;
+    transition: transform 0.2s, color 0.2s;
+}
+
+.icon-btn i {
+    pointer-events: none;
+}
+
+.icon-btn:hover {
+    transform: scale(1.2);
+}
+
+.edit-btn {
+    color: #007bff;
+}
+
+.delete-btn {
+    color: #d9534f;
+}
+
+.edit-btn:hover {
+    color: #0056b3;
+}
+
+.delete-btn:hover {
+    color: #b30000;
+}
+.dropdown-checkbox {
+    position: relative;
+    display: inline-block;
+    width: 250px;
+}
+
+.dropdown-btn {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #fff;
+    text-align: left;
+    cursor: pointer;
+}
+
+.dropdown-btn::after {
+    content: "▾";
+    float: right;
+    color: #555;
+}
+
+
+.side-menu ul li a.active {
+    border-left: 4px solid #122e00; 
+}
