@@ -242,7 +242,7 @@ def insert_test_data(patient_ident: int, doctor_ident: int) -> None:
     
     test_results = [
         Test_Result(
-            test_name = "Complete Blood Couint",
+            test_name = "Complete Blood Count",
             test_status = TestStatus.COMPLETED,
             ordered_date = datetime.now() - timedelta(days=45),
             result_time = datetime.now() - timedelta(days=42),

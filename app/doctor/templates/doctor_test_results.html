@@ -51,12 +51,8 @@
             <div class="welcome-subtitle">Review pending and completed laboratory results.</div>
         </div>
 
-        <!-- Add Test Result -->
-        <div style="text-align:right; margin-bottom: 15px;">
-            <a href="{{ url_for('doctor.add_test_result') }}">
-                <button class="approve-btn">+ Add New Test Result</button>
-            </a>
-        </div>
+        <button class="approve-btn" onclick="openAddTestModal()">+ Add New Test Result</button>
+        <button class="approve-btn" onclick="openOrderTestModal()">+ Order New Test</button>
 
 
         <!-- PENDING RESULTS -->
@@ -77,14 +73,11 @@
                 <p><strong>Status:</strong> <span style="color:#c77900;">Pending</span></p>
 
                 <p><strong>Date Ordered:</strong>
-                {{ test.result_time.strftime("%b %d, %Y %I:%M %p") if test.result_time else "—" }}
+                {{ test.ordered_date.strftime("%b %d, %Y %I:%M %p") if test.ordered_date else "—" }}
                 </p>
 
                 <div class="action-buttons">
-                    <a href="{{ url_for('doctor.update_test_result', test_id=test.test_id) }}">
-                        <button class="approve-btn">Update</button>
-                    </a>
-
+                    <button class="approve-btn" onclick="openEditTestModal('{{ test.test_id }}')">Update</button>
                     <form method="POST"
                           action="{{ url_for('doctor.delete_test_result', test_id=test.test_id) }}"
                           style="display:inline;">
@@ -138,9 +131,7 @@
                 </p>
                 </div>
                     <div class="action-buttons fixed-actions">
-        <a href="{{ url_for('doctor.update_test_result', test_id=test.test_id) }}">
-            <button class="approve-btn">Edit</button>
-        </a>
+<button class="approve-btn" onclick="openEditTestModal('{{ test.test_id }}')">Edit</button>
 
         <form method="POST"
               action="{{ url_for('doctor.delete_test_result', test_id=test.test_id) }}"
@@ -168,6 +159,228 @@
 <div class="footer-doctor-page">
     <div>© Powered by Coin Flippers</div>
 </div>
+
+<!-- Add Test Result Modal -->
+<div id="addTestModal" class="modal-overlay">
+    <div class="modal-box">
+
+        <h2>Add New Test Result</h2>
+
+        <form method="POST" action="{{ url_for('doctor.add_test_result') }}">
+
+            <!-- Patient Dropdown -->
+            <label>Patient</label>
+            <select name="patient_id" required>
+                {% for p in doctor.patients %}
+                <option value="{{ p.patient_id }}">
+                    {{ p.first_name }} {{ p.last_name }}
+                </option>
+                {% endfor %}
+            </select>
+
+            <!-- Test Name Dropdown -->
+            <label>Test Name</label>
+            <select name="test_name" required>
+                {% for t in test_names %}
+                <option value="{{ t }}">{{ t }}</option>
+                {% endfor %}
+            </select>
+
+            <!-- Result Value -->
+            <label>Result Value</label>
+            <input type="text" name="result_value" placeholder="ex., 6.8, 105 mg/dL">
+
+            <!-- Unit of Measure -->
+            <!-- <label>Unit</label>
+            <input type="text" name="unit_of_measure" placeholder="ex., mg/dL, mmol/L"> -->
+
+            <!-- Notes -->
+            <label>Notes</label>
+            <textarea name="result_notes" rows="3"></textarea>
+
+            <!-- Date (Auto Now) -->
+            <label>Result Date/Time</label>
+            <input type="datetime-local" name="result_time"
+                   value="{{ current_time }}">
+
+            <div class="modal-actions">
+                <button type="button" class="deny-btn" id="closeAddTestModal">Cancel</button>
+                <button type="submit" class="approve-btn">Add Test</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Order Test Modal -->
+<div id="orderTestModal" class="modal-overlay">
+    <div class="modal-box">
+
+        <h2>Order a Test</h2>
+
+        <form method="POST" action="{{ url_for('doctor.order_test') }}">
+
+            <!-- Patient Dropdown -->
+            <label>Patient</label>
+            <select name="patient_id" required>
+                {% for p in doctor.patients %}
+                <option value="{{ p.patient_id }}">
+                    {{ p.first_name }} {{ p.last_name }}
+                </option>
+                {% endfor %}
+            </select>
+
+            <!-- Test Name Dropdown -->
+            <label>Test Name</label>
+            <select name="test_name" required>
+                {% for t in test_names %}
+                <option value="{{ t }}">{{ t }}</option>
+                {% endfor %}
+            </select>
+
+            <!-- Notes -->
+            <label>Notes</label>
+            <textarea name="result_notes" rows="3"></textarea>
+
+            <!-- Ordered Date -->
+            <label>Ordered Date/Time</label>
+            <input type="datetime-local" name="ordered_date"
+                   value="{{ current_time }}">
+
+            <div class="modal-actions">
+                <button type="button" class="deny-btn" id="closeOrderTestModal">Cancel</button>
+                <button type="submit" class="approve-btn">Order Test</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<!-- Edit Test Result Modal -->
+<div id="editTestModal" class="modal-overlay">
+    <div class="modal-box">
+
+        <h2>Edit Test Result</h2>
+
+        <form method="POST" id="editTestForm">
+
+            <!-- Test Name -->
+            <label>Test Name</label>
+            <input type="text" name="test_name" id="edit_test_name" required>
+
+            <!-- Result Value -->
+            <label>Result Value</label>
+            <input type="text" name="result_value" id="edit_result_value">
+
+            <!-- Unit -->
+            <label>Unit</label>
+            <input type="text" name="unit_of_measure" id="edit_unit">
+
+            <!-- Reference Range -->
+            <!-- <label>Reference Range</label>
+            <input type="text" name="reference_range" id="edit_reference_range"> -->
+
+            <!-- Notes -->
+            <label>Notes</label>
+            <textarea name="result_notes" id="edit_notes" rows="3"></textarea>
+
+            <!-- Status -->
+            <!-- <label>Status</label>
+            <select name="test_status" id="edit_status">
+                <option value="PENDING">Pending</option>
+                <option value="COMPLETED">Completed</option>
+            </select> -->
+
+            <!-- Status (only visible for pending tests) -->
+            <div id="edit_status_wrapper">
+                <label>Status</label>
+                <select name="test_status" id="edit_status">
+                    <option value="PENDING">Pending</option>
+                    <option value="COMPLETED">Completed</option>
+                </select>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="deny-btn" onclick="closeEditTestModal()">Cancel</button>
+                <button type="submit" class="approve-btn">Save Changes</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+
+<script>
+
+// open / close helpers
+function openModal(id) {
+    document.getElementById(id).style.display = "flex";
+}
+
+function closeModal(id) {
+    document.getElementById(id).style.display = "none";
+}
+
+// add test
+function openAddTestModal() {
+    openModal("addTestModal");
+}
+document.getElementById("closeAddTestModal").onclick = function() {
+    closeModal("addTestModal");
+};
+
+// order test
+function openOrderTestModal() {
+    openModal("orderTestModal");
+}
+document.getElementById("closeOrderTestModal").onclick = function() {
+    closeModal("orderTestModal");
+};
+
+// edit test
+function openEditTestModal(testId) {
+
+    fetch(`/doctor/test-results/update/${testId}`)
+        .then(response => response.json())
+        .then(data => {
+
+            document.getElementById("edit_test_name").value = data.test_name;
+            document.getElementById("edit_result_value").value = data.result_value || "";
+            document.getElementById("edit_unit").value = data.unit_of_measure || "";
+            document.getElementById("edit_notes").value = data.result_notes || "";
+            document.getElementById("editTestForm").action = `/doctor/test-results/update/${testId}`;
+
+            const statusWrapper = document.getElementById("edit_status_wrapper");
+            const statusSelect = document.getElementById("edit_status");
+
+            statusSelect.value = data.test_status;
+
+            if (data.test_status === "PENDING") {
+                statusWrapper.style.display = "block";
+            } else {
+                statusWrapper.style.display = "none";
+            }
+            openModal("editTestModal");
+        });
+}
+
+function closeEditTestModal() {
+    closeModal("editTestModal");
+}
+
+window.addEventListener("click", function(e) {
+    const modals = ["addTestModal", "orderTestModal", "editTestModal"];
+
+    modals.forEach(id => {
+        const modal = document.getElementById(id);
+        if (e.target === modal) {
+            modal.style.display = "none";
+        }
+    });
+});
+
+</script>
+
+
 
 </body>
 </html>

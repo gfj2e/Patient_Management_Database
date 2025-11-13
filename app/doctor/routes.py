@@ -263,15 +263,21 @@ def doctor_test_results():
         .order_by(Test_Result.result_time.desc())
     ).scalars().all()
 
+    test_names = db.session.execute(
+        select(Test_Result.test_name).distinct()
+    ).scalars().all()
+
     return render_template(
         "doctor_test_results.html",
         doctor=doctor,
         pending_results=pending_results,
-        completed_results=completed_results
+        completed_results=completed_results,
+        test_names=test_names,
+        current_time=datetime.now().strftime("%Y-%m-%dT%H:%M")
     )
 
 
-@doctor_bp.route("/doctor/test-results/add", methods=["GET", "POST"])
+@doctor_bp.route("/doctor/test-results/add", methods=["POST"])
 @login_required
 def add_test_result():
     if not isinstance(current_user, Doctor_Login):
@@ -279,34 +285,31 @@ def add_test_result():
         return redirect(url_for("auth.login"))
 
     doctor = current_user.doctor
-    patients = doctor.patients
 
-    if request.method == "POST":
-        patient_id = request.form.get("patient_id")
-        test_name = request.form.get("test_name")
-        result_value = request.form.get("result_value")
-        unit = request.form.get("unit_of_measure")
-        reference_range = request.form.get("reference_range")
-        notes = request.form.get("result_notes")
+    patient_id = request.form.get("patient_id")
+    test_name = request.form.get("test_name")
+    result_value = request.form.get("result_value")
+    unit = request.form.get("unit_of_measure")
+    # reference_range = request.form.get("reference_range")
+    notes = request.form.get("result_notes")
 
-        new_test = Test_Result(
-            patient_id=patient_id,
-            test_name=test_name,
-            test_status=TestStatus.PENDING,
-            ordered_date=datetime.now(),
-            result_value=result_value,
-            unit_of_measure=unit,
-            reference_range=reference_range,
-            result_notes=notes
-        )
+    new_test = Test_Result(
+        patient_id=patient_id,
+        test_name=test_name,
+        test_status=TestStatus.COMPLETED,
+        ordered_date=datetime.now(),
+        result_time=datetime.now(),
+        result_value=result_value,
+        unit_of_measure=unit,
+        # reference_range=reference_range,
+        result_notes=notes
+    )
 
-        db.session.add(new_test)
-        db.session.commit()
+    db.session.add(new_test)
+    db.session.commit()
 
-        flash("Test result added successfully!", "success")
-        return redirect(url_for("doctor.doctor_test_results"))
-
-    return render_template("doctor_add_test_result.html", doctor=doctor, patients=patients)
+    flash("Test result added successfully!", "success")
+    return redirect(url_for("doctor.doctor_test_results"))
 
 
 @doctor_bp.route("/doctor/test-results/update/<int:test_id>", methods=["GET", "POST"])
@@ -316,6 +319,16 @@ def update_test_result(test_id):
     if not test:
         flash("Test result not found.", "danger")
         return redirect(url_for("doctor.doctor_test_results"))
+    
+    if request.method == "GET":
+        return {
+            "test_name": test.test_name,
+            "result_value": test.result_value,
+            "unit_of_measure": test.unit_of_measure,
+            "reference_range": test.reference_range,
+            "result_notes": test.result_notes,
+            "test_status": test.test_status.value
+        }
 
     if request.method == "POST":
         test.test_name = request.form.get("test_name")
@@ -323,10 +336,14 @@ def update_test_result(test_id):
         test.unit_of_measure = request.form.get("unit_of_measure")
         test.reference_range = request.form.get("reference_range")
         test.result_notes = request.form.get("result_notes")
-        test.test_status = request.form.get("test_status")
+        # test.test_status = request.form.get("test_status")
 
-        if test.test_status == TestStatus.COMPLETED:
-            test.result_time = datetime.now()
+        new_status = request.form.get("test_status")
+        if new_status:
+            test.test_status = TestStatus[new_status]
+
+            if new_status == "COMPLETED":
+                test.result_time = datetime.now()
 
         db.session.commit()
 
@@ -352,6 +369,41 @@ def delete_test_result(test_id):
 
     flash("Test result deleted.", "info")
     return redirect(url_for("doctor.doctor_test_results"))
+
+@doctor_bp.route("/doctor/test-results/order", methods=["POST"])
+@login_required
+def order_test():
+    if not isinstance(current_user, Doctor_Login):
+        flash("Not authorized.", "danger")
+        return redirect(url_for("auth.login"))
+
+    doctor = current_user.doctor
+
+    patient_id = request.form.get("patient_id")
+    test_name = request.form.get("test_name")
+    notes = request.form.get("result_notes")
+    ordered_date = request.form.get("ordered_date")
+
+    ordered_datetime = (
+        datetime.strptime(ordered_date, "%Y-%m-%dT%H:%M")
+        if ordered_date else datetime.now()
+    )
+
+    new_test = Test_Result(
+        patient_id=patient_id,
+        test_name=test_name,
+        test_status=TestStatus.PENDING,
+        ordered_date=ordered_datetime,
+        result_notes=notes,
+        result_time=None
+    )
+
+    db.session.add(new_test)
+    db.session.commit()
+
+    flash("Test has been ordered and appears in pending results.", "success")
+    return redirect(url_for("doctor.doctor_test_results"))
+
 
 
 @auth_bp.route("/logout")
