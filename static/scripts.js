@@ -1,4 +1,4 @@
- let selectedPrescriptionId = null;
+let selectedPrescriptionId = null;
 let selectedMedicationName = null;
 let selectedDosage = null;
 
@@ -8,7 +8,7 @@ function openRefillModal(){
 }
 
 function closeRefillModal(){
-    document.getElementById('prescription-refill-popup').setAttribute('aria-hidden', 'false');
+    document.getElementById('prescription-refill-popup').setAttribute('aria-hidden', 'true');
     resetSelection();
 }
 
@@ -18,10 +18,10 @@ function resetSelection(){
     selectedMedicationName = null;
 
     const options = document.querySelectorAll('.prescription-option');
-    options.forEach(optoin => options.classList.remove('selected'));
+    options.forEach(option => options.classList.remove('selected'));
 
     // Hide selected prescrip info
-    document.getElementById('selected-prescription-inof').setAttribute('aria-hidden', 'true');
+    document.getElementById('selected-prescription-info').setAttribute('aria-hidden', 'true');
 
     // Disable submit button
     document.getElementById('submitRefillBtn').disabled = true;
@@ -83,6 +83,18 @@ window.onclick = function(event) {
     }
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+    const refillCloseBtn = document.querySelector('[id="prescription-refill-popup"] .close');
+    const refillCancelBtn = document.querySelector('[id="prescription-refill-popup"] .modal-btn-cancel');
+    
+    if (refillCloseBtn) {
+        refillCloseBtn.addEventListener('click', closeRefillModal);
+    }
+    if (refillCancelBtn) {
+        refillCancelBtn.addEventListener('click', closeRefillModal);
+    }
+});
+
 // Download Modal Functions
 let selectedResultId = null;
 
@@ -128,7 +140,7 @@ function closeDownloadModal() {
     if (modal) {
         modal.style.display = 'none';
     }
-    selectedTestId = null;
+    selectedResultId = null;
     
     const downloadBtn = document.getElementById('downloadPdfBtn');
     if (downloadBtn) {
@@ -229,6 +241,12 @@ window.addEventListener('click', function(event) {
 });
 
 document.addEventListener("DOMContentLoaded", function() {
+    // Ensure download modal is closed on page load
+    const downloadModal = document.getElementById('downloadModal');
+    if (downloadModal) {
+        downloadModal.style.display = 'none';
+    }
+    
     const modal = document.getElementById("editModal");
     const closeModal = document.getElementById("closeModal");
     const editButtons = document.querySelectorAll(".edit-btn");
@@ -292,4 +310,3 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 });
-

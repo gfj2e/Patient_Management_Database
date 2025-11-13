@@ -252,7 +252,7 @@ def request_refill():
 @patient_bp.route("/get-lab-results-json")
 @login_required
 def get_lab_results_json():
-    """API endpoint to get all lab results for the current patient"""
+    # get all lab results for the current patient
     if not (current_user.is_authenticated and isinstance(current_user, Patient_Login)):
         return jsonify({"success": False, "message": "Unauthorized"}), 403
     
@@ -281,13 +281,13 @@ def get_lab_results_json():
 @patient_bp.route("/download-lab-report/<int:test_id>")
 @login_required
 def download_lab_report(test_id):
-    """Download a lab result as PDF"""
+    # Download a lab result as PDF
     if not (current_user.is_authenticated and isinstance(current_user, Patient_Login)):
         return redirect(url_for('auth.login'))
     
     patient = current_user.patient
     
-    # Verify the test result belongs to the patient
+    # Ensure the test result belongs to the patient
     test_result = db.session.execute(
         select(Test_Result).where(
             Test_Result.test_id == test_id,
