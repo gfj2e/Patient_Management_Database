@@ -123,27 +123,39 @@ def doctor_messages():
         flash("You must be logged in as a doctor to view this page")
         return redirect(url_for('auth.login'))
 
-@doctor_bp.route("/send_message", methods=["POST"])
+@doctor_bp.route("/doctor/send_message", methods=["POST"])
 @login_required
 def send_message():
+    if not isinstance(current_user, Doctor_Login):
+        flash("You must be logged in as a doctor to send messages.")
+        return redirect(url_for("auth.login"))
+
+    doctor = current_user.doctor
     patient_id = request.form.get("patient_id")
     content = request.form.get("content")
 
     if not patient_id or not content:
-        flash("Please select a patient and enter a message.", "danger")
+        flash("Please select a patient and enter a message.")
+        return redirect(url_for("doctor.doctor_messages"))
+
+    patient = db.session.get(Patient, int(patient_id))
+    if not patient:
+        flash("Selected patient not found.")
         return redirect(url_for("doctor.doctor_messages"))
 
     new_message = Message(
         content=content,
         sender_type="doctor",
-        doctor_id=current_user.doctor_id,
-        patient_id=int(patient_id)
+        doctor=doctor,
+        patient=patient
     )
+
     db.session.add(new_message)
     db.session.commit()
 
-    flash("Message sent successfully!", "success")
+    flash("Message sent successfully.")
     return redirect(url_for("doctor.doctor_messages"))
+
 
 @doctor_bp.route("/doctor/refills")
 @login_required
