@@ -5,6 +5,8 @@ from ..database.models import (Patient_Login, Appointment, Patient, Message, Tes
 from ..database.connection import db
 from sqlalchemy import select
 from datetime import datetime, date
+from utils.logger import log_event
+
 
 patient_bp = Blueprint("patient", __name__, template_folder="templates")
 
@@ -178,6 +180,13 @@ def send_message():
     db.session.add(new_message)
     db.session.commit()
 
+    log_event(
+        "patient_message_send",
+        f"Patient {current_user.id} sent a message to doctor {doctor_id}",
+        target_type="doctor",
+        target_id=doctor_id
+    )
+
     flash("Message sent successfully!", "success")
     return redirect(url_for("patient.patient_messages"))
 
@@ -222,6 +231,14 @@ def request_refill():
 
     db.session.add(new_refill_request)
     db.session.commit()
+
+    log_event(
+        "refill_requested",
+        f"Patient {current_user.id} requested refill for prescription {prescription_id}",
+        target_type="prescription",
+        target_id=prescription_id
+    )
+
     flash("Refill requjest successfully submitted", "success")
     
     return jsonify({"success": True, "message": "Refill request submitted"})

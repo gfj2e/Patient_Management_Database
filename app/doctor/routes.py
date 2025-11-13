@@ -1,5 +1,7 @@
 from flask import Blueprint, render_template, redirect, request, url_for, flash
 from flask_login import login_required, current_user, logout_user
+
+from utils.logger import log_event
 from ..database.models import (Doctor_Login, Appointment, Patient, Message, 
                                PrescriptionRefillRequest, RefillStatus)
 from ..database.connection import db
@@ -153,6 +155,13 @@ def send_message():
     db.session.add(new_message)
     db.session.commit()
 
+    log_event(
+    "doctor_message_send",
+    f"Doctor {current_user.id} sent a message to patient {patient_id}",
+    target_type="patient",
+    target_id=patient_id
+)
+
     flash("Message sent successfully.")
     return redirect(url_for("doctor.doctor_messages"))
 
@@ -211,10 +220,25 @@ def handle_refill(request_id):
         flash("Refill denied.", "warning")
 
     db.session.commit()
+
+    log_event(
+        "refill_approved" if action == "approve" else "refill_denied",
+        f"Doctor {current_user.id} {action} refill request {request_id} for patient {refill.patient_id}",
+        target_type="patient",
+        target_id=refill.patient_id
+    )
+
+
     return redirect(url_for("doctor.doctor_refills"))
 
 @auth_bp.route("/logout")
 def logout():
+    log_event(
+    "logout",
+    f"User {current_user.id} logged out",
+    target_type="user",
+    target_id=current_user.id
+)
     logout_user()
     flash("You have been logged out.")
     return redirect(url_for("auth.login_options")) 

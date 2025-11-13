@@ -10,6 +10,8 @@ from .mailer import send_reset_email
 import uuid
 import random
 import secrets
+from utils.logger import log_event
+
 
 auth_bp = Blueprint("auth", __name__, template_folder="templates")
 
@@ -136,6 +138,14 @@ def login():
         
         if user and bcrypt.check_password_hash(user.password, password):
             login_user(user)
+
+            log_event(
+                "login",
+                f"{role.capitalize()} '{username}' logged in",
+                target_type="user",
+                target_id=user.id
+            )
+
             flash(f"Welcome back, {username}!", "success")
             
             if role == "patient":
@@ -239,6 +249,14 @@ def reset_with_token(token):
 @auth_bp.route('/logout')
 @login_required
 def logout():
+
+    log_event(
+    "logout",
+    f"User '{current_user.user_name}' logged out",
+    target_type="user",
+    target_id=current_user.id
+)
+        
     logout_user()
     flash("You have been logged out successfully.", "info")
     return redirect(url_for("main.index"))
