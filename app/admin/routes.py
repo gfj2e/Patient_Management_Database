@@ -260,6 +260,37 @@ def add_doctor():
     flash("Doctor added successfully!", "success")
     return redirect(url_for("admin.admin_doctors"))
 
+@admin_bp.route('/edit_doctor/<int:doctor_id>', methods=['POST'])
+def edit_doctor(doctor_id):
+    doctor = db.session.execute(
+        select(Doctor).where(Doctor.doctor_id == doctor_id)
+    ).scalar_one_or_none()
+
+    if not doctor:
+        flash("Doctor not found.", "danger")
+        return redirect(url_for('admin.admin_doctors'))
+
+    try:
+        doctor.first_name = request.form.get("first_name")
+        doctor.last_name = request.form.get("last_name")
+        doctor.specialty = request.form.get("specialty")
+        doctor.email = request.form.get("email")
+        doctor.phone_number = request.form.get("phone")
+        doctor.city = request.form.get("city")
+        doctor.state = request.form.get("state")
+        doctor.accepting_patients = bool(request.form.get("accepting_patients"))
+
+        db.session.commit()
+        flash("Doctor information updated successfully!", "success")
+
+    except Exception as e:
+        db.session.rollback()
+        print("EDIT DOCTOR ERROR:", e)
+        flash("Failed to update doctor.", "danger")
+
+    return redirect(url_for('admin.admin_doctors'))
+
+
 @admin_bp.route("/delete_doctor/<int:doctor_id>", methods=["POST"])
 def delete_doctor(doctor_id):
     doctor = db.get_or_404(Doctor, doctor_id)

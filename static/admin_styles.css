@@ -354,3 +354,29 @@
 .side-menu ul li a.active {
     border-left: 4px solid #122e00; 
 }
+
+.checkbox-wrapper {
+    width: 100%;
+    margin: auto;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #333;
+}
+
+.checkbox-label input {
+    transform: scale(1.2);
+    cursor: pointer;
+}
+
+.modal-content {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+}
+
