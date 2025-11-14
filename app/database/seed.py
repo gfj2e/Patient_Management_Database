@@ -288,7 +288,27 @@ def insert_test_data(patient_ident: int, doctor_ident: int) -> None:
         insert(Appointment),
         [
             {"appointment_time": "2025-09-21 12:02:30", "clinic_name": "TN Medical Center", "state": "Tennessee", "city": "Nashville", "patient_id": 1, "doctor_id": 1},
-            {"appointment_time": "2025-10-07 14:02:30", "clinic_name": "TN Medical Center", "state": "Tennessee", "city": "Nashville", "patient_id": 1, "doctor_id": 1}
+            {"appointment_time": "2025-10-07 14:02:30", "clinic_name": "TN Medical Center", "state": "Tennessee", "city": "Nashville", "patient_id": 1, "doctor_id": 1},
+            {"appointment_time": "2025-09-21 12:02:30", "clinic_name": "TN Medical Center", "state": "Tennessee", "city": "Nashville", "patient_id": 1, "doctor_id": 1},
+            {"appointment_time": "2025-10-07 14:02:30", "clinic_name": "TN Medical Center", "state": "Tennessee", "city": "Nashville", "patient_id": 1, "doctor_id": 1},
+            {"appointment_time": "2025-11-03 09:15:00", "clinic_name": "Nashville Family Clinic", "state": "Tennessee", "city": "Nashville", "patient_id": 2, "doctor_id": 1},
+            {"appointment_time": "2025-11-15 11:00:00", "clinic_name": "Nashville Health Group", "state": "Tennessee", "city": "Nashville", "patient_id": 3, "doctor_id": 1},
+            {"appointment_time": "2025-12-01 15:45:00", "clinic_name": "Green Hills Clinic", "state": "Tennessee", "city": "Nashville", "patient_id": 4, "doctor_id": 1},
+            {"appointment_time": "2025-09-29 09:00:00", "clinic_name": "Knoxville Regional Clinic", "state": "Tennessee", "city": "Knoxville", "patient_id": 9, "doctor_id": 3},
+            {"appointment_time": "2025-10-02 14:45:00", "clinic_name": "Knoxville Regional Clinic", "state": "Tennessee", "city": "Knoxville", "patient_id": 10, "doctor_id": 3},
+            {"appointment_time": "2025-10-22 11:25:00", "clinic_name": "Mountain View Health", "state": "Tennessee", "city": "Knoxville", "patient_id": 11, "doctor_id": 3},
+            {"appointment_time": "2025-11-05 08:00:00", "clinic_name": "Knox Primary Care", "state": "Tennessee", "city": "Knoxville", "patient_id": 12, "doctor_id": 3},
+            {"appointment_time": "2025-11-28 14:15:00", "clinic_name": "Volunteer Health Center", "state": "Tennessee", "city": "Knoxville", "patient_id": 9, "doctor_id": 3},
+            {"appointment_time": "2025-09-18 10:30:00", "clinic_name": "Memphis Medical Plaza", "state": "Tennessee", "city": "Memphis", "patient_id": 5, "doctor_id": 2},
+            {"appointment_time": "2025-10-10 08:45:00", "clinic_name": "Memphis Medical Plaza", "state": "Tennessee", "city": "Memphis", "patient_id": 6, "doctor_id": 2},
+            {"appointment_time": "2025-10-25 13:20:00", "clinic_name": "East Memphis Clinic", "state": "Tennessee", "city": "Memphis", "patient_id": 7, "doctor_id": 2},
+            {"appointment_time": "2025-11-12 16:10:00", "clinic_name": "Midtown Health Center", "state": "Tennessee", "city": "Memphis", "patient_id": 8, "doctor_id": 2},
+            {"appointment_time": "2025-11-30 10:00:00", "clinic_name": "University Medical Center", "state": "Tennessee", "city": "Memphis", "patient_id": 5, "doctor_id": 2},
+            {"appointment_time": "2025-09-11 13:10:00", "clinic_name": "Chattanooga Family Clinic", "state": "Tennessee", "city": "Chattanooga", "patient_id": 13, "doctor_id": 4},
+            {"appointment_time": "2025-10-14 09:40:00", "clinic_name": "Chattanooga Family Clinic", "state": "Tennessee", "city": "Chattanooga", "patient_id": 14, "doctor_id": 4},
+            {"appointment_time": "2025-11-18 15:25:00", "clinic_name": "Riverfront Health Center", "state": "Tennessee", "city": "Chattanooga", "patient_id": 15, "doctor_id": 4},
+            {"appointment_time": "2025-12-04 12:50:00", "clinic_name": "Riverfront Health Center", "state": "Tennessee", "city": "Chattanooga", "patient_id": 14, "doctor_id": 4},
+            {"appointment_time": "2025-12-09 10:05:00", "clinic_name": "Tennessee Valley Medical", "state": "Tennessee", "city": "Chattanooga", "patient_id": 13, "doctor_id": 4}
         ]
     )
     

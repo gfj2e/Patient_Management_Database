@@ -26,9 +26,12 @@ def register():
     if current_user.is_authenticated:
         return redirect(url_for('patient.patient_home'))
 
+    doctors = db.session.execute(select(Doctor)).scalars().all()
+
     if request.method == 'POST':
-        first_name = request.form.get("First-Name")
-        last_name = request.form.get("Last-Name")
+
+        first_name = request.form.get("First_Name")
+        last_name = request.form.get("Last_Name")
         email = request.form.get("Email")
         username = request.form.get("Username")
         password = request.form.get("Password")
@@ -38,19 +41,24 @@ def register():
         city = request.form.get("City")
         dob_str = request.form.get("DateOfBirth")
         sex = request.form.get("Sex")
+        doctor_id = request.form.get("DoctorID")
 
-        if not all([first_name, last_name, email, username, password, phone, address, zip_code, city, dob_str, sex]):
+        # if not all([first_name, last_name, email, username, password, phone,
+        #             address, zip_code, city, dob_str, sex, doctor_id]):
+        #     flash("All fields are required.", "danger")
+        #     return redirect(url_for('auth.register'))
+
+        required_fields = [first_name, last_name, email, username, password, phone,
+                   address, zip_code, city, dob_str, sex]
+
+        if not all(required_fields):
             flash("All fields are required.", "danger")
             return redirect(url_for('auth.register'))
 
-        #if User_Login.query.filter_by(user_name=username).first():
-        if db.session.execute(select(User_Login).where(User_Login.user_name == username)).scalar():
-            flash("Username already exists. Please choose another username.", "danger")
+        if not doctor_id or doctor_id == "":
+            flash("Please select a doctor.", "danger")
             return redirect(url_for('auth.register'))
-        # if User_Login.query.filter_by(email=email).first():
-        if db.session.execute(select(User_Login).where(User_Login.email == email)).scalar():
-            flash("Email already exists. Please choose another email.", "danger")
-            return redirect(url_for('auth.register'))
+
 
         try:
             dob = datetime.strptime(dob_str, "%Y-%m-%d").date()
@@ -66,20 +74,24 @@ def register():
             hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
 
             new_patient = Patient(
-                patient_code = str(uuid.uuid4()),
-                first_name = first_name,
-                last_name = last_name,
-                dob = dob,
-                age = age,
-                address = full_address,
-                phone_number = phone,
-                email = email,
-                gender = gender,
-                height = Decimal('0.00'),
-                doctor_id = random.randint(1, 10)
+                patient_code=str(uuid.uuid4()),
+                first_name=first_name,
+                last_name=last_name,
+                dob=dob,
+                age=age,
+                address=full_address,
+                phone_number=phone,
+                email=email,
+                gender=gender,
+                height=Decimal('0.00'),
+                # doctor_id=int(doctor_id) 
             )
+
             db.session.add(new_patient)
             db.session.flush()
+
+            selected_doctor = db.session.get(Doctor, int(doctor_id))
+            new_patient.doctors.append(selected_doctor)
 
             new_user = Patient_Login(
                 user_name=username,
@@ -97,9 +109,12 @@ def register():
 
         except Exception as e:
             db.session.rollback()
+            print("REGISTRATION ERROR:", e)
+            flash("Registration failed.", "danger")
             return redirect(url_for('auth.register'))
 
-    return render_template('register.html', title="Register")
+    return render_template('register.html', doctors=doctors, title="Register")
+
 
 # Login
 @auth_bp.route('/login', methods=['GET', 'POST'])

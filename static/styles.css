@@ -428,3 +428,10 @@ footer {
     color: #444;
     font-weight: bold;
 }
+
+.register-title {
+    text-align: center;
+    width: 100%;
+    display: block;
+    margin-bottom: 15px;
+}

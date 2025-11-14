@@ -122,7 +122,22 @@
                             </div>
                         </div>
                     </div>
-                </div>
+
+                    <div class="dashboard-card">
+                        <div class="card-header-doctor">Test Results</div>
+                            <div class="card-content">
+                                <p class="card-text">
+                                    Pending: {{ pending_tests_count }}<br>
+                                    Completed: {{ completed_tests_count }}
+                                </p>
+                                <div class="card-action">
+                                    <a href="{{ url_for('doctor.doctor_test_results') }}">
+                                        <button class="btn-primary-doctor">View Test Results</button>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 
             </div>
         </div>

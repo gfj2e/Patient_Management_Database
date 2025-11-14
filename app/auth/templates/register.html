@@ -30,6 +30,9 @@
             </ul>
         </div>
 
+
+
+
         <!-- Register Content -->
         <div class="content">
 
@@ -40,12 +43,8 @@
                 </div>
 
         <!--added tabs-->
-        <div class="tab-container">
-            <div class="tab active" onclick="openTab('patient')">
-                <span class="tab-icon"></span> Patient Registration
-            </div>
-        </div>
-
+        <h1 class="register-title"> Patient Registration</h1>
+              <hr style="width: 75%; margin: 30px auto; border-top: 1px dotted purple" >
         <!--Patient Registration Input-->
         <div class="tab-content">
             <form id="patient" class="active" method="POST" action="{{ url_for('auth.register') }}">
@@ -54,12 +53,12 @@
             <div class="form-grid">
                 <div class="form-row">
                     <label class="form-label">First Name</label>
-                    <input class="register-box" type="text" name="First-Name" placeholder="Enter first name" required>
+                    <input class="register-box" type="text" name="First_Name" placeholder="Enter first name" required>
                 </div>
             
                 <div class="form-row">
                     <label class="form-label">Last Name</label>
-                    <input class="register-box" type="text" name="Last-Name" placeholder="Enter Last Name" required>
+                    <input class="register-box" type="text" name="Last_Name" placeholder="Enter Last Name" required>
                 </div>
             
                 <div class="form-row">
@@ -109,6 +108,19 @@
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
                         <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <label class="form-label">Select Doctor</label>
+                    <select class="register-box" name="DoctorID" required>
+                        <option value="">Choose a doctor</option>
+
+                        {% for doc in doctors %}
+                            <option value="{{ doc.doctor_id }}">
+                                Dr. {{ doc.first_name }} {{ doc.last_name }} — {{ doc.specialty }}
+                            </option>
+                        {% endfor %}
                     </select>
                 </div>
             </div>

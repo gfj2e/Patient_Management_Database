@@ -38,14 +38,23 @@ def doctor_home():
         ).scalars().all()
         pending_refill_count = len(pending_refill_count)
 
+        pending_tests_count = Test_Result.query.filter_by(test_status="PENDING").count()
+        completed_tests_count = Test_Result.query.filter_by(test_status="COMPLETED").count()
+
+
         return render_template("doctor_home.html", 
                                doctor=doctor, 
                                doctor_name=doctor_name, 
                                appointments=upcoming_appointments,
                                patients=list(patients),
                                messages_count=messages_count,
-                               pending_refill_count=pending_refill_count
+                               pending_refill_count=pending_refill_count,
+                               pending_tests_count=pending_tests_count,
+                               completed_tests_count=completed_tests_count,
                                )
+    
+
+
     else:
         flash("You must be logged in as a doctor to view this page")
         return redirect(url_for('auth.login'))
@@ -107,7 +116,6 @@ def doctor_patients():
 @doctor_bp.route("/patients")
 @login_required
 def doctor_patientlist():
-    # Assuming `current_user` is a Doctor
     doctor = current_user.doctor
     patients = doctor.patients
     return render_template("doctor_patientlist.html", patients=patients)
@@ -186,7 +194,6 @@ def doctor_refills():
             ).order_by(PrescriptionRefillRequest.request_date.desc())
         ).scalars().all()
     
-        # return render_template("doctor_refills.html", doctor=doctor, refills=pending_refills)
         return render_template("doctor_refills.html", doctor=doctor, refill_requests=pending_refills, past_refills=past_refills )
     
     else:
@@ -239,11 +246,9 @@ def doctor_test_results():
         return redirect(url_for("auth.login"))
 
     doctor = current_user.doctor
-
-    # All patient IDs for this doctor
     doctor_patient_ids = [p.patient_id for p in doctor.patients]
 
-    # PENDING results
+    #pending results
     pending_results = db.session.execute(
         select(Test_Result)
         .where(
@@ -253,7 +258,7 @@ def doctor_test_results():
         .order_by(Test_Result.ordered_date.desc())
     ).scalars().all()
 
-    # COMPLETED results
+    # completed results
     completed_results = db.session.execute(
         select(Test_Result)
         .where(
@@ -290,7 +295,6 @@ def add_test_result():
     test_name = request.form.get("test_name")
     result_value = request.form.get("result_value")
     unit = request.form.get("unit_of_measure")
-    # reference_range = request.form.get("reference_range")
     notes = request.form.get("result_notes")
 
     new_test = Test_Result(
@@ -301,7 +305,6 @@ def add_test_result():
         result_time=datetime.now(),
         result_value=result_value,
         unit_of_measure=unit,
-        # reference_range=reference_range,
         result_notes=notes
     )
 
@@ -336,7 +339,6 @@ def update_test_result(test_id):
         test.unit_of_measure = request.form.get("unit_of_measure")
         test.reference_range = request.form.get("reference_range")
         test.result_notes = request.form.get("result_notes")
-        # test.test_status = request.form.get("test_status")
 
         new_status = request.form.get("test_status")
         if new_status:

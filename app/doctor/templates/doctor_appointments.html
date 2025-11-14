@@ -7,30 +7,7 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='doctor_styles.css') }}">
         <title>Doctor - Appointments</title>
     </head>
-    
-        <style>
-            .dashboard-container{
-                display:flex;
-                gap:25px;
-                margin-top:20px;
-                margin-left:30px
-            }
 
-            .dashboard-vertical{
-                flex:3;
-                display:flex;
-                flex-direction: column;
-                gap: 20px;
-            }
-
-            .quick-actions {
-                flex:1;
-                display:flex;
-                flex-direction: column;
-                gap:20px;
-            }
-
-        </style>
     <body>
     <header class="navbar-doctor">
         <div class="logo">
@@ -41,13 +18,12 @@
                 <div class="profile-icon"> 
                     <img id="admin-profile-icon" src="{{ url_for('static', filename='images/user.png') }}" alt="admin profile icon">
                 </div>
-                    <a href="{{ url_for('auth.login') }}">
+                    <a href="{{ url_for('auth.logout') }}">
                         <button class="logout-btn">Logout</button>
                     </a>
                 </div>
                 
             </div>
-        </div>
     </header>
 
     <div class="container">
