@@ -4,7 +4,7 @@ from ..database.models import (Patient_Login, Appointment, Patient, Message, Tes
                                TestStatus, Prescription, Billing, Doctor, PrescriptionRefillRequest, RefillStatus)
 from ..database.connection import db
 from sqlalchemy import select
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from utils.logger import log_event
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -89,6 +89,128 @@ def appointments():
                            upcoming_appointments=upcoming_appointments,
                            past_appointments=past_appointments,
                            doctors=doctors)  
+    else:
+        flash("You must be logged in to view this page")
+        return redirect(url_for('auth.login'))
+    
+@patient_bp.route("/patient/api/avaliable-slots")
+@login_required
+def available_slots():
+    if not current_user.is_authenticated and isinstance(current_user, Patient_Login):
+        return jsonify({"slots": []}), 403
+    
+    doctor_id = request.args.get("doctor_id", type=int)
+    date_str = request.args.get("date")
+    
+    if not doctor_id or not date_str:
+        return jsonify({"slots": []}), 400
+    
+    try:
+        selected_date = datetime.strptime(date_str, "%Y-%m-%d").date()
+    except ValueError:
+        return jsonify({"slots": []}), 400
+    
+    start_hour = 9
+    end_hour = 17
+    interval_minutes = 30
+    
+    slots = []
+    current_dt = datetime.combine(selected_date, datetime.min.time()).replace(hour=start_hour, minute=0)
+    end_dt = datetime.combine(selected_date, datetime.min.time()).replace(hour=end_hour, minute=0)
+    
+    while current_dt < end_dt:
+        existing = db.session.execute(
+            select(Appointment).where(Appointment.doctor_id == doctor_id,
+            Appointment.appointment_time == current_dt
+            )
+        ).scalar_one_or_none()
+        
+        if not existing and current_dt >= datetime.now():
+            slots.append(current_dt.strftime("%H:%M"))
+            
+        current_dt = current_dt + timedelta(minutes=interval_minutes)
+        
+    return jsonify({"slots": slots})
+
+@patient_bp.route("/patient/schedule-appointment", methods=["POST"])
+@login_required
+def schedule_appointment():
+    if current_user.is_authenticated and isinstance(current_user, Patient_Login):
+        doctor_id = request.form.get("doctor_id", type=int)
+        appointment_date_str = request.form.get("appointment_date")
+        appointment_time_str = request.form.get("appointment_time")
+        
+        
+        if not all ([doctor_id, appointment_date_str, appointment_time_str]):
+            flash("All fields are required to book an appointment", "error")
+            return redirect(url_for('patient.appointments'))
+        
+        try:
+            appointment_datetime = datetime.strptime(f"{appointment_date_str} {appointment_time_str}", "%Y-%m-%d %H:%M")
+        except ValueError:
+            flash("Invalid date or time format", "error")
+            return redirect(url_for('patient.appointments'))
+        
+        existing_appointment = db.session.execute(
+            select(Appointment).where(Appointment.doctor_id == doctor_id,
+            Appointment.appointment_time == appointment_datetime
+            )
+        ).scalar_one_or_none()
+        
+        if existing_appointment:
+            flash("This time slot is no longer available. Please select another time.", "warning")
+            return redirect(url_for('patient.appointments'))
+        
+        doctor = db.session.get(Doctor, doctor_id)
+        if not doctor:
+            flash("Doctor not found.", "danger")
+            return redirect(url_for('patient.appointments'))
+        
+        new_appointment = Appointment(
+            patient_id=current_user.patient_id,
+            doctor_id=doctor_id,
+            appointment_time=appointment_datetime,
+            clinic_name=f"CuraCloud Clinic - {doctor.city}",
+            state=doctor.state,
+            city=doctor.city 
+        )
+        
+        db.session.add(new_appointment)
+        db.session.commit()
+        
+        flash("Schedule appointment success", "success")
+        return redirect(url_for('patient.appointments'))
+    
+    else:
+        flash("You must be logged in to view this page")
+        return redirect(url_for('auth.login'))
+    
+@patient_bp.route("/patient/cancel-appointment/<int:appointment_id>", methods=["POST"])
+@login_required
+def cancel_appointment(appointment_id):
+    if current_user.is_authenticated and isinstance(current_user, Patient_Login):
+        patient = current_user.patient
+        
+        appointment = db.session.execute(
+            select(Appointment).where(Appointment.appointment_id == appointment_id,
+            Appointment.patient_id == patient.patient_id
+            )
+        ).scalar_one_or_none()
+        
+        if not appointment:
+            flash("Appointment not found.", "warning")
+            return redirect(url_for("patient.appointments"))
+
+        if appointment.appointment_time < datetime.now():
+            flash("You cannot cancel past appointments.", "warning")
+            return redirect(url_for("patient.appointments"))
+        
+        db.session.delete(appointment)
+        db.session.commit()
+        
+        flash("Appointment cancelled successfully.", "success")
+        return redirect(url_for('patient.appointments'))
+    
     else:
         flash("You must be logged in to view this page")
         return redirect(url_for('auth.login'))
