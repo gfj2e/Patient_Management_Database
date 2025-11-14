@@ -53,20 +53,29 @@
                     {% endfor %}
 
         {% for pid, msgs in grouped.items() %}
-            <div class="patient-message-group">
-                <h3 class="patient-name">{{ msgs[0].patient.first_name }} {{ msgs[0].patient.last_name }}</h3>
-                {% for msg in msgs %}
-                    <div class="message {{ 'sent' if msg.sender_type == 'doctor' else 'received' }}">
-                        <div class="bubble">
-                            <span class="label">
-                                {{ 'Sent' if msg.sender_type == 'doctor' else 'Received' }}
-                            </span>
-                            {{ msg.content }}
-                        </div>
+    <div class="patient-message-group">
+
+        <h3 class="patient-name" onclick="toggleMessages('{{ pid }}')">
+            <span class="arrow" id="arrow-{{ pid }}">►</span>
+            {{ msgs[0].patient.first_name }} {{ msgs[0].patient.last_name }}
+        </h3>
+
+        <div class="message-list" id="group-{{ pid }}" style="display:none;">
+            {% for msg in msgs %}
+                <div class="message {{ 'sent' if msg.sender_type == 'doctor' else 'received' }}">
+                    <div class="bubble">
+                        <span class="label">
+                            {{ 'Sent' if msg.sender_type == 'doctor' else 'Received' }}
+                        </span>
+                        {{ msg.content }}
                     </div>
-                {% endfor %}
-            </div>
-        {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+
+    </div>
+{% endfor %}
+
     {% else %}
         <p>You have no messages.</p>
     {% endif %}
@@ -100,5 +109,22 @@
     <div class="footer-doctor-page">
         <div>© Powered by Coin Flippers</div>
     </div>
+
+<script>
+function toggleMessages(pid) {
+    const group = document.getElementById("group-" + pid);
+    const arrow = document.getElementById("arrow-" + pid);
+
+    if (group.style.display === "none") {
+        group.style.display = "block";
+        arrow.textContent = "▼";
+    } else {
+        group.style.display = "none";
+        arrow.textContent = "►";
+    }
+}
+</script>
+
+
 </body>
 </html>
