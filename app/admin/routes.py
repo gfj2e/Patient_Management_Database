@@ -238,6 +238,14 @@ def edit_doctor(doctor_id):
         doctor.accepting_patients = bool(request.form.get("accepting_patients"))
 
         db.session.commit()
+
+        log_event(
+            "edit_doctor",
+            f"Edited doctor {doctor.first_name} {doctor.last_name}",
+            target_type="doctor",
+            target_id=doctor.doctor_id
+        )
+
         flash("Doctor information updated successfully!", "success")
 
     except Exception as e:
@@ -251,15 +259,16 @@ def edit_doctor(doctor_id):
 @admin_bp.route("/delete_doctor/<int:doctor_id>", methods=["POST"])
 def delete_doctor(doctor_id):
     doctor = db.get_or_404(Doctor, doctor_id)
-    db.session.delete(doctor)
-    db.session.commit()
 
     log_event(
-    "delete_doctor",
-    f"Deleted doctor {doctor.first_name} {doctor.last_name}",
-    target_type="doctor",
-    target_id=doctor.doctor_id
-)
+        "delete_doctor",
+        f"Deleted doctor {doctor.first_name} {doctor.last_name}",
+        target_type="doctor",
+        target_id=doctor.doctor_id
+    )
+
+    db.session.delete(doctor)
+    db.session.commit()
 
     flash("Doctor deleted successfully.", "info")
     return redirect(url_for("admin.admin_doctors"))

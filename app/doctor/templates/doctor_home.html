@@ -45,7 +45,7 @@
                 <div class="welcome-subtitle">Welcome to your CuraCloud Doctor Portal.</div>
             </div>
             
-            <!-- Side by side layout -->
+            <!-- side by side layout -->
             <div class="dashboard-container">
                 <div class="dashboard-vertical">
 
@@ -150,7 +150,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Add click handlers to action cards
             const actionCards = document.querySelectorAll('.action-card');
             actionCards.forEach(card => {
                 card.addEventListener('click', function() {
@@ -159,7 +158,6 @@
                 });
             });
             
-            // Add active state to menu items
             const menuItems = document.querySelectorAll('.side-menu a');
             menuItems.forEach(item => {
                 item.addEventListener('click', function(e) {
@@ -168,12 +166,10 @@
                 });
             });
             
-            // Add click handlers to dashboard card buttons
             const dashboardButtons = document.querySelectorAll('.dashboard-card .btn-primary-doctor');
             dashboardButtons.forEach(button => {
                 button.addEventListener('click', function() {
                     const cardHeader = this.closest('.dashboard-card').querySelector('.card-header-doctor').textContent;
-            //        (`Action for: ${cardHeadealertr}`);
                 });
             });
         });

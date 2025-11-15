@@ -29,6 +29,7 @@
     margin-bottom: 5px;
     border-radius: 10px;
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
 }
 
 /* // stuffs for patient list */
@@ -466,4 +467,76 @@
     border: 1px solic #ccc;
     padding: 10px;
     margin-bottom: 10px;
+}
+
+.doctor-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    font-size: 15px;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.doctor-table thead {
+    background: #002C85; 
+    color: white;
+}
+
+.doctor-table th {
+    padding: 12px 16px;
+    font-weight: bold;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.doctor-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #d6d6d6;
+}
+
+.doctor-table tbody tr:hover {
+    background: #f0f4ff;
+}
+
+.doctor-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.card-header-doctor {
+    background: #002C85;
+    color: white;
+    padding: 14px 18px;
+    font-weight: bold;
+    font-size: 18px;
+    border-radius: 8px;
+    margin-top: 25px;
+    margin-bottom: 10px;
+    display: inline-block;
+}
+
+.toggle-view-btn {
+    background: #f4f6ff;
+    color: #002C85;
+    border: 2px solid #002C85;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-right: 10px;
+    transition: all 0.2s ease-in-out;
+}
+
+.toggle-view-btn:hover {
+    background: #e6ecff;
+    border-color: #001e5c;
+}
+
+.toggle-view-btn.active {
+    background: #002C85;
+    color: white;
+    border-color: #002C85;
+    box-shadow: 0px 0px 8px rgba(0, 44, 133, 0.4);
 }

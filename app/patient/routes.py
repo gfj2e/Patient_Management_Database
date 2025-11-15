@@ -179,13 +179,28 @@ def schedule_appointment():
         db.session.add(new_appointment)
         db.session.commit()
 
+        log_event(
+            "appointment_scheduled",
+            f"Patient {current_user.id} scheduled appointment with doctor {doctor_id} at {appointment_datetime}",
+            target_type="appointment",
+            target_id=new_appointment.appointment_id
+        )
+
         # If this request includes an old appointment id, remove the old appointment (reschedule)
         if old_appointment_id:
+            log_event(
+                "appointment_rescheduled",
+                f"Patient {current_user.id} rescheduled appointment {old_appointment_id} to {new_appointment.appointment_id}",
+                target_type="appointment",
+                target_id=new_appointment.appointment_id
+            )
             try:
                 old_appt = db.session.get(Appointment, old_appointment_id)
                 if old_appt and old_appt.patient_id == current_user.patient_id:
                     db.session.delete(old_appt)
                     db.session.commit()
+
+
             except Exception as e:
                 db.session.rollback()
                 # log but do not fail the reschedule if deletion fails
@@ -221,6 +236,13 @@ def cancel_appointment(appointment_id):
         db.session.delete(appointment)
         db.session.commit()
         
+        log_event(
+            "appointment_cancelled",
+            f"Patient {current_user.id} cancelled appointment {appointment_id}",
+            target_type="appointment",
+            target_id=appointment_id
+        )
+
         flash("Appointment cancelled successfully.", "success")
         return redirect(url_for('patient.appointments'))
     

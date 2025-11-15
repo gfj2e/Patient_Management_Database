@@ -337,6 +337,14 @@ def add_test_result():
     db.session.add(new_test)
     db.session.commit()
 
+    log_event(
+        "test_result_added",
+        f"Doctor {doctor.doctor_id} added test result for patient {patient_id}",
+        target_type="patient",
+        target_id=patient_id
+    )
+
+
     flash("Test result added successfully!", "success")
     return redirect(url_for("doctor.doctor_test_results"))
 
@@ -344,6 +352,7 @@ def add_test_result():
 @doctor_bp.route("/doctor/test-results/update/<int:test_id>", methods=["GET", "POST"])
 @login_required
 def update_test_result(test_id):
+    doctor = current_user.doctor
     test = db.session.get(Test_Result, test_id)
     if not test:
         flash("Test result not found.", "danger")
@@ -374,6 +383,13 @@ def update_test_result(test_id):
                 test.result_time = datetime.now()
 
         db.session.commit()
+
+        log_event(
+            "test_result_updated",
+            f"Doctor {doctor.doctor_id} updated test result {test_id}",
+            target_type="test_result",
+            target_id=test_id
+        )
 
         flash("Test result updated!", "success")
         return redirect(url_for("doctor.doctor_test_results"))
@@ -428,6 +444,14 @@ def order_test():
 
     db.session.add(new_test)
     db.session.commit()
+
+    log_event(
+        "test_ordered",
+        f"Doctor {doctor.doctor_id} ordered test '{test_name}' for patient {patient_id}",
+        target_type="patient",
+        target_id=patient_id
+    )
+
 
     flash("Test has been ordered and appears in pending results.", "success")
     return redirect(url_for("doctor.doctor_test_results"))

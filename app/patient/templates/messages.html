@@ -54,12 +54,12 @@
         <div class="container">
             <div class="side-menu">
                 <ul>
-                    <li><a href="{{ url_for('patient.patient_home') }}" class="active">Home</a></li>
+                    <li><a href="{{ url_for('patient.patient_home') }}">Home</a></li>
                     <li><a href="{{ url_for('patient.appointments') }}">Appointments</a></li>
                     <li><a href="{{ url_for('patient.prescriptions') }}">Prescriptions</a></li>
                     <li><a href="{{ url_for('patient.billing') }}">Billing & Payments</a></li>
                     <li><a href="{{ url_for('patient.lab_results') }}">Lab Results</a></li>
-                    <li><a href="{{ url_for('patient.patient_messages') }}">Messages</a></li>
+                    <li><a href="{{ url_for('patient.patient_messages') }}" class="active">Messages</a></li>
                     <li><a href="{{ url_for('patient.patient_info') }}">My Health</a></li>
                 </ul>
             </div>

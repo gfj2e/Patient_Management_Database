@@ -1,292 +1,279 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="{{ url_for('static', filename='patient_styles.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='doctor_styles.css') }}">
-        <title>Doctor - Appointments</title>
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='patient_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='doctor_styles.css') }}">
+    <title>Doctor - Appointments</title>
+</head>
 
-    <body>
-    <header class="navbar-doctor">
-        <div class="logo">
-            <a href="{{ url_for('main.index') }}">CuraCloud</a>
-        </div>
-        <div class="nav-buttons">
-            <div class="right-header">
-                <div class="profile-icon"> 
-                    <img id="admin-profile-icon" src="{{ url_for('static', filename='images/user.png') }}" alt="admin profile icon">
-                </div>
-                    <a href="{{ url_for('auth.logout') }}">
-                        <button class="logout-btn">Logout</button>
-                    </a>
-                </div>
-                
+<body>
+
+<header class="navbar-doctor">
+    <div class="logo">
+        <a href="{{ url_for('main.index') }}">CuraCloud</a>
+    </div>
+    <div class="nav-buttons">
+        <div class="right-header">
+            <div class="profile-icon">
+                <img id="admin-profile-icon" src="{{ url_for('static', filename='images/user.png') }}" alt="admin profile icon">
             </div>
-    </header>
+            <a href="{{ url_for('auth.logout') }}">
+                <button class="logout-btn">Logout</button>
+            </a>
+        </div>
+    </div>
+</header>
 
-    <div class="container">
-        <div class="side-menu">
-            <ul>
-                <li><a href="{{ url_for('doctor.doctor_home') }}">Home</a></li>
-                <li><a href="{{ url_for('doctor.doctor_appointments') }}" class="active">Appointments</a></li>
-                <li><a href="{{ url_for('doctor.doctor_messages') }}">Messages</a></li>
-                <li><a href="{{ url_for('doctor.doctor_patients') }}">Patient List</a></li>
-                <li><a href="{{ url_for('doctor.doctor_refills') }}">Prescription Refill Requests</a></li>
-                <li><a href="{{ url_for('doctor.doctor_test_results') }}">Test Results</a></li>
-            </ul>
+<div class="container">
+    <div class="side-menu">
+        <ul>
+            <li><a href="{{ url_for('doctor.doctor_home') }}">Home</a></li>
+            <li><a href="{{ url_for('doctor.doctor_appointments') }}" class="active">Appointments</a></li>
+            <li><a href="{{ url_for('doctor.doctor_messages') }}">Messages</a></li>
+            <li><a href="{{ url_for('doctor.doctor_patients') }}">Patient List</a></li>
+            <li><a href="{{ url_for('doctor.doctor_refills') }}">Prescription Refill Requests</a></li>
+            <li><a href="{{ url_for('doctor.doctor_test_results') }}">Test Results</a></li>
+        </ul>
+    </div>
+
+    <div class="content">
+
+        <div class="welcome-section-doctor">
+            <div class="welcome-message">Appointments for Dr. {{ doctor.first_name }} {{ doctor.last_name }}</div>
+            <div class="welcome-subtitle">Manage your medical appointments.</div>
         </div>
 
-        <div class="content">
-            <div class="welcome-section-doctor">
-                <div class="welcome-message">Appointments for Dr. {{ doctor.first_name }} {{ doctor.last_name }}</div>
-                <div class="welcome-subtitle">Manage your medical appointments.</div>
-            </div>
+        <!-- view toggle buttons -->
+        <div class="view-toggle">
+            <button id="gridViewBtn" class="toggle-view-btn active">Grid View</button>
+            <button id="listViewBtn" class="toggle-view-btn">Column View</button>
+        </div>
 
-            <div class="dashboard-container">
+<!--grid view -->
+        <div id="gridView">
 
-
-                <div class="dashboard-vertical">
-
-    <!-- Today's Appointments -->
-    <!-- <div class="dashboard-card">
-        <div class="card-header-doctor">Today's Appointments</div>
-        <div class="card-content">
-            {% if todays_appointments %}
-            <table border="1" cellpadding="5" cellspacing="0">
-                <thead>
-                    <tr>
-                        <th>Time</th>
-                        <th>Patient Name</th>
-                        <th>Clinic</th>
-                        <th>City</th>
-                        <th>State</th>
-                    </tr>
-                </thead>
-                <tbody>
+            <!-- today -->
+            <div class="card-header-doctor">Today's Appointments</div>
+            <div class="appointments-grid">
+                {% if todays_appointments %}
                     {% for appt in todays_appointments %}
-                    <tr>
-                        <td>{{ appt.appointment_time.strftime("%H:%M") }}</td>
-                        <td>{{ appt.patient.first_name }} {{ appt.patient.last_name }}</td>
-                        <td>{{ appt.clinic_name }}</td>
-                        <td>{{ appt.city }}</td>
-                        <td>{{ appt.state }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            {% else %}
-            <p>No appointments today.</p>
-            {% endif %}
-        </div>
-    </div> -->
+                    <div class="flip-card">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">
+                                <h3>{{ appt.patient.first_name }} {{ appt.patient.last_name }}</h3>
+                                <p><strong>Date:</strong> {{ appt.appointment_time.strftime("%B %d, %Y") }}</p>
+                                <p><strong>Time:</strong> {{ appt.appointment_time.strftime("%I:%M %p") }}</p><br>
+                                <button class="btn-primary-doctor toggle-btn">Hover for Patient Details</button>
+                            </div>
 
-    <!-- Upcoming Appointments -->
-    <!-- <div class="dashboard-card">
-        <div class="card-header-doctor">Upcoming Appointments</div>
-        <div class="card-content">
-            {% if upcoming_appointments %}
-            <table border="1" cellpadding="5" cellspacing="0">
-                <thead>
-                    <tr>
-                        <th>Date & Time</th>
-                        <th>Patient Name</th>
-                        <th>Clinic</th>
-                        <th>City</th>
-                        <th>State</th>
-                    </tr>
-                </thead>
-                <tbody>
+                            <div class="flip-card-back">
+                                <h3>{{ appt.patient.first_name }} {{ appt.patient.last_name }}</h3>
+                                <p><strong>DOB:</strong> {{ appt.patient.dob.strftime("%Y-%m-%d") }}</p>
+                                <p><strong>Age:</strong> {{ appt.patient.age }}</p>
+                                <p><strong>Phone:</strong> {{ appt.patient.phone_number or "phone number missing" }}</p>
+                                <p><strong>Email:</strong> {{ appt.patient.email or "email missing" }}</p>
+                                <p><strong>Address:</strong> {{ appt.patient.address or "address missing" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No appointments today.</p>
+                {% endif %}
+            </div>
+
+            <!-- upcoming -->
+            <div class="card-header-doctor">Upcoming Appointments</div>
+            <div class="appointments-grid">
+                {% if upcoming_appointments %}
                     {% for appt in upcoming_appointments %}
-                    <tr>
-                        <td>{{ appt.appointment_time.strftime("%Y-%m-%d %H:%M") }}</td>
-                        <td>{{ appt.patient.first_name }} {{ appt.patient.last_name }}</td>
-                        <td>{{ appt.clinic_name }}</td>
-                        <td>{{ appt.city }}</td>
-                        <td>{{ appt.state }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            {% else %}
-            <p>No upcoming appointments.</p>
-            {% endif %}
-        </div>
-    </div> -->
+                    <div class="flip-card">
+                        <div class="flip-card-inner">
 
-    <!-- Past Appointments -->
-    <!-- <div class="dashboard-card">
-        <div class="card-header-doctor">Past Appointments</div>
-        <div class="card-content">
-            {% if past_appointments %}
-            <table border="1" cellpadding="5" cellspacing="0">
+                            <div class="flip-card-front">
+                                <h3>{{ appt.patient.first_name }} {{ appt.patient.last_name }}</h3>
+                                <p><strong>Date:</strong> {{ appt.appointment_time.strftime("%B %d, %Y") }}</p>
+                                <p><strong>Time:</strong> {{ appt.appointment_time.strftime("%I:%M %p") }}</p><br>
+                                <button class="btn-primary-doctor toggle-btn">Hover for Patient Details</button>
+                            </div>
+
+                            <div class="flip-card-back">
+                                <h3>{{ appt.patient.first_name }} {{ appt.patient.last_name }}</h3>
+                                <p><strong>DOB:</strong> {{ appt.patient.dob.strftime("%Y-%m-%d") }}</p>
+                                <p><strong>Age:</strong> {{ appt.patient.age }}</p>
+                                <p><strong>Phone:</strong> {{ appt.patient.phone_number or "phone number missing" }}</p>
+                                <p><strong>Email:</strong> {{ appt.patient.email or "email missing" }}</p>
+                                <p><strong>Address:</strong> {{ appt.patient.address or "address missing" }}</p>
+                            </div>
+
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No upcoming appointments.</p>
+                {% endif %}
+            </div>
+
+            <!-- past -->
+            <div class="card-header-doctor">Past Appointments</div>
+            <div class="appointments-grid">
+                {% if past_appointments %}
+                    {% for appt in past_appointments %}
+                    <div class="flip-card">
+                        <div class="flip-card-inner">
+
+                            <div class="flip-card-front">
+                                <h3>{{ appt.patient.first_name }} {{ appt.patient.last_name }}</h3>
+                                <p><strong>Date:</strong> {{ appt.appointment_time.strftime("%B %d, %Y") }}</p>
+                                <p><strong>Time:</strong> {{ appt.appointment_time.strftime("%I:%M %p") }}</p><br>
+                                <button class="btn-primary-doctor toggle-btn">Hover for Patient Details</button>
+                            </div>
+
+                            <div class="flip-card-back">
+                                <h3>{{ appt.patient.first_name }} {{ appt.patient.last_name }}</h3>
+                                <p><strong>DOB:</strong> {{ appt.patient.dob.strftime("%Y-%m-%d") }}</p>
+                                <p><strong>Age:</strong> {{ appt.patient.age }}</p>
+                                <p><strong>Phone:</strong> {{ appt.patient.phone_number or "phone number missing" }}</p>
+                                <p><strong>Email:</strong> {{ appt.patient.email or "email missing" }}</p>
+                                <p><strong>Address:</strong> {{ appt.patient.address or "address missing" }}</p>
+                            </div>
+
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No past appointments.</p>
+                {% endif %}
+            </div>
+
+        </div>
+
+<!--list view-->
+        <div id="listView" style="display:none">
+
+            <!-- today table -->
+            <div class="card-header-doctor">Today's Appointments</div>
+            {% if todays_appointments %}
+            <table class="doctor-table">
                 <thead>
                     <tr>
-                        <th>Date & Time</th>
-                        <th>Patient Name</th>
-                        <th>Clinic</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Patient</th>
                         <th>City</th>
                         <th>State</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for appt in past_appointments %}
+                {% for appt in todays_appointments %}
                     <tr>
-                        <td>{{ appt.appointment_time.strftime("%Y-%m-%d %H:%M") }}</td>
+                        <td>{{ appt.appointment_time.strftime("%B %d, %Y") }}</td>
+                        <td>{{ appt.appointment_time.strftime("%I:%M %p") }}</td>
                         <td>{{ appt.patient.first_name }} {{ appt.patient.last_name }}</td>
-                        <td>{{ appt.clinic_name }}</td>
                         <td>{{ appt.city }}</td>
                         <td>{{ appt.state }}</td>
                     </tr>
-                    {% endfor %}
+                {% endfor %}
                 </tbody>
             </table>
             {% else %}
-            <p>No past appointments.</p>
+                <p>No appointments today.</p>
+            {% endif %}
+
+            <br>
+
+            <!-- upcoming table -->
+            <div class="card-header-doctor">Upcoming Appointments</div>
+            {% if upcoming_appointments %}
+            <table class="doctor-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Patient</th>
+                        <th>City</th>
+                        <th>State</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for appt in upcoming_appointments %}
+                    <tr>
+                        <td>{{ appt.appointment_time.strftime("%B %d, %Y") }}</td>
+                        <td>{{ appt.appointment_time.strftime("%I:%M %p") }}</td>
+                        <td>{{ appt.patient.first_name }} {{ appt.patient.last_name }}</td>
+                        <td>{{ appt.city }}</td>
+                        <td>{{ appt.state }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+                <p>No upcoming appointments.</p>
+            {% endif %}
+
+            <br>
+
+            <!-- past table -->
+            <div class="card-header-doctor">Past Appointments</div>
+            {% if past_appointments %}
+            <table class="doctor-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Patient</th>
+                        <th>City</th>
+                        <th>State</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for appt in past_appointments %}
+                    <tr>
+                        <td>{{ appt.appointment_time.strftime("%B %d, %Y") }}</td>
+                        <td>{{ appt.appointment_time.strftime("%I:%M %p") }}</td>
+                        <td>{{ appt.patient.first_name }} {{ appt.patient.last_name }}</td>
+                        <td>{{ appt.city }}</td>
+                        <td>{{ appt.state }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+                <p>No past appointments.</p>
             {% endif %}
         </div>
-    </div> -->
-
-<!-- TODAY’S APPOINTMENTS -->
-<div class="card-header-doctor">Today's Appointments</div>
-<div class="appointments-grid">
-    {% if todays_appointments %}
-        {% for appt in todays_appointments %}
-        <div class="flip-card">
-            <div class="flip-card-inner">
-                
-                <!-- FRONT: Appointment Info -->
-                <div class="flip-card-front">
-                    <h3>{{ appt.patient.first_name }} {{ appt.patient.last_name }}</h3>
-                    <p><strong>Date:</strong> {{ appt.appointment_time.strftime("%B %d, %Y") }}</p>
-                    <p><strong>Time:</strong> {{ appt.appointment_time.strftime("%I:%M %p") }}</p><br>
-                    <button class="btn-primary-doctor toggle-btn">Hover for Patient Details</button>
-                </div>
-
-                <!-- BACK: Patient Info -->
-                <div class="flip-card-back">
-                    <h3 class="back-card-title">{{ appt.patient.first_name }} {{ appt.patient.last_name }}</h3>
-                    <p><strong>DOB:</strong> {{ appt.patient.dob.strftime("%Y-%m-%d") }}</p>
-                    <p><strong>Age:</strong> {{ appt.patient.age }}</p>
-                    <p><strong>Phone:</strong> {{ appt.patient.phone_number or "phone number missing" }}</p>
-                    <p><strong>Email:</strong> {{ appt.patient.email or "email missing" }}</p>
-                    <p><strong>Address:</strong> {{ appt.patient.address or "address missing" }}</p>
-                </div>
-
-            </div>
-        </div>
-        {% endfor %}
-    {% else %}
-        <p>No appointments today.</p>
-    {% endif %}
-</div>
-
-<!-- UPCOMING APPOINTMENTS -->
-<div class="card-header-doctor">Upcoming Appointments</div>
-<div class="appointments-grid">
-    {% if upcoming_appointments %}
-        {% for appt in upcoming_appointments %}
-        <div class="flip-card">
-            <div class="flip-card-inner">
-                
-                <!-- FRONT: Appointment Info -->
-                <div class="flip-card-front">
-                    <h3>{{ appt.patient.first_name }} {{ appt.patient.last_name }}</h3>
-                    <p><strong>Date:</strong> {{ appt.appointment_time.strftime("%B %d, %Y") }}</p>
-                    <p><strong>Time:</strong> {{ appt.appointment_time.strftime("%I:%M %p") }}</p><br>
-                    <button class="btn-primary-doctor toggle-btn">Hover for Patient Details</button>
-                </div>
-
-                <!-- BACK: Patient Info -->
-                <div class="flip-card-back">
-                    <h3 class="back-card-title">{{ appt.patient.first_name }} {{ appt.patient.last_name }}</h3>
-                    <p><strong>DOB:</strong> {{ appt.patient.dob.strftime("%Y-%m-%d") }}</p>
-                    <p><strong>Age:</strong> {{ appt.patient.age }}</p>
-                    <p><strong>Phone:</strong> {{ appt.patient.phone_number or "phone number missing" }}</p>
-                    <p><strong>Email:</strong> {{ appt.patient.email or "email missing" }}</p>
-                    <p><strong>Address:</strong> {{ appt.patient.address or "address missing" }}</p>
-                    <!-- <button class="btn-secondary toggle-btn">View Appointment Info</button> -->
-                </div>
-
-            </div>
-        </div>
-        {% endfor %}
-    {% else %}
-        <p>No upcoming appointments.</p>
-    {% endif %}
-</div>
-
-
-
-
-<!-- PAST APPOINTMENTS -->
-<div class="card-header-doctor">Past Appointments</div>
-<div class="appointments-grid">
-    {% if past_appointments %}
-        {% for appt in past_appointments %}
-        <div class="flip-card">
-            <div class="flip-card-inner">
-
-                <!-- FRONT: Appointment Info -->
-                <div class="flip-card-front">
-                    <h3>{{ appt.patient.first_name }} {{ appt.patient.last_name }}</h3>
-                    <p><strong>Date:</strong> {{ appt.appointment_time.strftime("%B %d, %Y") }}</p>
-                    <p><strong>Time:</strong> {{ appt.appointment_time.strftime("%I:%M %p") }}</p><br>
-                    <button class="btn-primary-doctor toggle-btn">Hover for Patient Details</button>
-                </div>
-
-                <!-- BACK: Patient Info -->
-                <div class="flip-card-back">
-                    <h3>{{ appt.patient.first_name }} {{ appt.patient.last_name }}</h3>
-                    <p><strong>DOB:</strong> {{ appt.patient.dob.strftime("%Y-%m-%d") }}</p>
-                    <p><strong>Age:</strong> {{ appt.patient.age }}</p>
-                    <p><strong>Phone:</strong> {{ appt.patient.phone_number or "phone number missing" }}</p>
-                    <p><strong>Email:</strong> {{ appt.patient.email or "email missing" }}</p>
-                    <p><strong>Address:</strong> {{ appt.patient.address or "address missing" }}</p>
-                </div>
-
-            </div>
-        </div>
-        {% endfor %}
-    {% else %}
-        <p>No past appointments.</p>
-    {% endif %}
-</div>
 
     </div>
 </div>
 
 
+<div class="footer-doctor-page">
+    <div>© Powered by Coin Flippers</div>
+</div>
 
+<script>
+    //toggle view
+    const gridBtn = document.getElementById("gridViewBtn");
+    const listBtn = document.getElementById("listViewBtn");
+    const grid = document.getElementById("gridView");
+    const list = document.getElementById("listView");
 
+    gridBtn.addEventListener("click", () => {
+        grid.style.display = "block";
+        list.style.display = "none";
+        gridBtn.classList.add("active");
+        listBtn.classList.remove("active");
+    });
 
-<!-- 
-                    <div class="quick-actions">
-                    <div class="action-card">
-                        <div class="action-icon">📅</div>
-                        <div>Schedule Appointment</div>
-                    </div>
-                    <div class="action-card">
-                        <div class="action-icon">🔄</div>
-                        <div>Reschedule</div>
-                    </div>
-                    <div class="action-card">
-                        <div class="action-icon">❌</div>
-                        <div>Cancel Appointment</div>
-                    </div>
-                    <div class="action-card">
-                        <div class="action-icon">💬</div>
-                        <div>Contact Office</div>
-                    </div> -->
+    listBtn.addEventListener("click", () => {
+        grid.style.display = "none";
+        list.style.display = "block";
+        listBtn.classList.add("active");
+        gridBtn.classList.remove("active");
+    });
+</script>
 
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="footer-doctor-page">
-        <div>© Powered by Coin Flippers</div>
-    </div>
-    </body>
+</body>
 </html>

@@ -27,10 +27,9 @@
     </div>
 </header>
 
-
 <div class="container">
 
-    <!-- SIDEBAR -->
+    <!-- sidebar -->
     <div class="side-menu">
         <ul>
             <li><a href="{{ url_for('doctor.doctor_home') }}">Home</a></li>
@@ -42,8 +41,7 @@
         </ul>
     </div>
 
-
-    <!-- CONTENT -->
+    <!-- content -->
     <div class="content">
 
         <div class="welcome-section-doctor">
@@ -54,8 +52,7 @@
         <button class="approve-btn" onclick="openAddTestModal()">+ Add New Test Result</button>
         <button class="approve-btn" onclick="openOrderTestModal()">+ Order New Test</button>
 
-
-        <!-- PENDING RESULTS -->
+        <!-- pending results -->
         <div class="card-header-doctor">Pending Test Results</div>
 
         {% if pending_results %}
@@ -96,9 +93,7 @@
             <p class="no-appointments-text">No pending test results.</p>
         {% endif %}
 
-
-
-        <!-- COMPLETED RESULTS -->
+        <!-- completed results -->
         <br>
         <div class="card-header-doctor">Completed Test Results</div>
 
@@ -163,12 +158,11 @@
 
 </div>
 
-
 <div class="footer-doctor-page">
     <div>© Powered by Coin Flippers</div>
 </div>
 
-<!-- Add Test Result Modal -->
+<!-- add test result modal -->
 <div id="addTestModal" class="modal-overlay">
     <div class="modal-box">
 
@@ -176,7 +170,7 @@
 
         <form method="POST" action="{{ url_for('doctor.add_test_result') }}">
 
-            <!-- Patient Dropdown -->
+            <!-- patient dropdown -->
             <label>Patient</label>
             <select name="patient_id" required>
                 {% for p in doctor.patients %}
@@ -186,7 +180,7 @@
                 {% endfor %}
             </select>
 
-            <!-- Test Name Dropdown -->
+            <!-- test name dropdown -->
             <label>Test Name</label>
             <select name="test_name" required>
                 {% for t in test_names %}
@@ -194,19 +188,19 @@
                 {% endfor %}
             </select>
 
-            <!-- Result Value -->
+            <!-- result value -->
             <label>Result Value</label>
             <input type="text" name="result_value" placeholder="ex., 6.8, 105 mg/dL">
 
-            <!-- Unit of Measure -->
+            <!-- unit of measure -->
             <!-- <label>Unit</label>
             <input type="text" name="unit_of_measure" placeholder="ex., mg/dL, mmol/L"> -->
 
-            <!-- Notes -->
+            <!-- notes -->
             <label>Notes</label>
             <textarea name="result_notes" rows="3"></textarea>
 
-            <!-- Date (Auto Now) -->
+            <!-- result date/time -->
             <label>Result Date/Time</label>
             <input type="datetime-local" name="result_time"
                    value="{{ current_time }}">
@@ -219,7 +213,7 @@
     </div>
 </div>
 
-<!-- Order Test Modal -->
+<!-- order test -->
 <div id="orderTestModal" class="modal-overlay">
     <div class="modal-box">
 
@@ -227,7 +221,7 @@
 
         <form method="POST" action="{{ url_for('doctor.order_test') }}">
 
-            <!-- Patient Dropdown -->
+            <!-- patient dropdown -->
             <label>Patient</label>
             <select name="patient_id" required>
                 {% for p in doctor.patients %}
@@ -237,7 +231,7 @@
                 {% endfor %}
             </select>
 
-            <!-- Test Name Dropdown -->
+            <!-- test name dropdown -->
             <label>Test Name</label>
             <select name="test_name" required>
                 {% for t in test_names %}
@@ -245,11 +239,11 @@
                 {% endfor %}
             </select>
 
-            <!-- Notes -->
+            <!-- notes -->
             <label>Notes</label>
             <textarea name="result_notes" rows="3"></textarea>
 
-            <!-- Ordered Date -->
+            <!-- ordered date -->
             <label>Ordered Date/Time</label>
             <input type="datetime-local" name="ordered_date"
                    value="{{ current_time }}">
@@ -263,7 +257,7 @@
     </div>
 </div>
 
-<!-- Edit Test Result Modal -->
+<!-- edit test result -->
 <div id="editTestModal" class="modal-overlay">
     <div class="modal-box">
 
@@ -271,27 +265,27 @@
 
         <form method="POST" id="editTestForm">
 
-            <!-- Test Name -->
+            <!-- test name -->
             <label>Test Name</label>
             <input type="text" name="test_name" id="edit_test_name" required>
 
-            <!-- Result Value -->
+            <!-- result value -->
             <label>Result Value</label>
             <input type="text" name="result_value" id="edit_result_value">
 
-            <!-- Unit -->
+            <!-- unit -->
             <label>Unit</label>
             <input type="text" name="unit_of_measure" id="edit_unit">
 
-            <!-- Reference Range -->
+            <!-- ref range -->
             <!-- <label>Reference Range</label>
             <input type="text" name="reference_range" id="edit_reference_range"> -->
 
-            <!-- Notes -->
+            <!-- notes -->
             <label>Notes</label>
             <textarea name="result_notes" id="edit_notes" rows="3"></textarea>
 
-            <!-- Status -->
+            <!-- status -->
             <label>Status</label>
             <select name="test_status" id="edit_status">
                 <option value="PENDING">Pending</option>
@@ -306,7 +300,6 @@
         </form>
     </div>
 </div>
-
 
 <script>
 
@@ -350,13 +343,6 @@ function openEditTestModal(testId) {
             document.getElementById("edit_notes").value = data.result_notes || "";
             document.getElementById("editTestForm").action = `/doctor/test-results/update/${testId}`;
 
-            // const statusSelect = document.getElementById("edit_status");
-            // if (data.test_status) {
-            //     statusSelect.value = data.test_status.toUpperCase();
-            // } else {
-            //     statusSelect.value = "COMPLETED";
-            // }
-
             const statusSelect = document.getElementById("edit_status");
             statusSelect.value = "COMPLETED";
 
@@ -376,8 +362,6 @@ window.addEventListener("click", function(e) {
 });
 
 </script>
-
-
 
 </body>
 </html>
