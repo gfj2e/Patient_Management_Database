@@ -600,14 +600,6 @@ body {
         }
 
 /* message stuff */
-.patient-message-group {
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    margin-bottom: 25px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-}
-
 .patient-name {
     font-size: 20px;
     color: #250046;
@@ -1429,10 +1421,6 @@ body {
     flex: 1;
 }
 
-.doctor-name {
-    font-weight: 600;
-}
-
 .doctor-specialty {
     font-size: 0.95em;
     color: #444;
@@ -1839,12 +1827,13 @@ body {
 
 /* dr name header (clickable) */
 .doctor-name {
-    font-size: 1.05rem;
+    font-size: 1.25rem;
     font-weight: 600;
     color: #1b2d50;
     display: flex;
     align-items: center;
     gap: 10px;
+    cursor: pointer;
 }
 
 /* arrow next to doctor name */
@@ -1889,4 +1878,20 @@ body {
     max-height: 250px; 
     overflow-y: auto;
     padding-right: 5px;
+}
+
+.patient-message-group,
+.doctor-message-group {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.timestamp {
+    font-size: 11px;
+    color: #777;
+    margin-top: 3px;
+    display: block;
 }

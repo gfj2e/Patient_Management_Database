@@ -140,6 +140,11 @@ function toggleMessages(pid) {
     if (group.style.display === "none") {
         group.style.display = "block";
         arrow.textContent = "▼";
+
+                setTimeout(() => {
+            group.scrollTop = group.scrollHeight;
+        }, 5);
+
     } else {
         group.style.display = "none";
         arrow.textContent = "►";

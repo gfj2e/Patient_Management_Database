@@ -119,7 +119,7 @@
 
                         <h3 class="doctor-name" onclick="toggleDoctorMessages('{{ did }}')">
                             <span class="arrow" id="arrow-{{ did }}">►</span>
-                            {{ msgs[0].doctor.first_name }} {{ msgs[0].doctor.last_name }}
+                            Dr. {{ msgs[0].doctor.first_name }} {{ msgs[0].doctor.last_name }}
                         </h3>
 
                         <div class="message-list" id="group-{{ did }}" style="display:none;">
@@ -152,7 +152,7 @@
                         <select name = "doctor_id" id  = "doctor_id" required>
                             {% for doctor in doctors %}
                                 <option value = "{{ doctor.doctor_id }}">
-                                    {{ doctor.first_name }} {{ doctor.last_name }}
+                                    Dr. {{ doctor.first_name }} {{ doctor.last_name }}
                                 </option>
                             {% endfor %}
                         </select>
@@ -194,6 +194,10 @@
         if (list.style.display === "none") {
             list.style.display = "block";
             arrow.textContent = "▼";
+            
+                        setTimeout(() => {
+            list.scrollTop = list.scrollHeight;
+        }, 5);
         } else {
             list.style.display = "none";
             arrow.textContent = "►";

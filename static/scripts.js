@@ -500,6 +500,8 @@ function sendMessage(){
     const text = input.value.trim();
     if (!text) return;
 
+    const timestamp = new Date().toISOString(); 
+
     // determine if this page is doctor or patient
     const isDoctor = (senderType === "doctor");
     const isPatient = (senderType === "patient");
@@ -532,7 +534,8 @@ function sendMessage(){
         message: text,
         sender_type: senderType,
         doctor_id: selectedDoctor,
-        patient_id : selectedPatient
+        patient_id : selectedPatient,
+        timestamp: timestamp
     });
 
     input.value = "";
@@ -548,8 +551,9 @@ function doctorNameFromDropdown(id) {
 
 // display incoming message
 socket.on("receive_message", (data) => {
-    console.log("Received message:", data);
 
+    console.log("Received message:", data);
+    const formattedTime = new Date(data.timestamp).toLocaleString();
     const userIsDoctor = (senderType === "doctor");
     const userIsPatient = (senderType === "patient");
 
@@ -591,6 +595,7 @@ if (userIsPatient) {
         <div class="bubble">
             <span class="label">${sender_type === "doctor" ? "Doctor" : "You"}</span>
             ${message}
+            <div class="timestamp">${formattedTime}</div>
         </div>
     `;
 
@@ -655,9 +660,11 @@ msgGroup.scrollTop = msgGroup.scrollHeight;
         <div class="bubble">
             <span class="label">${sender_type === "doctor" ? "Sent" : "Received"}</span>
             ${message}
+            <div class="timestamp">${formattedTime}</div>
         </div>
     `;
     messageList.appendChild(msgDiv);
+messageList.scrollTop = messageList.scrollHeight;
 
     if (messageList.style.display === "none") {
         messageList.style.display = "block";

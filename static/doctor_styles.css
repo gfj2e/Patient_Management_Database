@@ -250,11 +250,14 @@
 }
 
 .patient-name {
-    font-size: 20px;
-    color: #0a3096;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 8px;
-    margin-bottom: 15px;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1b2d50;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    text-decoration: none !important;
 }
 
 .send-message-section h3 {
@@ -542,7 +545,27 @@
 }
 
 .message-list {
-    max-height: 250px;     /* adjust size as needed */
+    max-height: 250px;    
     overflow-y: auto;
     padding-right: 5px;
+}
+
+.patient-message-group,
+.patient-name {
+    border-bottom: none !important;
+}
+
+.patient-message-group,
+.doctor-message-group {
+    background: white;
+    padding: 10px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.timestamp {
+    font-size: 11px;
+    color: #777;
+    margin-top: 3px;
+    display: block;
 }
