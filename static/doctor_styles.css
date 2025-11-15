@@ -540,3 +540,9 @@
     border-color: #002C85;
     box-shadow: 0px 0px 8px rgba(0, 44, 133, 0.4);
 }
+
+.message-list {
+    max-height: 250px;     /* adjust size as needed */
+    overflow-y: auto;
+    padding-right: 5px;
+}

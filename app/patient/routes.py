@@ -315,12 +315,20 @@ def lab_results():
 def patient_messages():
     patient = current_user.patient
     messages = patient.messages
+    assigned_doctors = patient.doctors #added this for full list of drs 
 
     # a patient can have multiple doctors through messages
-    doctor_ids = list({msg.doctor_id for msg in messages})
-    doctors = [Doctor.query.get(did) for did in doctor_ids]
+    # doctor_ids = list({msg.doctor_id for msg in messages})
+    # doctors = [Doctor.query.get(did) for did in doctor_ids]
 
-    active_doctor_id = doctor_ids[0] if doctor_ids else None
+    # active_doctor_id = doctor_ids[0] if doctor_ids else None
+
+    if assigned_doctors and len(assigned_doctors) > 0:
+        active_doctor_id = assigned_doctors[0].doctor_id
+    else:
+        doctor_ids_from_messages = list({msg.doctor_id for msg in messages})
+        assigned_doctors = [Doctor.query.get(did) for did in doctor_ids_from_messages]
+        active_doctor_id = doctor_ids_from_messages[0] if doctor_ids_from_messages else None
 
     # room ID uniquely identifies this patient for live chat
     room_id = None
@@ -331,7 +339,7 @@ def patient_messages():
         "messages.html",
         patient=patient,
         messages=messages,
-        doctors=doctors,
+        doctors=assigned_doctors, #added this for full list of drs 
         room_id=room_id,
         doctor_id=active_doctor_id,
         patient_id=patient.patient_id,

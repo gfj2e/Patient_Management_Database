@@ -70,7 +70,7 @@
                     <div class = "welcome-subtitle">View your doctors messages and notes!</div>
                 </div>    
 
-                <div class = "messages-container">
+                <!-- <div class = "messages-container">
                     {% if messages %}
                         {% set grouped = {} %}
                         {% for msg in messages %}
@@ -99,7 +99,52 @@
         {% else %}
             <p> You have no messages. </p>
         {% endif %}
+                </div> -->
+
+            <div class="messages-container">
+                <div id="chat-box">
+
+                    {% set grouped = {} %}
+                    {% for msg in messages %}
+                        {% set did = msg.doctor.doctor_id %}
+                        {% if grouped.setdefault(did, []) %}
+                            {% set _ = grouped[did].append(msg) %}
+                        {% else %}
+                            {% set _ = grouped.update({did: [msg]}) %}
+                        {% endif %}
+                    {% endfor %}
+
+                    {% for did, msgs in grouped.items() %}
+                    <div class="doctor-message-group" id="chat-{{ did }}">
+
+                        <h3 class="doctor-name" onclick="toggleDoctorMessages('{{ did }}')">
+                            <span class="arrow" id="arrow-{{ did }}">►</span>
+                            {{ msgs[0].doctor.first_name }} {{ msgs[0].doctor.last_name }}
+                        </h3>
+
+                        <div class="message-list" id="group-{{ did }}" style="display:none;">
+                            {% for msg in msgs %}
+                            <div class="message {{ 'sent' if msg.sender_type == 'patient' else 'received' }}">
+                                <div class="bubble">
+                                    <span class="label">
+                                        {{ 'Sent' if msg.sender_type == 'patient' else 'Doctor' }}
+                                    </span>
+                                    {{ msg.content }}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                    </div>
+                    {% endfor %}
+
+                    {% if not messages %}
+                        <p>You have no messages.</p>
+                    {% endif %}
+
                 </div>
+            </div>
+
                 <div class = "send-message-section">
                     <h3>Send a Message</h3>
                     <form onsubmit="event.preventDefault(); sendMessage();">
@@ -137,12 +182,26 @@
                 </div>
             </div>
         </div>
-        <script src = "https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-        <script src = "{{ url_for('static', filename = 'scripts.js') }}"></script>
-        <script>
-            if (roomId){
-                joinRoom(roomId);
-            }
-        </script>
+
+        <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<script src="{{ url_for('static', filename='scripts.js') }}"></script>
+
+<script>
+    function toggleDoctorMessages(did) {
+        const list = document.getElementById("group-" + did);
+        const arrow = document.getElementById("arrow-" + did);
+
+        if (list.style.display === "none") {
+            list.style.display = "block";
+            arrow.textContent = "▼";
+        } else {
+            list.style.display = "none";
+            arrow.textContent = "►";
+        }
+    }
+    const room = `room_${doctorId}_${patientId}`;
+    joinRoom(room);
+</script>
+
     </body>
 </html>

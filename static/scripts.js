@@ -520,7 +520,11 @@ function sendMessage(){
 
     // join room before sending
     const room = `room_${selectedDoctor}_${selectedPatient}`;
-    joinRoom(room);
+
+    if (currentRoom !== room) {
+        joinRoom(room);
+    }
+
 
     // emit socket event
     socket.emit("send_message", {
@@ -532,43 +536,135 @@ function sendMessage(){
     });
 
     input.value = "";
+    console.log("PATIENT SENDING → doctor:", selectedDoctor, "patient:", selectedPatient);
+
 }
+
+function doctorNameFromDropdown(id) {
+    const opt = document.querySelector(`#doctor_id option[value="${id}"]`);
+    return opt ? opt.textContent.trim() : "Unknown Doctor";
+}
+
 
 // display incoming message
 socket.on("receive_message", (data) => {
-    const wrapper = document.createElement("div");
-    wrapper.classList.add("message");
+    console.log("Received message:", data);
 
-    if(data.sender_type === senderType){
-        wrapper.classList.add("sent");
-    } else {
-        wrapper.classList.add("received");
+    const userIsDoctor = (senderType === "doctor");
+    const userIsPatient = (senderType === "patient");
+
+    const { message, sender_type, patient_id, doctor_id } = data;
+
+    // patientside
+if (userIsPatient) {
+
+    const doctorGroup = document.getElementById(`group-${doctor_id}`);
+    const doctorWrapper = document.getElementById(`chat-${doctor_id}`);
+
+    //create group if it doesnt exist
+    if (!doctorWrapper) {
+
+        const newGroup = document.createElement("div");
+        newGroup.className = "doctor-message-group";
+        newGroup.id = `chat-${doctor_id}`;
+
+        newGroup.innerHTML = `
+            <h3 class="doctor-name" onclick="toggleDoctorMessages('${doctor_id}')">
+                <span class="arrow" id="arrow-${doctor_id}">▼</span>
+                ${doctorNameFromDropdown(doctor_id)}
+            </h3>
+
+            <div class="message-list" id="group-${doctor_id}" style="display:block;"></div>
+        `;
+        const chatBox = document.getElementById("chat-box");
+
+        chatBox.prepend(newGroup);
     }
 
-    wrapper.innerHTML =`
-    <div class = "bubble">
-        <span class = "label">
-            ${data.sender_type === senderType ? "Sent" : "Received"}
-        </span>
-        ${data.message}
-    </div>
+    // add that msg to group
+    const msgGroup = document.getElementById(`group-${doctor_id}`);
+
+    const msgDiv = document.createElement("div");
+    msgDiv.className = `message ${sender_type === "doctor" ? "received" : "sent"}`;
+    
+    msgDiv.innerHTML = `
+        <div class="bubble">
+            <span class="label">${sender_type === "doctor" ? "Doctor" : "You"}</span>
+            ${message}
+        </div>
     `;
 
-    // doctor view (multiple patients)
-    if (senderType == "doctor"){
-        const patientChat = document.getElementById(`chat-${data.patient_id}`);
-        if (patientChat){
-            patientChat.appendChild(wrapper);
-            patientChat.scrollTop = patientChat.scrollHeight;
-            return;
+msgGroup.appendChild(msgDiv);
+
+// most recent 5 messages only
+const msgs = msgGroup.querySelectorAll(".message");
+if (msgs.length > 5) {
+    //hide older ones, show last 5
+    msgs.forEach((m, i) => {
+        if (i < msgs.length - 5) {
+            m.style.display = "none";   // older messages hidden but  scrollable
+        } else {
+            m.style.display = "flex";
         }
+    });
+}
+
+// auto-open group if it's collapsed
+const wrapper = document.getElementById(`chat-${doctor_id}`);
+const arrow = document.getElementById(`arrow-${doctor_id}`);
+
+if (msgGroup.style.display === "none") {
+    msgGroup.style.display = "block";
+    if (arrow) arrow.textContent = "▼";
+}
+
+    chatBox.prepend(doctorWrapper);
+
+// scroll to bottom
+msgGroup.scrollTop = msgGroup.scrollHeight;
+
+}
+
+    // doctor side 
+    const pid = patient_id;
+    let groupWrapper = document.getElementById(`chat-${pid}`);
+
+    if (!groupWrapper) {
+        const patientName = document.querySelector(`#patient_id option[value="${pid}"]`).textContent;
+
+        groupWrapper = document.createElement("div");
+        groupWrapper.className = "patient-message-group";
+        groupWrapper.id = `chat-${pid}`;
+
+        groupWrapper.innerHTML = `
+            <h3 class="patient-name" onclick="toggleMessages('${pid}')">
+                <span class="arrow" id="arrow-${pid}">►</span>
+                ${patientName}
+            </h3>
+            <div class="message-list" id="group-${pid}" style="display:none;"></div>
+        `;
+
+        document.querySelector(".messages-container").prepend(groupWrapper);
     }
 
-    // patient view (single doctor)
-    const container = document.querySelector(".messages-container");
-    container.appendChild(wrapper);
-    container.scrollTop = container.scrollHeight;
+    const messageList = document.getElementById(`group-${pid}`);
+    const msgDiv = document.createElement("div");
+
+    msgDiv.className = `message ${sender_type === "doctor" ? "sent" : "received"}`;
+    msgDiv.innerHTML = `
+        <div class="bubble">
+            <span class="label">${sender_type === "doctor" ? "Sent" : "Received"}</span>
+            ${message}
+        </div>
+    `;
+    messageList.appendChild(msgDiv);
+
+    if (messageList.style.display === "none") {
+        messageList.style.display = "block";
+        document.getElementById(`arrow-${pid}`).textContent = "▼";
+    }
 });
+
 
 // Cancel / Reschedule modal handlers 
 function openCancelModal() {
