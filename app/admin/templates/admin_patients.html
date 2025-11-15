@@ -34,7 +34,8 @@
                 <li><a href="{{ url_for('admin.admin_patients') }}" class="active">Patients</a></li>
                 <li><a href="{{ url_for('admin.admin_doctors') }}">Doctors</a></li>
                 <li><a href="{{ url_for('admin.admin_billing') }}">Billing</a></li>
-                              <li><a href="{{ url_for('admin.system_logs') }}">System Logs</a></li>
+                <li><a href="{{ url_for('admin.admin_appointments') }}">Appointments</a></li>
+                <li><a href="{{ url_for('admin.system_logs') }}">System Logs</a></li>
             </ul>
         </div>
 
@@ -44,39 +45,6 @@
                 <div class="welcome-subtitle">View and manage all registered patients.</div>
             </div>
 
-
-            <!-- <div class="add-doctor-section">
-                <h3>Add New Patient</h3>
-                <form method="POST" action="{{ url_for('admin.add_patient') }}">
-                    <input type="text" name="first_name" placeholder="First Name" required>
-                    <input type="text" name="last_name" placeholder="Last Name" required>
-                    <input type="email" name="email" placeholder="Email" required>
-                    <input type="text" name="phone_number" placeholder="Phone">
-                    <input type="date" name="dob" placeholder="Date of Birth" required>
-                    <select name="gender" required>
-                        <option value="">Gender</option>
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                        <option value="Other">Other</option>
-                    </select>
-
-                    <div class="dropdown-checkbox">
-                        <button type="button" class="dropdown-btn">Select Doctor(s)</button>
-                        <div class="dropdown-content">
-                            {% for doctor in doctors %}
-                            <label>
-                                <input type="checkbox" name="doctor_ids" value="{{ doctor.doctor_id }}">
-                                Dr. {{ doctor.first_name }} {{ doctor.last_name }} — {{ doctor.specialty }}
-                            </label>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    <input type="text" name="address" placeholder="Address">
-                    <button type="submit" class="btn-primary-admin">Add Patient</button>
-                </form>
-            </div> -->
-
-
             <div class="add-patient-header">
                 <button class="btn-primary-admin" id="openAddModal">+ Add Patient</button>
             </div>
@@ -85,18 +53,17 @@
 
             <div class="dashboard-container">
                 <div class="dashboard-vertical">
-                    <!-- <div class="card-section-header">All Registered Patients</div> -->
 
                     {% if patients %}
                     <div class="table-container">
                         <table class="billing-table">
                             <thead>
                                 <tr>
-                                    <th>Patient ID</th>
-                                    <th>Full Name</th>
+                                    <th>ID</th>
+                                    <th>Name</th>
                                     <th>Email</th>
                                     <th>Phone</th>
-                                    <th>Date of Birth</th>
+                                    <th>DOB</th>
                                     <th>Doctor Assigned</th>
                                     <th>Gender</th>
                                     <th>Address</th>
@@ -164,6 +131,7 @@
     <div id="editModal" class="modal-overlay">
         <div class="modal-content">
             <h3>Edit Patient Information</h3>
+            <div class="modal-header-line"></div>
             <form id="editForm" method="POST">
                 <input type="hidden" name="patient_id" id="edit-id">
                 <input type="text" name="first_name" id="edit-first" placeholder="First Name" required>
@@ -171,6 +139,7 @@
                 <input type="email" name="email" id="edit-email" placeholder="Email" required>
                 <input type="text" name="phone_number" id="edit-phone" placeholder="Phone Number">
                 <input type="date" name="dob" id="edit-dob" required>
+                <input type="text" name="address" id="edit-address" placeholder="Address">
                 <select name="gender" id="edit-gender" required>
                     <option value="">Select Gender</option>
                     <option value="Male">Male</option>
@@ -192,7 +161,6 @@
                     </div>
                     
                 </div>
-                <input type="text" name="address" id="edit-address" placeholder="Address">
 
                 <div class="modal-buttons">
                     <button type="submit" class="btn-primary-admin">Save Changes</button>
@@ -206,13 +174,15 @@
     <div id="addModal" class="modal-overlay">
     <div class="modal-content">
         <h3>Add New Patient</h3>
+        <div class="modal-header-line"></div>
+
         <form id="addForm" method="POST" action="{{ url_for('admin.add_patient') }}">
             <input type="text" name="first_name" placeholder="First Name" required>
             <input type="text" name="last_name" placeholder="Last Name" required>
             <input type="email" name="email" placeholder="Email" required>
             <input type="text" name="phone_number" placeholder="Phone">
             <input type="date" name="dob" placeholder="Date of Birth" required>
-
+            <input type="text" name="address" placeholder="Address">
             <select name="gender" required>
                 <option value="">Gender</option>
                 <option value="Male">Male</option>
@@ -231,9 +201,6 @@
                     {% endfor %}
                 </div>
             </div>
-
-            <input type="text" name="address" placeholder="Address">
-
             <div class="modal-buttons">
                 <button type="submit" class="btn-primary-admin">Add Patient</button>
                 <button type="button" class="btn-secondary-admin" id="closeAddModal">Cancel</button>

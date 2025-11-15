@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='patient_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin_styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <title>Admin – Appointments</title>
+</head>
+<body>
+
+<header class="navbar-admin">
+    <div class="logo">
+        <a href="{{ url_for('main.index') }}">CuraCloud</a>
+    </div>
+    <div class="nav-buttons">
+        <div class="right-header">
+            <div class="profile-icon">
+                <img src="{{ url_for('static', filename='images/user.png') }}" alt="Admin Icon">
+            </div>
+            <a href="{{ url_for('auth.logout') }}">
+                <button class="logout-btn">Logout</button>
+            </a>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+
+    <!-- Sidebar -->
+    <div class="side-menu">
+        <ul>
+            <li><a href="{{ url_for('admin.admin_home') }}">Home</a></li>
+            <li><a href="{{ url_for('admin.admin_patients') }}">Patients</a></li>
+            <li><a href="{{ url_for('admin.admin_doctors') }}">Doctors</a></li>
+            <li><a href="{{ url_for('admin.admin_billing') }}">Billing</a></li>
+            <li><a href="{{ url_for('admin.admin_appointments') }}" class="active">Appointments</a></li>
+            <li><a href="{{ url_for('admin.system_logs') }}">System Logs</a></li>
+        </ul>
+    </div>
+
+    <!--main-->
+    <div class="content">
+
+        <div class="welcome-section-admin">
+            <div class="welcome-message">Appointment Schedule</div>
+            <div class="welcome-subtitle">View and manage all appointments.</div>
+        </div>
+
+        <div class="add-patient-header">
+            <button class="btn-primary-admin" id="openAddAppointmentModal">+ Add Appointment</button>
+        </div>
+
+        <div class="dashboard-container">
+            <div class="dashboard-vertical">
+
+                {% if appointments %}
+                <div class="table-container">
+                    <table class="billing-table">
+                        <thead>
+                            <tr>
+                                <th class="sortable" data-sort="id">ID</th>
+                                <th class="sortable" data-sort="datetime">Date/Time</th>
+                                <th class="sortable" data-sort="patient">Patient</th>
+                                <th class="sortable" data-sort="doctor">Doctor</th>
+                                <th class="sortable" data-sort="clinic">Clinic</th>
+                                <th class="sortable" data-sort="location">Location</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                        {% for appt in appointments %}
+                        <tr>
+                            <td>{{ appt.appointment_id }}</td>
+
+                            <td>{{ appt.appointment_time.strftime("%B %d, %Y %I:%M %p") }}</td>
+
+                            <td>{{ appt.patient.first_name }} {{ appt.patient.last_name }}</td>
+
+                            <td>Dr. {{ appt.doctor.first_name }} {{ appt.doctor.last_name }}</td>
+
+                            <td>{{ appt.clinic_name }}</td>
+                            <td>{{ appt.city }}, {{ appt.state }}</td>
+
+                            <td class="action-cell">
+
+                                <!-- edit -->
+                                <button class="icon-btn edit-btn"
+                                    data-id="{{ appt.appointment_id }}"
+                                    data-patient="{{ appt.patient_id }}"
+                                    data-doctor="{{ appt.doctor_id }}"
+                                    data-datetime="{{ appt.appointment_time.strftime('%Y-%m-%dT%H:%M') }}"
+                                    data-clinic="{{ appt.clinic_name }}"
+                                    data-city="{{ appt.city }}"
+                                    data-state="{{ appt.state }}">
+                                    <i class="fa fa-pen"></i>
+                                </button>
+
+                                <!-- delete -->
+                                <form method="POST"
+                                      action="{{ url_for('admin.delete_appointment', appointment_id=appt.appointment_id) }}"
+                                      onsubmit="return confirm('Delete appointment?');">
+
+                                    <button type="submit" class="icon-btn delete-btn">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </form>
+
+                            </td>
+                        </tr>
+                        {% endfor %}
+
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                    <p>No appointments found.</p>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--add appt-->
+<div id="addAppointmentModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3>Add Appointment</h3>
+        <div class="modal-header-line"></div>
+
+        <form method="POST" action="{{ url_for('admin.add_appointment') }}">
+
+            <select name="patient_id" required>
+                <option value="">Select Patient</option>
+                {% for p in patients %}
+                <option value="{{ p.patient_id }}">{{ p.first_name }} {{ p.last_name }}</option>
+                {% endfor %}
+            </select>
+
+            <select name="doctor_id" required>
+                <option value="">Select Doctor</option>
+                {% for d in doctors %}
+                <option value="{{ d.doctor_id }}">Dr. {{ d.first_name }} {{ d.last_name }}</option>
+                {% endfor %}
+            </select>
+
+            <input type="datetime-local" name="appointment_time" required>
+
+            <input type="text" name="clinic_name" placeholder="Clinic Name" required>
+            <input type="text" name="city" placeholder="City" required>
+            <input type="text" name="state" placeholder="State" required>
+
+            <div class="modal-buttons">
+                <button type="submit" class="btn-primary-admin">Add</button>
+                <button type="button" class="btn-secondary-admin" id="closeAddAppointmentModal">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!--edit appt-->
+<div id="editAppointmentModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3>Edit Appointment</h3>
+        <div class="modal-header-line"></div>
+
+        <form id="editAppointmentForm" method="POST">
+
+            <select name="patient_id" id="edit-patient" required>
+                {% for p in patients %}
+                <option value="{{ p.patient_id }}">{{ p.first_name }} {{ p.last_name }}</option>
+                {% endfor %}
+            </select>
+
+            <select name="doctor_id" id="edit-doctor" required>
+                {% for d in doctors %}
+                <option value="{{ d.doctor_id }}">Dr. {{ d.first_name }} {{ d.last_name }}</option>
+                {% endfor %}
+            </select>
+
+            <input type="datetime-local" name="appointment_time" id="edit-datetime" required>
+
+            <input type="text" name="clinic_name" id="edit-clinic" required>
+            <input type="text" name="city" id="edit-city" required>
+            <input type="text" name="state" id="edit-state" required>
+
+            <div class="modal-buttons">
+                <button type="submit" class="btn-primary-admin">Save</button>
+                <button type="button" class="btn-secondary-admin" id="closeEditAppointmentModal">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    const addModal = document.getElementById("addAppointmentModal");
+    document.getElementById("openAddAppointmentModal").onclick =
+        () => addModal.style.display = "flex";
+    document.getElementById("closeAddAppointmentModal").onclick =
+        () => addModal.style.display = "none";
+
+    const editModal = document.getElementById("editAppointmentModal");
+    const editForm = document.getElementById("editAppointmentForm");
+
+    document.querySelectorAll(".edit-btn").forEach(btn => {
+        btn.onclick = () => {
+            document.getElementById("edit-patient").value = btn.dataset.patient;
+            document.getElementById("edit-doctor").value = btn.dataset.doctor;
+            document.getElementById("edit-datetime").value = btn.dataset.datetime;
+            document.getElementById("edit-clinic").value = btn.dataset.clinic;
+            document.getElementById("edit-city").value = btn.dataset.city;
+            document.getElementById("edit-state").value = btn.dataset.state;
+
+            editForm.action = `/edit_appointment/${btn.dataset.id}`;
+
+            editModal.style.display = "flex";
+        };
+    });
+
+    document.getElementById("closeEditAppointmentModal").onclick =
+        () => editModal.style.display = "none";
+
+    window.onclick = (e) => {
+        if (e.target === addModal) addModal.style.display = "none";
+        if (e.target === editModal) editModal.style.display = "none";
+    };
+
+});
+//sorting
+document.querySelectorAll(".sortable").forEach(header => {
+    header.addEventListener("click", () => {
+        const table = header.closest("table");
+        const tbody = table.querySelector("tbody");
+        const rows = Array.from(tbody.querySelectorAll("tr"));
+        const sortType = header.dataset.sort;
+
+        let direction = header.classList.contains("sort-asc") ? "desc" : "asc";
+
+        document.querySelectorAll(".sortable").forEach(h => h.classList.remove("sort-asc", "sort-desc"));
+
+        header.classList.add(direction === "asc" ? "sort-asc" : "sort-desc");
+
+        rows.sort((a, b) => {
+            const A = a.children[header.cellIndex].innerText.trim();
+            const B = b.children[header.cellIndex].innerText.trim();
+
+            switch (sortType) {
+                case "id":
+                    return direction === "asc"
+                        ? Number(A) - Number(B)
+                        : Number(B) - Number(A);
+
+                case "datetime":
+                    return direction === "asc"
+                        ? new Date(A) - new Date(B)
+                        : new Date(B) - new Date(A);
+
+                case "patient":
+                case "doctor":
+                case "clinic":
+                case "location":
+                    return direction === "asc"
+                        ? A.localeCompare(B)
+                        : B.localeCompare(A);
+            }
+        });
+        rows.forEach(row => tbody.appendChild(row));
+    });
+});
+</script>
+
+<div class="footer">
+    <div>© Powered by Coin Flippers</div>
+</div>
+
+</body>
+</html>

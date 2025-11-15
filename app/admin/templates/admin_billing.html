@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Billing Management</title>
+
     <link rel="stylesheet" href="{{ url_for('static', filename='patient_styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='admin_styles.css') }}">
-
 </head>
 
 <body>
+
 <header class="navbar-admin">
     <div class="logo">
         <a href="{{ url_for('main.index') }}">CuraCloud</a>
@@ -19,6 +20,7 @@
             <div class="profile-icon">
                 <img id="admin-profile-icon" src="{{ url_for('static', filename='images/user.png') }}" alt="Admin profile">
             </div>
+
             <a href="{{ url_for('auth.logout') }}">
                 <button class="logout-btn">Logout</button>
             </a>
@@ -27,84 +29,135 @@
 </header>
 
 <div class="container">
+
+    <!-- Sidebar -->
     <div class="side-menu">
         <ul>
             <li><a href="{{ url_for('admin.admin_home') }}">Home</a></li>
             <li><a href="{{ url_for('admin.admin_patients') }}">Patients</a></li>
             <li><a href="{{ url_for('admin.admin_doctors') }}">Doctors</a></li>
             <li><a href="{{ url_for('admin.admin_billing') }}" class="active">Billing</a></li>
+            <li><a href="{{ url_for('admin.admin_appointments') }}">Appointments</a></li>
             <li><a href="{{ url_for('admin.system_logs') }}">System Logs</a></li>
         </ul>
     </div>
 
+    <!-- Main Content -->
     <div class="content">
+
         <div class="welcome-section-admin">
             <div class="welcome-message">Billing Overview</div>
             <div class="welcome-subtitle">View and manage all billing records.</div>
         </div>
 
-<div class="add-doctor-section">
-  <h3>Add New Billing Entry</h3>
-  <form method="POST" action="{{ url_for('admin.add_billing') }}">
-      <select name="patient_id" required>
-          <option value="">Select Patient</option>
-          {% for patient in patients %}
-              <option value="{{ patient.patient_id }}">{{ patient.first_name }} {{ patient.last_name }}</option>
-          {% endfor %}
-      </select>
+        <!-- Add Billing Button -->
+        <div class="add-billing-header">
+            <button class="btn-primary-admin" id="openAddBillingModal">+ Add Billing</button>
+        </div>
 
-      <input type="number" step="0.01" name="amount" placeholder="Amount ($)" required>
-      <input type="date" name="billing_date" required>
-      <input type="text" name="notes" placeholder="Notes" required>
-      <button type="submit" class="btn-primary-admin">Add Billing</button>
-  </form>
-</div>
-
-
-
-        <!-- <div class="card-section-header">Billing Records</div> -->
+        <!-- Billing Records Table -->
         <table class="billing-table">
             <thead>
                 <tr>
-                    <th>Billing ID</th>
+                    <th>ID</th>
                     <th>Patient Name</th>
                     <th>Date</th>
                     <th>Amount</th>
+                    <th>Insurance</th>
                     <th>Notes</th>
-
                 </tr>
             </thead>
-            <tbody>
-    {% if billing_records %}
-        {% for bill in billing_records %}
-        <tr>
-            <td>{{ bill.billing_id }}</td>
-                        <td>
-                {% if bill.patient %}
-                    {{ bill.patient.first_name }} {{ bill.patient.last_name }}
-                {% else %}
-                    Unknown
-                {% endif %}
-            </td>
-            <td>{{ bill.billing_date.strftime("%B %d, %Y") }}</td>
-            <td>{{ "%.2f"|format(bill.billing_amount) }}</td>
-            <td>{{ bill.notes }}</td>
 
-        </tr>
-        {% endfor %}
-    {% else %}
-        <tr>
-            <td colspan="5" style="text-align:center;">No billing records found.</td>
-        </tr>
-    {% endif %}
+ <tbody>
+{% for bill in billing_records %}
+<tr>
+    <td>{{ bill.billing_id }}</td>
+
+    <td>
+        {% if bill.patient %}
+            {{ bill.patient.first_name }} {{ bill.patient.last_name }}
+        {% else %}
+            Unknown
+        {% endif %}
+    </td>
+
+    <td>{{ bill.billing_date.strftime("%B %d, %Y") }}</td>
+
+    <td>${{ "%.2f"|format(bill.billing_amount) }}</td>
+
+    <td>
+{% if bill.patient.insurance|length > 0 %}
+    {{ bill.patient.insurance[0].primary_insurance }}
+{% else %}
+    Self-Pay
+{% endif %}
+
+    </td>
+
+    <td>{{ bill.notes }}</td>
+</tr>
+{% endfor %}
 </tbody>
 
         </table>
     </div>
 </div>
 
+
+<!-- ADD BILLING MODAL -->
+<div id="addBillingModal" class="modal-overlay">
+    <div class="modal-content">
+
+        <h3>Add Billing Entry</h3>
+        <div class="modal-header-line"></div>
+
+        <form method="POST" action="{{ url_for('admin.add_billing') }}">
+
+            <select name="patient_id" required>
+                <option value="">Select Patient</option>
+                {% for patient in patients %}
+                    <option value="{{ patient.patient_id }}">{{ patient.first_name }} {{ patient.last_name }}</option>
+                {% endfor %}
+            </select>
+
+            <input type="number" step="0.01" name="amount" placeholder="Amount ($)" required>
+            <input type="date" name="billing_date" required>
+            <input type="text" name="notes" placeholder="Notes" required>
+
+            <div class="modal-buttons">
+                <button type="submit" class="btn-primary-admin">Add Billing</button>
+                <button type="button" class="btn-secondary-admin" id="closeAddBillingModal">Cancel</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+
+<!-- JS FOR BILLING MODAL -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    const billingModal = document.getElementById("addBillingModal");
+    const openBtn = document.getElementById("openAddBillingModal");
+    const closeBtn = document.getElementById("closeAddBillingModal");
+
+    openBtn.onclick = () => billingModal.style.display = "flex";
+    closeBtn.onclick = () => billingModal.style.display = "none";
+
+    // Close by clicking outside
+    window.addEventListener("click", (e) => {
+        if (e.target === billingModal) {
+            billingModal.style.display = "none";
+        }
+    });
+
+});
+</script>
+
 <div class="footer">
     <div>© Powered by Coin Flippers</div>
 </div>
+
 </body>
 </html>

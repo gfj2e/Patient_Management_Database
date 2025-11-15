@@ -1,7 +1,7 @@
 import uuid
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
-from ..database.models import Admin_Login, Patient, Doctor, Billing
+from ..database.models import Admin_Login, Patient, Doctor, Billing, Appointment, Insurance
 from ..database.connection import db
 from sqlalchemy import select, func
 from app.database.seed import SPECIALTIES
@@ -24,23 +24,11 @@ def admin_home():
             "admin_home.html",
             patients_count=patients_count,
             doctors_count=doctors_count,
-            # billing_pending_count=billing_pending_count,
             billing_total_count=billing_total_count
         )
     else:
         flash("You must be logged in as an admin to view this page.")
         return redirect(url_for("auth.login"))
-
-# @admin_bp.route("/admin/patients")
-# @login_required
-# def admin_patients():
-#     if current_user.is_authenticated and isinstance(current_user, Admin_Login):
-#         patients = db.session.execute(select(Patient)).scalars().all()
-#         doctors = db.session.execute(select(Doctor)).scalars().all()
-#         return render_template("admin_patients.html", patients=patients, doctors=doctors)
-#     else:
-#         flash("You must be logged in as an admin to view this page.")
-#         return redirect(url_for("auth.login"))
 
 @admin_bp.route("/admin/patients")
 @login_required
@@ -53,50 +41,6 @@ def admin_patients():
     doctors = Doctor.query.all()
 
     return render_template("admin_patients.html", patients=patients, doctors=doctors)
-
-
-# @admin_bp.route("/add_patient", methods=["POST"])
-# def add_patient():
-#     first_name = request.form["first_name"]
-#     last_name = request.form["last_name"]
-#     email = request.form.get("email")
-#     phone = request.form.get("phone_number")
-#     gender = request.form.get("gender")
-#     address = request.form.get("address")
-#     last_patient = db.session.execute(select(Patient).order_by(Patient.patient_id.desc())).scalar()
-#     next_id = (last_patient.patient_id + 1) if last_patient else 1
-#     patient_code = f"P{next_id:04d}"
-#     dob_str = request.form.get("dob")
-#     dob = datetime.strptime(dob_str, "%Y-%m-%d").date()
-#     today = date.today()
-#     age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
-#     height = 0
-#     marriage_status = "Single"
-#     race = "OTHER_MIXED"
-#     #default_doctor = Doctor.query.first()
-#     default_doctor = db.session.execute(select(Doctor).order_by(db.func.rand())).scalar()
-#     doctor_id = default_doctor.doctor_id if default_doctor else None
-
-#     new_patient = Patient(
-#         patient_code=patient_code,
-#         first_name=first_name,
-#         last_name=last_name,
-#         email=email,
-#         phone_number=phone,
-#         dob=dob,
-#         age=age,
-#         gender=gender,
-#         address=address,
-#         height=height,
-#         marriage_status=marriage_status,
-#         race=race,
-#         doctor_id=doctor_id
-#     )
-
-#     db.session.add(new_patient)
-#     db.session.commit()
-#     flash("Patient added successfully!", "success")
-#     return redirect(url_for("admin.admin_patients"))
 
 @admin_bp.route("/add_patient", methods=["POST"])
 @login_required
@@ -359,3 +303,106 @@ def system_logs():
     ).scalars().all()
 
     return render_template("admin_logs.html", logs=logs)
+
+@admin_bp.route("/admin/appointments")
+@login_required
+def admin_appointments():
+    if not (current_user.is_authenticated and isinstance(current_user, Admin_Login)):
+        flash("You must be logged in as an admin to view appointments.")
+        return redirect(url_for("auth.login"))
+
+    appointments = Appointment.query.options(
+        db.joinedload(Appointment.patient),
+        db.joinedload(Appointment.doctor)
+    ).all()
+
+    patients = Patient.query.all()
+    doctors = Doctor.query.all()
+
+    return render_template(
+        "admin_appointments.html",
+        appointments=appointments,
+        patients=patients,
+        doctors=doctors
+    )
+
+@admin_bp.route("/add_appointment", methods=["POST"])
+@login_required
+def add_appointment():
+    patient_id = request.form.get("patient_id")
+    doctor_id = request.form.get("doctor_id")
+    appointment_time = request.form.get("appointment_time")
+    clinic = request.form.get("clinic_name")
+    city = request.form.get("city")
+    state = request.form.get("state")
+
+    if not all([patient_id, doctor_id, appointment_time, clinic, city, state]):
+        flash("All fields are required.", "danger")
+        return redirect(url_for("admin.admin_appointments"))
+
+    new_appt = Appointment(
+        patient_id=patient_id,
+        doctor_id=doctor_id,
+        appointment_time=datetime.strptime(appointment_time, "%Y-%m-%dT%H:%M"),
+        clinic_name=clinic,
+        city=city,
+        state=state
+    )
+
+    db.session.add(new_appt)
+    db.session.commit()
+
+    log_event(
+        "add_appointment",
+        f"Added appointment for patient {patient_id}",
+        target_type="appointment",
+        target_id=new_appt.appointment_id
+    )
+
+    flash("Appointment added successfully!", "success")
+    return redirect(url_for("admin.admin_appointments"))
+
+@admin_bp.route("/edit_appointment/<int:appointment_id>", methods=["POST"])
+@login_required
+def edit_appointment(appointment_id):
+
+    appt = Appointment.query.get_or_404(appointment_id)
+
+    appt.patient_id = request.form.get("patient_id")
+    appt.doctor_id = request.form.get("doctor_id")
+    appt.appointment_time = datetime.strptime(
+        request.form.get("appointment_time"), "%Y-%m-%dT%H:%M"
+    )
+    appt.clinic_name = request.form.get("clinic_name")
+    appt.city = request.form.get("city")
+    appt.state = request.form.get("state")
+
+    db.session.commit()
+
+    log_event(
+        "edit_appointment",
+        f"Edited appointment {appointment_id}",
+        target_type="appointment",
+        target_id=appointment_id
+    )
+
+    flash("Appointment updated successfully!", "success")
+    return redirect(url_for("admin.admin_appointments"))
+
+@admin_bp.route("/delete_appointment/<int:appointment_id>", methods=["POST"])
+@login_required
+def delete_appointment(appointment_id):
+
+    appt = Appointment.query.get_or_404(appointment_id)
+    db.session.delete(appt)
+    db.session.commit()
+
+    log_event(
+        "delete_appointment",
+        f"Deleted appointment {appointment_id}",
+        target_type="appointment",
+        target_id=appointment_id
+    )
+
+    flash("Appointment deleted.", "info")
+    return redirect(url_for("admin.admin_appointments"))

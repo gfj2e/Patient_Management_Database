@@ -36,6 +36,7 @@
             <li><a href="{{ url_for('admin.admin_patients') }}">Patients</a></li>
             <li><a href="{{ url_for('admin.admin_doctors') }}" class="active">Doctors</a></li>
             <li><a href="{{ url_for('admin.admin_billing') }}">Billing</a></li>
+            <li><a href="{{ url_for('admin.admin_appointments') }}">Appointments</a></li>
             <li><a href="{{ url_for('admin.system_logs') }}">System Logs</a></li>
         </ul>
     </div>
@@ -63,7 +64,7 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Full Name</th>
+                                <th>Name</th>
                                 <th>Specialty</th>
                                 <th>Email</th>
                                 <th>Phone</th>
@@ -129,6 +130,7 @@
 <div id="addDoctorModal" class="modal-overlay">
     <div class="modal-content">
         <h3>Add Doctor</h3>
+<div class="modal-header-line"></div>
 
         <form method="POST" action="{{ url_for('admin.add_doctor') }}">
 
@@ -147,13 +149,10 @@
             <input type="text" name="city" placeholder="City" required>
             <input type="text" name="state" placeholder="State" required>
 
-<div class="form-row full-width checkbox-wrapper">
-    <label class="checkbox-label">
-        <input type="checkbox" name="accepting_patients">
-        Accepting New Patients
-    </label>
-</div>
-
+            <label class="checkbox-label">
+                <input type="checkbox" name="accepting_patients">
+                Accepting New Patients
+            </label>
 
             <div class="modal-buttons">
                 <button type="submit" class="btn-primary-admin">Add</button>
@@ -167,7 +166,8 @@
 <!-- Edit Doctor Modal -->
 <div id="editDoctorModal" class="modal-overlay">
     <div class="modal-content">
-        <h3>Edit Doctor</h3>
+        <h3>Edit Doctor Information</h3>
+<div class="modal-header-line"></div>
 
         <form id="editDoctorForm" method="POST">
             <input type="text" name="first_name" id="edit-first" required>
