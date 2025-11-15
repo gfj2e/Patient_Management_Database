@@ -47,45 +47,51 @@
                 <div class="welcome-subtitle">View all messages from patients.</div>
             </div>
 
-            <div class="messages-container">
-                {% if messages %}
-                    {% set grouped = {} %}
-                    {% for msg in messages %}
-                        {% set patient_id = msg.patient.patient_id %}
-                        {% if grouped.setdefault(patient_id, []) %}
-                            {% set _ = grouped[patient_id].append(msg) %}
-                        {% else %}
-                            {% set grouped = grouped.update({patient_id: [msg]}) %}
-                        {% endif %}
+        <div class="messages-container">
+
+        {% if messages %}
+
+        {% set grouped = namespace(data={}) %}
+
+        {% for msg in messages %}
+            {% set pid = msg.patient.patient_id %}
+            {% if pid not in grouped.data %}
+                {% set _ = grouped.data.update({ pid: [msg] }) %}
+            {% else %}
+                {% set _ = grouped.data[pid].append(msg) %}
+            {% endif %}
+        {% endfor %}
+
+
+        {% for pid, msgs in grouped.data.items() %}
+            <div class="patient-message-group" id="chat-{{ pid }}">
+
+                <h3 class="patient-name" onclick="toggleMessages('{{ pid }}')">
+                    <span class="arrow" id="arrow-{{ pid }}">►</span>
+                    {{ msgs[0].patient.first_name }} {{ msgs[0].patient.last_name }}
+                </h3>
+
+                <div class="message-list" id="group-{{ pid }}" style="display:none;">
+                    {% for msg in msgs %}
+                        <div class="message {{ 'sent' if msg.sender_type == 'doctor' else 'received' }}">
+                            <div class="bubble">
+                                <span class="label">
+                                    {{ 'Sent' if msg.sender_type == 'doctor' else 'Received' }}
+                                </span>
+                                {{ msg.content }}
+                            </div>
+                        </div>
                     {% endfor %}
-
-        {% for pid, msgs in grouped.items() %}
-    <div class="patient-message-group" id = "chat-{{ pid }}">
-
-        <h3 class="patient-name" onclick="toggleMessages('{{ pid }}')">
-            <span class="arrow" id="arrow-{{ pid }}">►</span>
-            {{ msgs[0].patient.first_name }} {{ msgs[0].patient.last_name }}
-        </h3>
-
-        <div class="message-list" id="group-{{ pid }}" style="display:none;">
-            {% for msg in msgs %}
-                <div class="message {{ 'sent' if msg.sender_type == 'doctor' else 'received' }}">
-                    <div class="bubble">
-                        <span class="label">
-                            {{ 'Sent' if msg.sender_type == 'doctor' else 'Received' }}
-                        </span>
-                        {{ msg.content }}
-                    </div>
                 </div>
-            {% endfor %}
-        </div>
-    </div>
-{% endfor %}
 
-    {% else %}
-        <p>You have no messages.</p>
-    {% endif %}
-</div>
+            </div>
+        {% endfor %}
+
+        {% else %}
+            <p>You have no messages.</p>
+        {% endif %}
+        </div>
+
 
 <div class="send-message-section">
     <h3>Send a Message</h3>

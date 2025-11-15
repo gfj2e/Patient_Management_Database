@@ -59,6 +59,8 @@ Then open your browser and go to:
 ```text
 http://127.0.0.1:5000
 ```
+To view live messaging between Doctor and Patient, open second window in Chrome Incognito Mode or other private window mode, or use secondary browser. 
+
 ## Login Credentials
 
 Usernames and passwords for testing are located in:
