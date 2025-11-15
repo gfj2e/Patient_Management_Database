@@ -102,7 +102,6 @@
                 </div>
                 <div class = "send-message-section">
                     <h3>Send a Message</h3>
-                    <!-- <form method = "POST" action = "{{ url_for('patient.send_message') }}"> -->
                     <form onsubmit="event.preventDefault(); sendMessage();">
                         <label for = "doctor_id">Select Doctor:</label>
                         <select name = "doctor_id" id  = "doctor_id" required>
@@ -141,7 +140,6 @@
         <script src = "https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
         <script src = "{{ url_for('static', filename = 'scripts.js') }}"></script>
         <script>
-            // const roomdId = "{{ room_id }}"
             if (roomId){
                 joinRoom(roomId);
             }

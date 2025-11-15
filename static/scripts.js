@@ -309,9 +309,6 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     }
-<<<<<<< Updated upstream
-});
-=======
 });
 
 // set by HTML template on load
@@ -399,4 +396,3 @@ socket.on("receive_message", (data) => {
     container.appendChild(wrapper);
     container.scrollTop = container.scrollHeight;
 });
->>>>>>> Stashed changes

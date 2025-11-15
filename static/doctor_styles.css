@@ -399,7 +399,6 @@
     justify-content: center;
 }
 
-<<<<<<< Updated upstream
 /* Modal overlay */
 .modal-overlay {
     position: fixed;
@@ -461,7 +460,6 @@
     margin-right: 8px;
     color: #00218d;
 }
-=======
 .chat-box {
     height: 300px;
     overflow-y: auto;
@@ -469,4 +467,3 @@
     padding: 10px;
     margin-bottom: 10px;
 }
->>>>>>> Stashed changes

@@ -9,7 +9,6 @@
 
     <script>
         const senderType = "doctor";
-        // const senderId = {{ doctor.doctor_id }};
         const roomId = "{{ room_id | default('') }}";
         const doctorId = "{{doctor.doctor_id }}";
         const patientId = "{{ patient_id | default('null') }}";
@@ -61,8 +60,7 @@
                     {% endfor %}
 
         {% for pid, msgs in grouped.items() %}
-<<<<<<< Updated upstream
-    <div class="patient-message-group">
+    <div class="patient-message-group" id = "chat-{{ pid }}">
 
         <h3 class="patient-name" onclick="toggleMessages('{{ pid }}')">
             <span class="arrow" id="arrow-{{ pid }}">►</span>
@@ -77,23 +75,10 @@
                             {{ 'Sent' if msg.sender_type == 'doctor' else 'Received' }}
                         </span>
                         {{ msg.content }}
-=======
-            <div class="patient-message-group" id = "chat-{{ pid }}">
-                <h3 class="patient-name">{{ msgs[0].patient.first_name }} {{ msgs[0].patient.last_name }}</h3>
-                {% for msg in msgs %}
-                    <div class="message {{ 'sent' if msg.sender_type == 'doctor' else 'received' }}">
-                        <div class="bubble">
-                            <span class="label">
-                                {{ 'Sent' if msg.sender_type == 'doctor' else 'Received' }}
-                            </span>
-                            {{ msg.content }}
-                        </div>
->>>>>>> Stashed changes
                     </div>
                 </div>
             {% endfor %}
         </div>
-
     </div>
 {% endfor %}
 
@@ -104,7 +89,6 @@
 
 <div class="send-message-section">
     <h3>Send a Message</h3>
-    <!-- <form method="POST" action="{{ url_for('doctor.send_message') }}"> -->
     <form onsubmit="event.preventDefault(); sendMessage();">
         <label for="patient_id">Select Patient:</label>
         <select name="patient_id" id="patient_id" required>
@@ -141,7 +125,6 @@
     <div class="footer-doctor-page">
         <div>© Powered by Coin Flippers</div>
     </div>
-<<<<<<< Updated upstream
 
 <script>
 function toggleMessages(pid) {
@@ -159,7 +142,6 @@ function toggleMessages(pid) {
 </script>
 
 
-=======
     <script src = "https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script src = "{{ url_for('static', filename = 'scripts.js') }}"></script>
     <script>
@@ -168,6 +150,5 @@ function toggleMessages(pid) {
             joinRoom(roomId);
         }
     </script>
->>>>>>> Stashed changes
 </body>
 </html>
