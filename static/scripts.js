@@ -1,6 +1,8 @@
 let selectedPrescriptionId = null;
 let selectedMedicationName = null;
 let selectedDosage = null;
+let selectedAppointmentId = null;
+let selectedAppointmentDetails = null;
 
 function openRefillModal(){
     document.getElementById('prescription-refill-popup').setAttribute('aria-hidden', 'false');
@@ -18,7 +20,7 @@ function resetSelection(){
     selectedMedicationName = null;
 
     const options = document.querySelectorAll('.prescription-option');
-    options.forEach(option => options.classList.remove('selected'));
+    options.forEach(option => option.classList.remove('selected'));
 
     // Hide selected prescrip info
     document.getElementById('selected-prescription-info').setAttribute('aria-hidden', 'true');
@@ -55,11 +57,47 @@ function submitRefillRequest() {
         alert('Please select a medication first.');
         return;
     }
-    alert(`Refill request submitted for ${selectedMedicationName} - ${selectedDosage}`);
-    
-    
-    
-    closeRefillModal();
+
+    // Show loading state
+    const submitBtn = document.getElementById('submitRefillBtn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Submitting....'
+
+    // Send request to server
+    fetch('/request_refill', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `prescription_id=${selectedPrescriptionId}&notes=`
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if(data.success){
+            alert(`Refill request submitted for ${selectedMedicationName} - ${selectedDosage}`);
+            
+            // Close modal and reload page to show the new refill request
+            closeRefillModal();
+            setTimeout(() => {
+                window.location.reload();
+            }, 500);
+        } else {
+            alert('Error: ' + (data.message || 'Unknown error occurred'));
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Request Refill';
+        }
+    })
+    .catch(error => {
+        console.error('Error submitting refill:', error);
+        alert('An error occurred while submitting the refill request: ' + error.message);
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Request Refill';
+    });
 }
 
 function openContactModal() {
@@ -83,9 +121,33 @@ window.onclick = function(event) {
     }
 }
 
+// Schedule Appointment Modal Functions
+function openScheduleModal() {
+    const modal = document.getElementById('schedule-appointment-modal');
+    if (modal) {
+        modal.setAttribute('aria-hidden', 'false');
+        // Reset form
+        document.getElementById('doctor-select').value = '';
+        document.getElementById('date-select').value = '';
+        document.getElementById('date-select').disabled = true;
+        document.getElementById('time-select').innerHTML = '<option value="" disabled selected>-- Select a date first --</option>';
+        document.getElementById('time-select').disabled = true;
+        document.getElementById('submit-appointment-btn').disabled = true;
+    }
+}
+
+function closeScheduleModal() {
+    const modal = document.getElementById('schedule-appointment-modal');
+    if (modal) {
+        modal.setAttribute('aria-hidden', 'true');
+    }
+}
+
+
 document.addEventListener('DOMContentLoaded', function() {
     const refillCloseBtn = document.querySelector('[id="prescription-refill-popup"] .close');
     const refillCancelBtn = document.querySelector('[id="prescription-refill-popup"] .modal-btn-cancel');
+    
     
     if (refillCloseBtn) {
         refillCloseBtn.addEventListener('click', closeRefillModal);
@@ -241,11 +303,11 @@ window.addEventListener('click', function(event) {
 });
 
 document.addEventListener("DOMContentLoaded", function() {
-    // Ensure download modal is closed on page load
     const downloadModal = document.getElementById('downloadModal');
     if (downloadModal) {
         downloadModal.style.display = 'none';
     }
+    
     
     const modal = document.getElementById("editModal");
     const closeModal = document.getElementById("closeModal");
@@ -309,7 +371,118 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     }
+    // Schedule Modal Functionality
+    const scheduleModal = document.getElementById('schedule-appointment-modal');
+    const openScheduleBtn = document.getElementById('open-schedule-modal-btn');
+    const closeScheduleBtn = document.getElementById('close-schedule-modal');
+    const cancelScheduleBtn = document.getElementById('cancel-schedule-btn');
+
+    const doctorSelect = document.getElementById('doctor-select');
+    const dateSelect = document.getElementById('date-select');
+    const timeSelect = document.getElementById('time-select');
+    const submitAppointmentBtn = document.getElementById('submit-appointment-btn');
+
+    if (openScheduleBtn) {
+        openScheduleBtn.addEventListener('click', openScheduleModal);
+    }
+    if (closeScheduleBtn) {
+        closeScheduleBtn.addEventListener('click', closeScheduleModal);
+    }
+    if (cancelScheduleBtn) {
+        cancelScheduleBtn.addEventListener('click', closeScheduleModal);
+    }
+
+    // Close schedule modal when clicking outside
+    window.addEventListener('click', function(event) {
+        if (event.target === scheduleModal) {
+            closeScheduleModal();
+        }
+    });
+
+    // Set min date to today
+    if (dateSelect) {
+        const today = new Date().toISOString().split('T')[0];
+        dateSelect.setAttribute('min', today);
+    }
+
+    function fetchAvailableSlots() {
+        const doctorId = doctorSelect.value;
+        const selectedDate = dateSelect.value;
+
+        if (!doctorId || !selectedDate) {
+            return;
+        }
+
+        timeSelect.innerHTML = '<option>Loading...</option>';
+        timeSelect.disabled = true;
+        submitAppointmentBtn.disabled = true;
+
+        fetch(`/patient/api/available-slots?doctor_id=${doctorId}&date=${selectedDate}`)
+            .then(response => response.json())
+            .then(data => {
+                timeSelect.innerHTML = '';
+                if (data.slots && data.slots.length > 0) {
+                    timeSelect.disabled = false;
+                    timeSelect.innerHTML = '<option value="" disabled selected>-- Select a time --</option>';
+                    data.slots.forEach(slot => {
+                        const option = document.createElement('option');
+                        option.value = slot;
+                        const displayTime = new Date(`1970-01-01T${slot}:00`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                        option.textContent = displayTime;
+                        timeSelect.appendChild(option);
+                    });
+                } else {
+                    timeSelect.innerHTML = '<option>No available slots on this day</option>';
+                    timeSelect.disabled = true;
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching slots:', error);
+                timeSelect.innerHTML = '<option>Error loading times</option>';
+                timeSelect.disabled = true;
+            });
+    }
+
+    if (doctorSelect) {
+        doctorSelect.addEventListener('change', function() {
+            if (this.value) {
+                dateSelect.disabled = false;
+            } else {
+                dateSelect.disabled = true;
+                timeSelect.disabled = true;
+            }
+            dateSelect.value = '';
+            timeSelect.innerHTML = '<option value="" disabled selected>-- Select a date first --</option>';
+            submitAppointmentBtn.disabled = true;
+        });
+    }
+
+    if (dateSelect) {
+        dateSelect.addEventListener('change', fetchAvailableSlots);
+    }
+
+    if (timeSelect) {
+        timeSelect.addEventListener('change', function() {
+            submitAppointmentBtn.disabled = !this.value;
+        });
+    }
+
+    // Quick Actions Integration
+    document.querySelectorAll('.action-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+            const action = this.querySelector('div:last-child').textContent.trim();
+            if (action === 'Schedule Appointment') {
+                openScheduleModal();
+            } else if (action === 'Reschedule') {
+                // open the reschedule picker modal
+                openReschedulePickerModal();
+            } else if (action === 'Cancel Appointment') {
+                openCancelModal();
+            }
+        });
+    });
 });
+
 
 // set by HTML template on load
 const socket = io();
@@ -396,3 +569,216 @@ socket.on("receive_message", (data) => {
     container.appendChild(wrapper);
     container.scrollTop = container.scrollHeight;
 });
+
+// Cancel / Reschedule modal handlers 
+function openCancelModal() {
+    const modal = document.getElementById('cancel-appointment-modal');
+    if (modal) modal.setAttribute('aria-hidden', 'false');
+}
+
+function closeCancelModal() {
+    const modal = document.getElementById('cancel-appointment-modal');
+    if (modal) modal.setAttribute('aria-hidden', 'true');
+}
+
+function openReschedulePickerModal() {
+    const modal = document.getElementById('reschedule-picker-modal');
+    if (modal) modal.setAttribute('aria-hidden', 'false');
+}
+
+function closeReschedulePickerModal() {
+    const modal = document.getElementById('reschedule-picker-modal');
+    if (modal) modal.setAttribute('aria-hidden', 'true');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Cancel modal buttons
+    const closeCancel = document.getElementById('close-cancel-modal');
+    const cancelCloseBtn = document.getElementById('cancel-cancel-btn');
+    const confirmCancelBtn = document.getElementById('confirm-cancel-btn');
+
+    if (closeCancel) closeCancel.addEventListener('click', closeCancelModal);
+    if (cancelCloseBtn) cancelCloseBtn.addEventListener('click', closeCancelModal);
+
+    if (confirmCancelBtn) {
+        confirmCancelBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (!selectedAppointmentId) {
+                alert('Please select an appointment to cancel.');
+                return;
+            }
+
+            confirmCancelBtn.disabled = true;
+            confirmCancelBtn.textContent = 'Cancelling...';
+
+            fetch(`/patient/cancel-appointment/${selectedAppointmentId}`, {
+                method: 'POST'
+            })
+            .then(() => window.location.reload())
+            .catch(err => {
+                console.error('Error cancelling appointment', err);
+                alert('Error cancelling appointment');
+                confirmCancelBtn.disabled = false;
+                confirmCancelBtn.textContent = 'Cancel Appointment';
+            });
+        });
+    }
+
+    // Reschedule modal buttons
+    const closeReschedule = document.getElementById('close-reschedule-modal');
+    const closeReschedulePickerBtn = document.getElementById('close-reschedule-picker-btn');
+    const startRescheduleBtn = document.getElementById('start-reschedule-btn');
+
+    if (closeReschedule) closeReschedule.addEventListener('click', closeReschedulePickerModal);
+    if (closeReschedulePickerBtn) closeReschedulePickerBtn.addEventListener('click', closeReschedulePickerModal);
+
+    if (startRescheduleBtn) {
+        startRescheduleBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (!selectedAppointmentId) {
+                alert('Please select an appointment to reschedule.');
+                return;
+            }
+
+            // find the selected option element
+            const opt = document.querySelector(`#reschedule-appointment-options .prescription-option.selected`);
+            if (!opt) {
+                alert('Please select an appointment to reschedule.');
+                return;
+            }
+
+            const apptId = opt.getAttribute('data-appointment-id');
+            const doctorId = opt.getAttribute('data-doctor-id');
+            const apptDate = opt.getAttribute('data-date');
+            const apptTime = opt.getAttribute('data-time');
+
+            const doctorSelect = document.getElementById('doctor-select');
+            const dateSelect = document.getElementById('date-select');
+            const timeSelect = document.getElementById('time-select');
+            const oldIdInput = document.getElementById('old_appointment_id');
+
+            if (doctorSelect) {
+                doctorSelect.value = doctorId;
+                dateSelect.disabled = false;
+            }
+
+            if (dateSelect) {
+                dateSelect.value = apptDate;
+            }
+
+            if (typeof fetchAvailableSlots === 'function') {
+                fetchAvailableSlots();
+                setTimeout(() => {
+                    if (timeSelect) {
+                        try { timeSelect.value = apptTime; } catch (e) {}
+                    }
+                }, 600);
+            }
+
+            if (oldIdInput) {
+                oldIdInput.value = apptId;
+            }
+
+            closeReschedulePickerModal();
+            openScheduleModal();
+        });
+    }
+});
+
+function cancelSelectedAppointment() {
+    const confirmBtn = document.getElementById('confirm-cancel-btn');
+    if (!selectedAppointmentId) {
+        alert('Please select an appointment to cancel.');
+        return;
+    }
+
+    if (confirmBtn) {
+        confirmBtn.disabled = true;
+        confirmBtn.textContent = 'Cancelling...';
+    }
+
+    fetch(`/patient/cancel-appointment/${selectedAppointmentId}`, { method: 'POST' })
+        .then(() => window.location.reload())
+        .catch(err => {
+            console.error('Error cancelling appointment', err);
+            alert('Error cancelling appointment');
+            if (confirmBtn) {
+                confirmBtn.disabled = false;
+                confirmBtn.textContent = 'Cancel Appointment';
+            }
+        });
+}
+
+function startRescheduleFromModal() {
+    if (!selectedAppointmentId) {
+        alert('Please select an appointment to reschedule.');
+        return;
+    }
+
+    const opt = document.querySelector(`#reschedule-appointment-options .prescription-option.selected`);
+    if (!opt) {
+        alert('Please select an appointment to reschedule.');
+        return;
+    }
+
+    const apptId = opt.getAttribute('data-appointment-id');
+    const doctorId = opt.getAttribute('data-doctor-id');
+    const apptDate = opt.getAttribute('data-date');
+    const apptTime = opt.getAttribute('data-time');
+
+    const doctorSelect = document.getElementById('doctor-select');
+    const dateSelect = document.getElementById('date-select');
+    const timeSelect = document.getElementById('time-select');
+    const oldIdInput = document.getElementById('old_appointment_id');
+
+    if (doctorSelect) {
+        doctorSelect.value = doctorId;
+        dateSelect.disabled = false;
+    }
+
+    if (dateSelect) {
+        dateSelect.value = apptDate;
+    }
+
+    if (typeof fetchAvailableSlots === 'function') {
+        fetchAvailableSlots();
+        setTimeout(() => {
+            if (timeSelect) {
+                try { timeSelect.value = apptTime; } catch (e) {}
+            }
+        }, 600);
+    }
+
+    if (oldIdInput) oldIdInput.value = apptId;
+    closeReschedulePickerModal();
+    openScheduleModal();
+}
+
+// selection handlers for option cards
+function selectCancelAppointment(element) {
+    const options = document.querySelectorAll('#cancel-appointment-options .prescription-option');
+    options.forEach(opt => opt.classList.remove('selected'));
+    element.classList.add('selected');
+    selectedAppointmentId = element.getAttribute('data-appointment-id');
+    selectedAppointmentDetails = element.textContent.trim();
+    const info = document.getElementById('selected-cancel-appt');
+    if (info) info.textContent = selectedAppointmentDetails;
+    const infoBox = document.getElementById('selected-cancel-info');
+    if (infoBox) infoBox.setAttribute('aria-hidden', 'false');
+    const confirmBtn = document.getElementById('confirm-cancel-btn');
+    if (confirmBtn) confirmBtn.disabled = false;
+}
+
+function selectRescheduleAppointment(element) {
+    const options = document.querySelectorAll('#reschedule-appointment-options .prescription-option');
+    options.forEach(opt => opt.classList.remove('selected'));
+    element.classList.add('selected');
+    selectedAppointmentId = element.getAttribute('data-appointment-id');
+    selectedAppointmentDetails = element.textContent.trim();
+    const info = document.getElementById('selected-reschedule-appt');
+    if (info) info.textContent = selectedAppointmentDetails;
+    const infoBox = document.getElementById('selected-reschedule-info');
+    if (infoBox) infoBox.setAttribute('aria-hidden', 'false');
+    const startBtn = document.getElementById('start-reschedule-btn');
+    if (startBtn) startBtn.disabled = false;
+}

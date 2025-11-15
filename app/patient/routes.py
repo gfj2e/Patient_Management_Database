@@ -93,7 +93,7 @@ def appointments():
         flash("You must be logged in to view this page")
         return redirect(url_for('auth.login'))
     
-@patient_bp.route("/patient/api/avaliable-slots")
+@patient_bp.route("/patient/api/available-slots")
 @login_required
 def available_slots():
     if not current_user.is_authenticated and isinstance(current_user, Patient_Login):
@@ -139,6 +139,7 @@ def schedule_appointment():
         doctor_id = request.form.get("doctor_id", type=int)
         appointment_date_str = request.form.get("appointment_date")
         appointment_time_str = request.form.get("appointment_time")
+        old_appointment_id = request.form.get("old_appointment_id", type=int)
         
         
         if not all ([doctor_id, appointment_date_str, appointment_time_str]):
@@ -177,7 +178,19 @@ def schedule_appointment():
         
         db.session.add(new_appointment)
         db.session.commit()
-        
+
+        # If this request includes an old appointment id, remove the old appointment (reschedule)
+        if old_appointment_id:
+            try:
+                old_appt = db.session.get(Appointment, old_appointment_id)
+                if old_appt and old_appt.patient_id == current_user.patient_id:
+                    db.session.delete(old_appt)
+                    db.session.commit()
+            except Exception as e:
+                db.session.rollback()
+                # log but do not fail the reschedule if deletion fails
+                print(f"Warning: failed to delete old appointment {old_appointment_id}: {e}")
+
         flash("Schedule appointment success", "success")
         return redirect(url_for('patient.appointments'))
     
@@ -348,7 +361,7 @@ def patient_info():
 @patient_bp.route("/request_refill", methods=["POST"])
 @login_required
 def request_refill():
-    if not current_user.is_authenticated and isinstance(current_user, Patient_Login):
+    if not (current_user.is_authenticated and isinstance(current_user, Patient_Login)):
         return jsonify({"success": False, "message": "Authentication error."}), 403
     
     patient = current_user.patient
@@ -357,32 +370,34 @@ def request_refill():
     
     if not prescription_id:
         return jsonify({"success": False, "message": "Prescription ID is missing."}), 400
-    
-    prescription = db.session.get(Prescription, int(prescription_id))
-    if not prescription or prescription.patient_id != patient.patient_id:
-        return jsonify({"success": False, "message": "Invalid prescription selected"}), 403
-    
-    new_refill_request = PrescriptionRefillRequest(
-        patient=patient.patient_id,
-        doctor_id=prescription.doctor_id,
-        prescription_id=prescription.prescription_id,
-        status=RefillStatus.PENDING,
-        notes=notes
-    )
+    try:
+        prescription = db.session.get(Prescription, int(prescription_id))
+        if not prescription or prescription.patient_id != patient.patient_id:
+            return jsonify({"success": False, "message": "Invalid prescription selected"}), 403
+        
+        new_refill_request = PrescriptionRefillRequest(
+            patient_id=patient.patient_id,
+            doctor_id=prescription.doctor_id,
+            prescription_id=prescription.prescription_id,
+            status=RefillStatus.PENDING,
+            notes=notes
+        )
 
-    db.session.add(new_refill_request)
-    db.session.commit()
+        db.session.add(new_refill_request)
+        db.session.commit()
 
-    log_event(
-        "refill_requested",
-        f"Patient {current_user.id} requested refill for prescription {prescription_id}",
-        target_type="prescription",
-        target_id=prescription_id
-    )
-
-    flash("Refill requjest successfully submitted", "success")
-    
-    return jsonify({"success": True, "message": "Refill request submitted"})
+        log_event(
+            "refill_requested",
+            f"Patient {current_user.id} requested refill for prescription {prescription_id}",
+            target_type="prescription",
+            target_id=prescription_id
+        )
+        
+        return jsonify({"success": True, "message": "Refill request submitted successfully"})
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error processing refill request: {e}")
+        return jsonify({"success": False, "message": f"Server error: {str(e)}"}), 500
 
 @patient_bp.route("/get-lab-results-json")
 @login_required

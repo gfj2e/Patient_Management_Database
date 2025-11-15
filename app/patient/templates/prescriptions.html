@@ -164,9 +164,11 @@
                     <p>Select a medication to request a refill:</p>
                     <div id="prescription-options">
                         {% for prescription in prescriptions %}
-                        <div class="prescription-option" data-prescription-id="{{ prescription.prescription_id }}" 
+                        <div class="prescription-option" 
+                             data-prescription-id="{{ prescription.prescription_id }}" 
                              data-med-name="{{ prescription.medication_name }}" 
                              data-dosage="{{ prescription.dosage }}"
+                             data-doctor-id="{{ prescription.doctor_id }}"
                              onclick="selectPrescription(this)">
                             <strong>{{ prescription.medication_name }}</strong> - {{ prescription.dosage }}
                             <div style="font-size: 0.9em; color: #666;">

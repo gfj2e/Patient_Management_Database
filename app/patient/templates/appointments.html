@@ -71,10 +71,23 @@
                         <div class="card-header">
                             <div class="card-icon-patient" style="font-size: 1.7em;">⚕️</div><h3>Upcoming Appointments</h3></div>
                         <div class="card-content">
-                            <p class="card-text">You have no upcoming appointments scheduled</p>
+                            {% if upcoming_appointments %}
+                            <div class="appointments-list">
+                                    {% for appt in upcoming_appointments %}
+                                        <div class="appt-row">
+                                            <div class="appt-time">{{ appt.appointment_time.strftime('%b %d, %Y %I:%M %p') }}</div>
+                                            <div class="appt-details">Dr. {{ appt.doctor.first_name }} {{ appt.doctor.last_name }} · {{ appt.city }}, {{ appt.state }}</div>
+                                            <form method="POST" action="{{ url_for('patient.cancel_appointment', appointment_id=appt.appointment_id) }}" style="margin-left:auto;">
+                                                <!-- <button type="submit" class="btn-secondary" style="padding:6px 10px; font-size:12px;">Cancel</button> -->
+                                            </form>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <p class="card-text">You have no upcoming appointments scheduled</p>
+                            {% endif %}
 
                             <div class="card-action">
-                                <button class="glow-btn">Schedule an appointment</button>
                             </div>
                         </div>
                     </div>
@@ -85,10 +98,21 @@
                             <h3>Appointment History</h3>
                         </div>
                             <div class="card-content">
-                                <p class="card-text">View your past appointments</p>
+                                {% if past_appointments %}
+                                <div class="appointments-list">
+                                        {% for appt in past_appointments %}
+                                            <div class="appt-row">
+                                                <div class="appt-time">{{ appt.appointment_time.strftime('%b %d, %Y %I:%M %p') }}</div>
+                                                <div class="appt-details">Dr. {{ appt.doctor.first_name }} {{ appt.doctor.last_name }} · {{ appt.city }}, {{ appt.state }}</div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <p class="card-text">You have no past appointments</p>
                                 <div class="card-action">
                                     <button class="glow-btn">View History</button>
                                 </div>
+                                {% endif %}
                             </div>
                     </div>
 
@@ -97,11 +121,25 @@
                             <div class="card-icon-patient">🧑‍⚕️</div> <h3>Doctor Directory</h3></div>
                             <div class="card-content">
                                 <p class="card-text">Find Doctors and Specialists in your area</p>
-
-                                <div class="card-action">
-                                    <button class="glow-btn">Browse Doctors</button>
+                                <div class="doctor-list">
+                                    {% for doc in doctors %}
+                                        <div class="doctor-item">
+                                            <div class="doctor-info">
+                                                <div class="doctor-name">Dr. {{ doc.first_name }} {{ doc.last_name }}</div>
+                                                <div class="doctor-specialty">{{ doc.specialty }}</div>
+                                                <div class="doctor-location">{{ doc.city }}, {{ doc.state }}</div>
+                                            </div>
+                                            <div style="text-align:right">
+                                                {% if doc.is_accepting_new_patients %}
+                                                    <span class="status-badge accepting">Accepting Patients</span>
+                                                {% else %}
+                                                    <span class="status-badge not-accepting">Not Accepting</span>
+                                                {% endif %}
+                                                <div class="doctor-phone">{{ doc.phone_number }}</div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
                                 </div>
-                                
                             </div>
                     </div>
                 </div>
@@ -109,17 +147,17 @@
                     <div class="quick-actions">
                     <div class="action-card">
                         <div class="action-icon">📅</div>
-                        <div>Schedule Appointment</div>
+                        <div onclick="openScheduleModal()">Schedule Appointment</div>
                     </div>
                     <div class="action-card">
                         <div class="action-icon">🔄</div>
-                        <div>Reschedule</div>
+                        <div onclick="openReschedulePickerModal()">Reschedule</div>
                     </div>
                     <div class="action-card">
                         <div class="action-icon">❌</div>
-                        <div>Cancel Appointment</div>
+                        <div onclick="openCancelModal()">Cancel Appointment</div>
                     </div>
-                    <div class="action-card">
+                    <div class="action-card" onclick="openContactModal()">
                         <div class="action-icon">💬</div>
                         <div>Contact Office</div>
                     </div>
@@ -131,5 +169,164 @@
     <div class="footer">
         <div>© Powered by Coin Flippers</div>
     </div>
+
+    <!-- Schedule Appointment Modal -->
+    <div class="modal" id="schedule-appointment-modal" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Schedule an Appointment</h2>
+                <span class="close" onclick="closeScheduleModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="schedule-form" action="{{ url_for('patient.schedule_appointment') }}" method="POST">
+                    <input type="hidden" id="old_appointment_id" name="old_appointment_id" value="">
+                    <div class="form-group mb-3">
+                        <label for="doctor-select">Select a Doctor</label>
+                        <select id="doctor-select" name="doctor_id" class="form-select" required>
+                            <option value="" disabled selected>-- Choose a Doctor --</option>
+                            {% for doc in doctors %}
+                                <option value="{{ doc.doctor_id }}">Dr. {{ doc.first_name }} {{ doc.last_name }} ({{ doc.specialty }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="date-select">Select a Date</label>
+                        <input type="date" id="date-select" name="appointment_date" class="form-select" required disabled>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="time-select">Select an Available Time</label>
+                        <select id="time-select" name="appointment_time" class="form-select" required disabled>
+                            <option value="" disabled selected>-- Select a date first --</option>
+                        </select>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="submit" id="submit-appointment-btn" class="btn-primary" disabled>Book Appointment</button>
+                        <button type="button" class="btn-secondary" id="cancel-schedule-btn">Cancel</button>
+                    </div>
+              </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cancel Appointment Modal -->
+    <div class="modal" id="cancel-appointment-modal" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Cancel Appointment</h2>
+                <span class="close" onclick="closeCancelModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="selected-cancel-info" aria-hidden="true" style="background-color: #fee; padding: 10px; border-radius: 5px; margin-bottom: 12px;">
+                    <strong>Selected: </strong><span id="selected-cancel-appt"></span>
+                </div>
+                <p>Select the appointment you wish to cancel:</p>
+                <div id="cancel-appointment-options">
+                    {% for appt in upcoming_appointments %}
+                        <div class="prescription-option" data-appointment-id="{{ appt.appointment_id }}" onclick="selectCancelAppointment(this)">
+                            <strong>{{ appt.appointment_time.strftime('%b %d, %Y %I:%M %p') }}</strong>
+                            <div style="font-size: 0.9em; color: #666;">Dr. {{ appt.doctor.first_name }} {{ appt.doctor.last_name }} — {{ appt.city }}, {{ appt.state }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-primary" id="confirm-cancel-btn" onclick="cancelSelectedAppointment()" disabled>Cancel Appointment</button>
+                <button class="btn-secondary" id="cancel-cancel-btn" onclick="closeCancelModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reschedule Picker Modal -->
+    <div class="modal" id="reschedule-picker-modal" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Reschedule Appointment</h2>
+                <span class="close" onclick="closeReschedulePickerModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="selected-reschedule-info" aria-hidden="true" style="background-color: #eef; padding: 10px; border-radius: 5px; margin-bottom: 12px;">
+                    <strong>Selected: </strong><span id="selected-reschedule-appt"></span>
+                </div>
+                <p>Select the appointment you wish to reschedule:</p>
+                <div id="reschedule-appointment-options">
+                    {% for appt in upcoming_appointments %}
+                        <div class="prescription-option" data-appointment-id="{{ appt.appointment_id }}" data-doctor-id="{{ appt.doctor_id }}" data-date="{{ appt.appointment_time.strftime('%Y-%m-%d') }}" data-time="{{ appt.appointment_time.strftime('%H:%M') }}" onclick="selectRescheduleAppointment(this)">
+                            <strong>{{ appt.appointment_time.strftime('%b %d, %Y %I:%M %p') }}</strong>
+                            <div style="font-size: 0.9em; color: #666;">Dr. {{ appt.doctor.first_name }} {{ appt.doctor.last_name }} — {{ appt.city }}, {{ appt.state }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-primary" id="start-reschedule-btn" onclick="startRescheduleFromModal()" disabled>Reschedule Selected</button>
+                <button class="btn-secondary" id="close-reschedule-picker-btn" onclick="closeReschedulePickerModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Us Modal -->
+    <div id="contact-us-popup" class="modal" aria-hidden="true">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3>Contact Our Offices</h3>
+                <span class="close" onclick="closeContactModal()">&times;</span>
+            </div>
+            <div class="contact-info-grid">
+                <!--Contact information-->
+                <div class="contact-card">
+                    <h3>McMinnville</h3>
+                    <ul>
+                        <li>Phone: 931-426-0554</li>
+                        <li>Email: mcminn.curacloud@gmail.com</li>
+                        <li>Fax: 931-980-7118</li>
+                        <li>Address: 1559 Sparta St, McMinnville, TN 37110</li>
+                    </ul>
+                </div>
+                <div class="contact-card">
+                    <h3>Murfreesboro</h3>
+                    <ul>
+                        <li>Phone: 615-293-3631</li>
+                        <li>Email: mboro.curacloud@gmail.com</li>
+                        <li>Fax: 615-879-2571</li>
+                        <li>Address: 1700 Medical Center Pkwy, Murfreesboro, TN 37129</li>
+                    </ul>
+                </div>
+                <div class="contact-card">
+                    <h3>Nashville</h3>
+                    <ul>
+                        <li>Phone: 615-915-7378</li>
+                        <li>Email: nash.curacloud@gmail.com</li>
+                        <li>Fax: 615-329-9742</li>
+                        <li>Address: 4220 Harding Pike, Nashville, TN 37205</li>
+                    </ul>
+                </div>
+                <div class="contact-card">
+                    <h3>Franklin</h3>
+                    <ul>
+                        <li>Phone: 629-612-1103</li>
+                        <li>Email: franklin.curacloud@gmail.com</li>
+                        <li>Fax: 629-484-7376</li>
+                        <li>Address: 4321 Carothers Pkwy, Franklin, TN 37067</li>
+                    </ul>
+                </div>
+            </div>
+            <br><hr style="width: 90%; border-top: 1px dotted purple; margin:20px auto"><br>
+            <div class="emergency-num">
+                <!--Emergency contact info-->
+                <h3>Emergency</h3>
+                <p>If you are experiencing an emergency, please dial 911 </p>
+                <h3>Mental Health and Suicide Prevention</h3>
+                <p>If you are experiencing a mental-health crisis please dial 988</p>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-secondary" onclick="closeContactModal()">Close</button>
+            </div>
+        </div>
+    </div>
+         <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+
     </body>
 </html>
