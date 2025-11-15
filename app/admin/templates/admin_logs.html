@@ -33,8 +33,8 @@
             <li><a href="{{ url_for('admin.admin_home') }}">Home</a></li>
             <li><a href="{{ url_for('admin.admin_patients') }}">Patients</a></li>
             <li><a href="{{ url_for('admin.admin_doctors') }}">Doctors</a></li>
-            <li><a href="{{ url_for('admin.admin_billing') }}">Billing</a></li>
             <li><a href="{{ url_for('admin.admin_appointments') }}">Appointments</a></li>
+            <li><a href="{{ url_for('admin.admin_billing') }}">Billing</a></li>
             <li><a href="{{ url_for('admin.system_logs') }}" class="active">System Logs</a></li>
         </ul>
     </div>
@@ -49,11 +49,11 @@
         <table class="billing-table">
             <thead>
                 <tr>
-                    <th>Timestamp</th>
-                    <th>Actor Role</th>
-                    <th>Actor ID</th>
-                    <th>Action</th>
-                    <th>Target</th>
+                    <th class="sortable" data-sort="timestamp">Timestamp</th>
+                    <th class="sortable" data-sort="role">Actor Role</th>
+                    <th class="sortable" data-sort="actorid">Actor ID</th>
+                    <th class="sortable" data-sort="action">Action</th>
+                    <th class="sortable" data-sort="target">Target</th>
                     <th>Description</th>
                 </tr>
             </thead>
@@ -94,6 +94,54 @@
 <div class="footer">
     <div>© Powered by Coin Flippers</div>
 </div>
+
+<script>
+document.querySelectorAll(".sortable").forEach(header => {
+    header.addEventListener("click", () => {
+        const table = header.closest("table");
+        const tbody = table.querySelector("tbody");
+        const rows = Array.from(tbody.querySelectorAll("tr"));
+        const sortType = header.dataset.sort;
+
+        const newDirection = header.classList.contains("sort-asc") ? "desc" : "asc";
+
+        document.querySelectorAll(".sortable")
+            .forEach(h => h.classList.remove("sort-asc", "sort-desc"));
+
+        header.classList.add(newDirection === "asc" ? "sort-asc" : "sort-desc");
+
+        rows.sort((a, b) => {
+            const A = a.children[header.cellIndex].innerText.trim();
+            const B = b.children[header.cellIndex].innerText.trim();
+
+            switch (sortType) {
+
+                case "timestamp":
+                    return newDirection === "asc"
+                        ? new Date(A) - new Date(B)
+                        : new Date(B) - new Date(A);
+
+                case "role":
+                case "action":
+                case "target":
+                    return newDirection === "asc"
+                        ? A.localeCompare(B)
+                        : B.localeCompare(A);
+
+                case "actorid":
+                    const aNum = isNaN(A) ? 0 : Number(A);
+                    const bNum = isNaN(B) ? 0 : Number(B);
+                    return newDirection === "asc"
+                        ? aNum - bNum
+                        : bNum - aNum;
+            }
+        });
+
+        rows.forEach(row => tbody.appendChild(row));
+    });
+});
+</script>
+
 
 </body>
 </html>

@@ -35,14 +35,13 @@
         <ul>
             <li><a href="{{ url_for('admin.admin_home') }}">Home</a></li>
             <li><a href="{{ url_for('admin.admin_patients') }}">Patients</a></li>
-            <li><a href="{{ url_for('admin.admin_doctors') }}">Doctors</a></li>
-            <li><a href="{{ url_for('admin.admin_billing') }}" class="active">Billing</a></li>
+            <li><a href="{{ url_for('admin.admin_doctors') }}">Doctors</a></li>    
             <li><a href="{{ url_for('admin.admin_appointments') }}">Appointments</a></li>
+            <li><a href="{{ url_for('admin.admin_billing') }}" class="active">Billing</a></li>
             <li><a href="{{ url_for('admin.system_logs') }}">System Logs</a></li>
         </ul>
     </div>
 
-    <!-- Main Content -->
     <div class="content">
 
         <div class="welcome-section-admin">
@@ -50,61 +49,57 @@
             <div class="welcome-subtitle">View and manage all billing records.</div>
         </div>
 
-        <!-- Add Billing Button -->
         <div class="add-billing-header">
             <button class="btn-primary-admin" id="openAddBillingModal">+ Add Billing</button>
         </div>
 
-        <!-- Billing Records Table -->
         <table class="billing-table">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Patient Name</th>
-                    <th>Date</th>
-                    <th>Amount</th>
-                    <th>Insurance</th>
+                    <th class="sortable" data-sort="id">ID</th>
+                    <th class="sortable" data-sort="name">Patient Name</th>
+                    <th class="sortable" data-sort="date">Date</th>
+                    <th class="sortable" data-sort="amount">Amount</th>
+                    <th class="sortable" data-sort="insurance">Insurance</th>
                     <th>Notes</th>
                 </tr>
             </thead>
 
- <tbody>
-{% for bill in billing_records %}
-<tr>
-    <td>{{ bill.billing_id }}</td>
+            <tbody>
+                {% for bill in billing_records %}
+                <tr>
+                    <td>{{ bill.billing_id }}</td>
 
-    <td>
-        {% if bill.patient %}
-            {{ bill.patient.first_name }} {{ bill.patient.last_name }}
-        {% else %}
-            Unknown
-        {% endif %}
-    </td>
+                    <td>
+                        {% if bill.patient %}
+                            {{ bill.patient.first_name }} {{ bill.patient.last_name }}
+                        {% else %}
+                            Unknown
+                        {% endif %}
+                    </td>
 
-    <td>{{ bill.billing_date.strftime("%B %d, %Y") }}</td>
+                    <td>{{ bill.billing_date.strftime("%B %d, %Y") }}</td>
 
-    <td>${{ "%.2f"|format(bill.billing_amount) }}</td>
+                    <td>${{ "%.2f"|format(bill.billing_amount) }}</td>
 
-    <td>
-{% if bill.patient.insurance|length > 0 %}
-    {{ bill.patient.insurance[0].primary_insurance }}
-{% else %}
-    Self-Pay
-{% endif %}
+                    <td>
+                        {% if bill.patient.insurance|length > 0 %}
+                            {{ bill.patient.insurance[0].primary_insurance }}
+                        {% else %}
+                            Self-Pay
+                        {% endif %}
+                    </td>
 
-    </td>
-
-    <td>{{ bill.notes }}</td>
-</tr>
-{% endfor %}
-</tbody>
+                    <td>{{ bill.notes }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
 
         </table>
     </div>
 </div>
 
 
-<!-- ADD BILLING MODAL -->
 <div id="addBillingModal" class="modal-overlay">
     <div class="modal-content">
 
@@ -133,11 +128,10 @@
     </div>
 </div>
 
-
-<!-- JS FOR BILLING MODAL -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
+//modal js
     const billingModal = document.getElementById("addBillingModal");
     const openBtn = document.getElementById("openAddBillingModal");
     const closeBtn = document.getElementById("closeAddBillingModal");
@@ -145,15 +139,65 @@ document.addEventListener("DOMContentLoaded", () => {
     openBtn.onclick = () => billingModal.style.display = "flex";
     closeBtn.onclick = () => billingModal.style.display = "none";
 
-    // Close by clicking outside
-    window.addEventListener("click", (e) => {
-        if (e.target === billingModal) {
-            billingModal.style.display = "none";
-        }
+    window.onclick = (e) => {
+        if (e.target === billingModal) billingModal.style.display = "none";
+    };
+
+//sort
+    document.querySelectorAll(".sortable").forEach(header => {
+
+        header.addEventListener("click", () => {
+
+            const table = header.closest("table");
+            const tbody = table.querySelector("tbody");
+            const rows = Array.from(tbody.querySelectorAll("tr"));
+            const sortType = header.dataset.sort;
+
+            const newDirection = header.classList.contains("sort-asc") ? "desc" : "asc";
+
+            document.querySelectorAll(".sortable").forEach(h =>
+                h.classList.remove("sort-asc", "sort-desc")
+            );
+
+            header.classList.add(newDirection === "asc" ? "sort-asc" : "sort-desc");
+
+            rows.sort((a, b) => {
+                const A = a.children[header.cellIndex].innerText.trim();
+                const B = b.children[header.cellIndex].innerText.trim();
+
+                switch (sortType) {
+
+                    case "id":
+                        return newDirection === "asc"
+                            ? Number(A) - Number(B)
+                            : Number(B) - Number(A);
+
+                    case "name":
+                    case "insurance":
+                        return newDirection === "asc"
+                            ? A.localeCompare(B)
+                            : B.localeCompare(A);
+
+                    case "date":
+                        return newDirection === "asc"
+                            ? new Date(A) - new Date(B)
+                            : new Date(B) - new Date(A);
+
+                    case "amount":
+                        return newDirection === "asc"
+                            ? parseFloat(A.replace(/[^0-9.-]/g, "")) -
+                              parseFloat(B.replace(/[^0-9.-]/g, ""))
+                            : parseFloat(B.replace(/[^0-9.-]/g, "")) -
+                              parseFloat(A.replace(/[^0-9.-]/g, ""));
+                }
+            });
+            rows.forEach(row => tbody.appendChild(row));
+        });
     });
 
 });
 </script>
+
 
 <div class="footer">
     <div>© Powered by Coin Flippers</div>

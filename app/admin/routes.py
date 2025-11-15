@@ -19,12 +19,15 @@ def admin_home():
         patients_count = db.session.scalar(select(db.func.count()).select_from(Patient))
         doctors_count = db.session.scalar(select(db.func.count()).select_from(Doctor))
         billing_total_count = db.session.scalar(select(db.func.count()).select_from(Billing))
+        appointments_count = db.session.scalar(select(db.func.count()).select_from(Appointment))
+
 
         return render_template(
             "admin_home.html",
             patients_count=patients_count,
             doctors_count=doctors_count,
-            billing_total_count=billing_total_count
+            billing_total_count=billing_total_count,
+            appointments_count=appointments_count
         )
     else:
         flash("You must be logged in as an admin to view this page.")
@@ -157,9 +160,11 @@ def delete_patient(patient_id):
 @admin_bp.route("/admin/doctors")
 @login_required
 def admin_doctors():
+    
     if current_user.is_authenticated and isinstance(current_user, Admin_Login):
         doctors = db.session.execute(select(Doctor)).scalars().all()
-        return render_template("admin_doctors.html", doctors=doctors,specialties=SPECIALTIES)
+        patients = db.session.execute(select(Patient)).scalars().all()
+        return render_template("admin_doctors.html", doctors=doctors,specialties=SPECIALTIES, patients=patients)
     else:
         flash("You must be logged in as an admin to view this page.")
         return redirect(url_for("auth.login"))
@@ -191,15 +196,23 @@ def add_doctor():
         email=email,
         is_accepting_new_patients=accepting_new
     )
+
     db.session.add(new_doctor)
-    db.session.commit()
+    db.session.commit()    
+
+    patient_ids = request.form.getlist("patient_ids")  
+    if patient_ids:
+        assigned_patients = Patient.query.filter(Patient.patient_id.in_(patient_ids)).all()
+        new_doctor.patients = assigned_patients
+
+        db.session.commit() 
 
     log_event(
-    "add_doctor",
-    f"Added doctor {new_doctor.first_name} {new_doctor.last_name}",
-    target_type="doctor",
-    target_id=new_doctor.doctor_id
-)
+        "add_doctor",
+        f"Added doctor {new_doctor.first_name} {new_doctor.last_name}",
+        target_type="doctor",
+        target_id=new_doctor.doctor_id
+    )
 
     flash("Doctor added successfully!", "success")
     return redirect(url_for("admin.admin_doctors"))

@@ -32,8 +32,8 @@
                 <li><a href="{{ url_for('admin.admin_home') }}" class="active">Home</a></li>
                 <li><a href="{{ url_for('admin.admin_patients') }}">Patients</a></li>
                 <li><a href="{{ url_for('admin.admin_doctors') }}">Doctors</a></li>
-                <li><a href="{{ url_for('admin.admin_billing') }}">Billing</a></li>
                 <li><a href="{{ url_for('admin.admin_appointments') }}">Appointments</a></li>
+                <li><a href="{{ url_for('admin.admin_billing') }}">Billing</a></li>
                 <li><a href="{{ url_for('admin.system_logs') }}">System Logs</a></li>
             </ul>
         </div>
@@ -83,6 +83,19 @@
                         </div>
                     </div>
                 </div>
+
+                <!--billing card-->
+                    <div class="dashboard-card">
+                        <div class="card-header-admin">Appointments</div>
+                        <div class="card-content">
+                            <p class="card-text">Scheduled Appointments: {{ appointments_count or 'NA' }}</p>
+                            <div class="card-action">
+                                <a href="{{ url_for('admin.admin_appointments') }}">
+                                    <button class="btn-primary-admin">View Appointments</button>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
 
                 <!-- Reports or System Logs -->
                 <div class="dashboard-card">

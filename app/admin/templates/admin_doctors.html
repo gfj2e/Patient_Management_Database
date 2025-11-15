@@ -35,13 +35,13 @@
             <li><a href="{{ url_for('admin.admin_home') }}">Home</a></li>
             <li><a href="{{ url_for('admin.admin_patients') }}">Patients</a></li>
             <li><a href="{{ url_for('admin.admin_doctors') }}" class="active">Doctors</a></li>
-            <li><a href="{{ url_for('admin.admin_billing') }}">Billing</a></li>
             <li><a href="{{ url_for('admin.admin_appointments') }}">Appointments</a></li>
+            <li><a href="{{ url_for('admin.admin_billing') }}">Billing</a></li>
             <li><a href="{{ url_for('admin.system_logs') }}">System Logs</a></li>
         </ul>
     </div>
 
-    <!-- Main Content -->
+    <!--main-->
     <div class="content">
 
         <div class="welcome-section-admin">
@@ -49,12 +49,12 @@
             <div class="welcome-subtitle">View and manage all registered doctors.</div>
         </div>
 
-        <!-- Add Doctor Button -->
+        <!--add dr button-->
         <div class="add-patient-header">
             <button class="btn-primary-admin" id="openAddDoctorModal">+ Add Doctor</button>
         </div>
 
-        <!-- Doctors Table -->
+        <!--doctors table-->
         <div class="dashboard-container">
             <div class="dashboard-vertical">
 
@@ -63,12 +63,13 @@
                     <table class="billing-table">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Specialty</th>
-                                <th>Email</th>
+                                <th class="sortable" data-sort="id">ID</th>
+                                <th class="sortable" data-sort="name">Name</th>
+                                <th class="sortable" data-sort="specialty">Specialty</th>
+                                <th class="sortable" data-sort="email">Email</th>
                                 <th>Phone</th>
-                                <th>Patients</th>
+                                <th class="sortable" data-sort="patients">Patient Count</th>
+                                <th class="sortable" data-sort="accepts">Accepting?</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -81,11 +82,23 @@
                             <td>{{ doc.specialty or "N/A" }}</td>
                             <td>{{ doc.email or "N/A" }}</td>
                             <td>{{ doc.phone_number or "N/A" }}</td>
-                            <td>{{ doc.patients|length }}</td>
-
+                            <td>
+                                <span class="patient-count-link"
+                                    data-patients='[
+                                        {% for p in doc.patients %}
+                                            "{{ p.first_name|default('') }} {{ p.last_name|default('') }}"
+                                            {% if not loop.last %},{% endif %}
+                                        {% endfor %}
+                                    ]'>
+                                    {{ doc.patients|length }}
+                                </span>
+                            </td>
+                            <td>
+                                {{ "Yes" if doc.is_accepting_new_patients else "No" }}
+                            </td>
                             <td class="action-cell">
 
-                                <!-- Edit Button -->
+                                <!--edit button-->
                                 <button class="icon-btn edit-btn"
                                         title="Edit Doctor"
                                         data-id="{{ doc.doctor_id }}"
@@ -96,12 +109,13 @@
                                         data-specialty="{{ doc.specialty }}"
                                         data-city="{{ doc.city }}"
                                         data-state="{{ doc.state }}"
-                                        data-accept="{{ doc.accepting_patients }}">
+                                        data-accept="{{ doc.accepting_patients }}"
+                                        data-patients="{{ doc.patients | map(attribute='patient_id') | list }}">
                                     <i class="fas fa-pen"></i>
                                 </button>
 
 
-                                <!-- Delete Button -->
+                                <!--delete button-->
                                 <form method="POST"
                                     action="{{ url_for('admin.delete_doctor', doctor_id=doc.doctor_id) }}"
                                     onsubmit="return confirm('Delete this doctor?');">
@@ -126,7 +140,7 @@
     </div>
 </div>
 
-<!-- Add Doctor Modal -->
+<!--add dr modal-->
 <div id="addDoctorModal" class="modal-overlay">
     <div class="modal-content">
         <h3>Add Doctor</h3>
@@ -149,13 +163,26 @@
             <input type="text" name="city" placeholder="City" required>
             <input type="text" name="state" placeholder="State" required>
 
+            <div class="dropdown-checkbox">
+                <button type="button" class="dropdown-btn">Assign Patients</button>
+
+                <div class="dropdown-content patient-select-list">
+                    {% for p in patients %}
+                    <label>
+                        <input type="checkbox" name="patient_ids" value="{{ p.patient_id }}">
+                        {{ p.first_name }} {{ p.last_name }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+
             <label class="checkbox-label">
                 <input type="checkbox" name="accepting_patients">
                 Accepting New Patients
             </label>
 
             <div class="modal-buttons">
-                <button type="submit" class="btn-primary-admin">Add</button>
+                <button type="submit" class="btn-primary-admin">Add Doctor</button>
                 <button type="button" class="btn-secondary-admin" id="closeAddDoctorModal">Cancel</button>
             </div>
 
@@ -163,7 +190,7 @@
     </div>
 </div>
 
-<!-- Edit Doctor Modal -->
+<!--edit dr modal-->
 <div id="editDoctorModal" class="modal-overlay">
     <div class="modal-content">
         <h3>Edit Doctor Information</h3>
@@ -184,13 +211,28 @@
             <input type="text" name="city" id="edit-city" required>
             <input type="text" name="state" id="edit-state" required>
 
+            <div class="dropdown-checkbox">
+                <button type="button" class="dropdown-btn" id="editPatientBtn">Assign Patients</button>
+
+                <div class="dropdown-content patient-select-list" id="editPatientList">
+                    {% for p in patients %}
+                    <label>
+                        <input type="checkbox"
+                            class="edit-patient-checkbox"
+                            value="{{ p.patient_id }}">
+                        {{ p.first_name }} {{ p.last_name }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+
             <label class="checkbox-label">
                 <input type="checkbox" name="accepting_patients" id="edit-accept">
                 Accepting New Patients
             </label>
 
             <div class="modal-buttons">
-                <button type="submit" class="btn-primary-admin">Save</button>
+                <button type="submit" class="btn-primary-admin">Save Changes</button>
                 <button type="button" class="btn-secondary-admin" id="closeEditDoctorModal">Cancel</button>
             </div>
         </form>
@@ -198,11 +240,23 @@
     </div>
 </div>
 
+<!--patient name list-->
+<div id="patientListModal" class="modal-overlay">
+    <div class="modal-content" style="max-width:400px">
+        <h3>Assigned Patients</h3>
+        <div class="modal-header-line"></div>
+
+        <ul id="patientListDisplay" style="padding-left:20px; line-height:1.8;"></ul>
+
+        <div class="modal-buttons">
+            <button class="btn-secondary-admin" id="closePatientList">Close</button>
+        </div>
+    </div>
+</div>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
-    // ADD Doctor Modal
     const addModal = document.getElementById("addDoctorModal");
     const openAddBtn = document.getElementById("openAddDoctorModal");
     const closeAddBtn = document.getElementById("closeAddDoctorModal");
@@ -210,7 +264,6 @@ document.addEventListener("DOMContentLoaded", () => {
     openAddBtn.onclick = () => addModal.style.display = "flex";
     closeAddBtn.onclick = () => addModal.style.display = "none";
 
-    // EDIT Doctor Modal
     const editModal = document.getElementById("editDoctorModal");
     const closeEditBtn = document.getElementById("closeEditDoctorModal");
     const editForm = document.getElementById("editDoctorForm");
@@ -218,7 +271,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".edit-btn").forEach(button => {
         button.addEventListener("click", () => {
 
-            // Fill modal fields
             document.getElementById("edit-first").value = button.dataset.first;
             document.getElementById("edit-last").value = button.dataset.last;
             document.getElementById("edit-email").value = button.dataset.email;
@@ -226,13 +278,29 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("edit-specialty").value = button.dataset.specialty;
             document.getElementById("edit-city").value = button.dataset.city;
             document.getElementById("edit-state").value = button.dataset.state;
-
             document.getElementById("edit-accept").checked =
                 button.dataset.accept === "True" || button.dataset.accept === "1";
 
-            // Set dynamic POST action
             editForm.action = `/edit_doctor/${button.dataset.id}`;
+            const assigned = JSON.parse(button.dataset.patients.replace(/'/g, '"'));
 
+            document.querySelectorAll("#editPatientList input[type='checkbox']")
+                .forEach(cb => {
+                    cb.checked = assigned.includes(Number(cb.value));
+                });
+
+            const editBtn = document.getElementById("editPatientBtn");
+
+            if (assigned.length === 0) {
+                editBtn.textContent = "Assign Patients";
+            } else if (assigned.length === 1) {
+                let label = document.querySelector(
+                    `#editPatientList input[value='${assigned[0]}']`
+                ).parentElement.innerText.trim();
+                editBtn.textContent = label;
+            } else {
+                editBtn.textContent = `${assigned.length} patients selected`;
+            }
 
             editModal.style.display = "flex";
         });
@@ -244,9 +312,103 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.target === addModal) addModal.style.display = "none";
         if (e.target === editModal) editModal.style.display = "none";
     };
+//sort
+    document.querySelectorAll(".sortable").forEach(header => {
+        header.addEventListener("click", () => {
+            const table = header.closest("table");
+            const tbody = table.querySelector("tbody");
+            const rows = Array.from(tbody.querySelectorAll("tr"));
+            const sortType = header.dataset.sort;
+
+            const newDirection = header.classList.contains("sort-asc") ? "desc" : "asc";
+
+            document.querySelectorAll(".sortable")
+                .forEach(h => h.classList.remove("sort-asc", "sort-desc"));
+
+            header.classList.add(newDirection === "asc" ? "sort-asc" : "sort-desc");
+
+            rows.sort((a, b) => {
+                const A = a.children[header.cellIndex].innerText.trim();
+                const B = b.children[header.cellIndex].innerText.trim();
+
+                switch (sortType) {
+                    case "id":
+                        return newDirection === "asc"
+                            ? Number(A) - Number(B)
+                            : Number(B) - Number(A);
+                    case "name":
+                    case "specialty":
+                    case "email":
+                    case "phone":
+                        return newDirection === "asc"
+                            ? A.localeCompare(B)
+                            : B.localeCompare(A);
+                    case "patients":
+                        return newDirection === "asc"
+                            ? Number(A) - Number(B)
+                            : Number(B) - Number(A);
+                    case "accepts":
+                        return newDirection === "asc"
+                            ? A.localeCompare(B)
+                            : B.localeCompare(A);
+                }
+            });
+
+            rows.forEach(row => tbody.appendChild(row));
+        });
+    });
+
+    document.querySelectorAll(".dropdown-checkbox").forEach(dropdown => {
+        const btn = dropdown.querySelector(".dropdown-btn");
+        const content = dropdown.querySelector(".dropdown-content");
+
+        btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            document.querySelectorAll(".dropdown-content")
+                .forEach(dc => { if (dc !== content) dc.style.display = "none"; });
+            content.style.display = content.style.display === "block" ? "none" : "block";
+        });
+
+        document.addEventListener("click", (e) => {
+            if (!content.contains(e.target) && e.target !== btn) {
+                content.style.display = "none";
+            }
+        });
+
+        content.addEventListener("change", () => {
+            const checked = content.querySelectorAll("input[type='checkbox']:checked");
+            if (checked.length === 0) btn.textContent = "Assign Patients";
+            else if (checked.length === 1) btn.textContent = checked[0].parentElement.textContent.trim();
+            else btn.textContent = `${checked.length} patients selected`;
+        });
+    });
 
 });
+document.querySelectorAll(".patient-count-link").forEach(item => {
+    item.addEventListener("click", () => {
+
+        const modal = document.getElementById("patientListModal");
+        const list = document.getElementById("patientListDisplay");
+
+        const names = JSON.parse(item.dataset.patients);
+
+        list.innerHTML = names.length
+            ? names.map(n => `<li>${n}</li>`).join("")
+            : "<li>No assigned patients</li>";
+
+        modal.style.display = "flex";
+    });
+});
+
+document.getElementById("closePatientList").onclick = () =>
+    document.getElementById("patientListModal").style.display = "none";
+
+window.addEventListener("click", e => {
+    const modal = document.getElementById("patientListModal");
+    if (e.target === modal) modal.style.display = "none";
+});
 </script>
+
 
 <div class="footer">
     <div>© Powered by Coin Flippers</div>

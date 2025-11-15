@@ -425,3 +425,79 @@
     content: " ▼";
     font-size: 0.7em;
 }
+
+.patient-select-list {
+    max-height: 200px; 
+    overflow-y: auto;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: #f8f8f8;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.dropdown-checkbox {
+    width: 100%;
+    display: block;
+}
+
+.dropdown-checkbox .dropdown-btn {
+    width: 100%;
+    text-align: left;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.dropdown-checkbox .dropdown-content {
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 6px;
+}
+
+.patient-select-list {
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: #f8f8f8;
+    margin-bottom: 10px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.patient-select-list label {
+    display: grid !important;
+    grid-template-columns: 24px 1fr !important;  
+    align-items: center !important;
+    padding: 4px 0 !important;
+    font-size: 15px !important;
+    gap: 8px !important;
+    white-space: normal !important;
+}
+
+.patient-select-list input[type="checkbox"] {
+    margin: 0 !important;
+    transform: scale(1.1);
+    justify-self: center; 
+}
+
+.patient-select-list input[type="checkbox"] {
+    accent-color: #122e00 !important; 
+    transform: scale(1.2);
+    cursor: pointer;
+}
+
+.patient-count-link {
+    color: #0d4b00; 
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.patient-count-link:hover {
+    color: #122e00;
+    text-decoration: none;
+}
+

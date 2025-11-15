@@ -35,8 +35,8 @@
             <li><a href="{{ url_for('admin.admin_home') }}">Home</a></li>
             <li><a href="{{ url_for('admin.admin_patients') }}">Patients</a></li>
             <li><a href="{{ url_for('admin.admin_doctors') }}">Doctors</a></li>
-            <li><a href="{{ url_for('admin.admin_billing') }}">Billing</a></li>
             <li><a href="{{ url_for('admin.admin_appointments') }}" class="active">Appointments</a></li>
+            <li><a href="{{ url_for('admin.admin_billing') }}">Billing</a></li>
             <li><a href="{{ url_for('admin.system_logs') }}">System Logs</a></li>
         </ul>
     </div>
@@ -45,7 +45,7 @@
     <div class="content">
 
         <div class="welcome-section-admin">
-            <div class="welcome-message">Appointment Schedule</div>
+            <div class="welcome-message">Appointment Scheduling</div>
             <div class="welcome-subtitle">View and manage all appointments.</div>
         </div>
 
@@ -154,7 +154,7 @@
             <input type="text" name="state" placeholder="State" required>
 
             <div class="modal-buttons">
-                <button type="submit" class="btn-primary-admin">Add</button>
+                <button type="submit" class="btn-primary-admin">Add Appointment</button>
                 <button type="button" class="btn-secondary-admin" id="closeAddAppointmentModal">Cancel</button>
             </div>
         </form>
