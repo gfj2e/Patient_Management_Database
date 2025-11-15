@@ -1757,3 +1757,11 @@ body {
 .modal-btn-cancel:hover {
     background-color: #aaa;
 }
+
+.chat-box {
+    height: 300px;
+    overflow-y: auto;
+    border: 1px solic #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+}

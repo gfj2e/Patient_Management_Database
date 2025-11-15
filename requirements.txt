@@ -8,6 +8,8 @@ flask-bcrypt
 pymysql
 flask-socketio
 reportlab
+python-socketio
+eventlet
 # google-cloud-sql-connector
 # cloud-sql-python-connector[pymysql]
 

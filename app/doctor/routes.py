@@ -127,11 +127,37 @@ def doctor_messages():
         doctor = current_user.doctor
         messages = doctor.messages
         patients = doctor.patients
-        
-        return render_template("doctor_messages.html", doctor=doctor, messages=messages, patients=patients)
+
+        active_patient_id = patients[0].patient_id if patients else None
+
+        room_id = None
+        if active_patient_id:
+            room_id = f"room_{doctor.doctor_id}_{active_patient_id}"
+
+        return render_template(
+            "doctor_messages.html", 
+            doctor=doctor, 
+            messages=messages, 
+            patients=patients,
+            room_id=room_id,
+            doctor_id=doctor.doctor_id,
+            patient_id=active_patient_id
+            )
     else:
         flash("You must be logged in as a doctor to view this page")
         return redirect(url_for('auth.login'))
+
+# do i need still?
+# @doctor_bp.route("/messages/<int:patient_id>")
+# @login_required
+# def doctor_patient_messages(patient_id):
+#     doctor = current_user
+#     room_id = f"room_{doctor.doctor_id}_{patient_id}"
+
+#     return render_template("doctor_messages.html",
+#                            room_id = room_id,
+#                            doctor_id = doctor.doctor_id,
+#                            patient_id = patient_id)
 
 @doctor_bp.route("/doctor/send_message", methods=["POST"])
 @login_required

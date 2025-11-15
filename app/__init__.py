@@ -40,4 +40,5 @@ def create_app():
     app.register_blueprint(admin_bp)
     app.register_blueprint(patient_bp)
     app.register_blueprint(doctor_bp)
+    
     return app

@@ -309,4 +309,94 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     }
+<<<<<<< Updated upstream
 });
+=======
+});
+
+// set by HTML template on load
+const socket = io();
+let currentRoom = null;
+
+function joinRoom(room) {
+    console.log("Joining room:", room);
+    socket.emit("join_room", { room: room});
+    currentRoom = room;
+}
+
+// send a chat message
+function sendMessage(){
+    const input = document.getElementById("content") || document.getElementById("messageInput");
+    const text = input.value.trim();
+    if (!text) return;
+
+    // determine if this page is doctor or patient
+    const isDoctor = (senderType === "doctor");
+    const isPatient = (senderType === "patient");
+
+    let selectedDoctor = null;
+    let selectedPatient = null;
+
+    if (isDoctor){
+        const p = document.getElementById("patient_id");
+        selectedPatient = p.value;
+        selectedDoctor  = doctorId;
+    } 
+    if (isPatient){
+        const d = document.getElementById("doctor_id");
+        selectedDoctor = d.value;
+        selectedPatient = patientId;
+    }
+
+    // join room before sending
+    const room = `room_${selectedDoctor}_${selectedPatient}`;
+    joinRoom(room);
+
+    // emit socket event
+    socket.emit("send_message", {
+        room: room,
+        message: text,
+        sender_type: senderType,
+        doctor_id: selectedDoctor,
+        patient_id : selectedPatient
+    });
+
+    input.value = "";
+}
+
+// display incoming message
+socket.on("receive_message", (data) => {
+    const wrapper = document.createElement("div");
+    wrapper.classList.add("message");
+
+    if(data.sender_type === senderType){
+        wrapper.classList.add("sent");
+    } else {
+        wrapper.classList.add("received");
+    }
+
+    wrapper.innerHTML =`
+    <div class = "bubble">
+        <span class = "label">
+            ${data.sender_type === senderType ? "Sent" : "Received"}
+        </span>
+        ${data.message}
+    </div>
+    `;
+
+    // doctor view (multiple patients)
+    if (senderType == "doctor"){
+        const patientChat = document.getElementById(`chat-${data.patient_id}`);
+        if (patientChat){
+            patientChat.appendChild(wrapper);
+            patientChat.scrollTop = patientChat.scrollHeight;
+            return;
+        }
+    }
+
+    // patient view (single doctor)
+    const container = document.querySelector(".messages-container");
+    container.appendChild(wrapper);
+    container.scrollTop = container.scrollHeight;
+});
+>>>>>>> Stashed changes

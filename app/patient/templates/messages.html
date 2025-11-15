@@ -23,6 +23,14 @@
             }
         </style>
 
+        <script>
+            const senderType = "patient";
+            // const senderId = {{ patient.patient_id }};
+            const roomId = "{{ room_id | default('') }}";
+            const doctorId = "{{ doctor_id | default('null') }}";
+            const patientId = "{{ patient.patient_id }}";
+        </script>
+
     </head>
     <body>
         <header class="navbar">
@@ -87,14 +95,15 @@
                         </div>
                     {% endfor %}
                 </div>
-            {% endfor %}
+            {% endfor %}    
         {% else %}
             <p> You have no messages. </p>
         {% endif %}
                 </div>
                 <div class = "send-message-section">
                     <h3>Send a Message</h3>
-                    <form method = "POST" action = "{{ url_for('patient.send_message') }}">
+                    <!-- <form method = "POST" action = "{{ url_for('patient.send_message') }}"> -->
+                    <form onsubmit="event.preventDefault(); sendMessage();">
                         <label for = "doctor_id">Select Doctor:</label>
                         <select name = "doctor_id" id  = "doctor_id" required>
                             {% for doctor in doctors %}
@@ -103,7 +112,17 @@
                                 </option>
                             {% endfor %}
                         </select>
+                        <script>
+                            document.getElementById("doctor_id").addEventListener("change", function() {
+                                const selectedDoctor = this.value;
+                                if (!selectedDoctor) return;
 
+                                const patientId = "{{ patient.patient_id }}";
+                                const room = `room_${selectedDoctor}_${patientId}`;
+
+                                joinRoom(room);
+                            });
+                        </script>
                         <label for = "content">Message:</label>
                         <textarea name = "content" id = "content" rows = "3" placeholder = "Type your message..." required></textarea>
 
@@ -119,5 +138,13 @@
                 </div>
             </div>
         </div>
+        <script src = "https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+        <script src = "{{ url_for('static', filename = 'scripts.js') }}"></script>
+        <script>
+            // const roomdId = "{{ room_id }}"
+            if (roomId){
+                joinRoom(roomId);
+            }
+        </script>
     </body>
 </html>

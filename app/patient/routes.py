@@ -278,16 +278,29 @@ def lab_results():
 @patient_bp.route("/messages")
 @login_required
 def patient_messages():
-    if current_user.is_authenticated and isinstance(current_user, Patient_Login):
-        patient = current_user.patient
-        messages = patient.messages
-        doctors = patient.doctors
-        # doctors = [doctor] if doctor else []
-        
-        return render_template("messages.html", patient = patient, messages = messages, doctors = doctors)
-    else:
-        flash("You must be logged in as a doctor to view this page")
-        return redirect(url_for('auth.login'))
+    patient = current_user.patient
+    messages = patient.messages
+
+    # a patient can have multiple doctors through messages
+    doctor_ids = list({msg.doctor_id for msg in messages})
+    doctors = [Doctor.query.get(did) for did in doctor_ids]
+
+    active_doctor_id = doctor_ids[0] if doctor_ids else None
+
+    # room ID uniquely identifies this patient for live chat
+    room_id = None
+    if active_doctor_id:
+        room_id = f"room_{active_doctor_id}_{patient.patient_id}"
+
+    return render_template(
+        "messages.html",
+        patient=patient,
+        messages=messages,
+        doctors=doctors,
+        room_id=room_id,
+        doctor_id=active_doctor_id,
+        patient_id=patient.patient_id,
+    )
 
 @patient_bp.route("/send_message", methods = ["POST"])
 @login_required

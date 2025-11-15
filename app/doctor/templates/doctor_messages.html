@@ -6,6 +6,14 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='patient_styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='doctor_styles.css') }}">
     <title>Doctor - Messages</title>
+
+    <script>
+        const senderType = "doctor";
+        // const senderId = {{ doctor.doctor_id }};
+        const roomId = "{{ room_id | default('') }}";
+        const doctorId = "{{doctor.doctor_id }}";
+        const patientId = "{{ patient_id | default('null') }}";
+    </script>
 </head>
 <body>
     <header class="navbar-doctor">
@@ -53,6 +61,7 @@
                     {% endfor %}
 
         {% for pid, msgs in grouped.items() %}
+<<<<<<< Updated upstream
     <div class="patient-message-group">
 
         <h3 class="patient-name" onclick="toggleMessages('{{ pid }}')">
@@ -68,6 +77,18 @@
                             {{ 'Sent' if msg.sender_type == 'doctor' else 'Received' }}
                         </span>
                         {{ msg.content }}
+=======
+            <div class="patient-message-group" id = "chat-{{ pid }}">
+                <h3 class="patient-name">{{ msgs[0].patient.first_name }} {{ msgs[0].patient.last_name }}</h3>
+                {% for msg in msgs %}
+                    <div class="message {{ 'sent' if msg.sender_type == 'doctor' else 'received' }}">
+                        <div class="bubble">
+                            <span class="label">
+                                {{ 'Sent' if msg.sender_type == 'doctor' else 'Received' }}
+                            </span>
+                            {{ msg.content }}
+                        </div>
+>>>>>>> Stashed changes
                     </div>
                 </div>
             {% endfor %}
@@ -83,7 +104,8 @@
 
 <div class="send-message-section">
     <h3>Send a Message</h3>
-    <form method="POST" action="{{ url_for('doctor.send_message') }}">
+    <!-- <form method="POST" action="{{ url_for('doctor.send_message') }}"> -->
+    <form onsubmit="event.preventDefault(); sendMessage();">
         <label for="patient_id">Select Patient:</label>
         <select name="patient_id" id="patient_id" required>
             {% for patient in patients %}
@@ -92,7 +114,17 @@
                 </option>
             {% endfor %}
         </select>
+        <script>
+            document.getElementById("patient_id").addEventListener("change", function() {
+                const selectedPatient = this.value;
+                if (!selectedPatient) return;
 
+                const doctorId = "{{ doctor.doctor_id }}";
+                const room = `room_${doctorId}_${selectedPatient}`;
+
+                joinRoom(room);
+            } );
+        </script>
         <label for="content">Message:</label>
         <textarea name="content" id="content" rows="3" placeholder="Type your message..." required></textarea>
 
@@ -109,6 +141,7 @@
     <div class="footer-doctor-page">
         <div>© Powered by Coin Flippers</div>
     </div>
+<<<<<<< Updated upstream
 
 <script>
 function toggleMessages(pid) {
@@ -126,5 +159,15 @@ function toggleMessages(pid) {
 </script>
 
 
+=======
+    <script src = "https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src = "{{ url_for('static', filename = 'scripts.js') }}"></script>
+    <script>
+        // const roomdId = "{{ room_id }}"
+        if (roomId){
+            joinRoom(roomId);
+        }
+    </script>
+>>>>>>> Stashed changes
 </body>
 </html>

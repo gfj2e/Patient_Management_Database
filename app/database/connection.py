@@ -14,8 +14,8 @@ def init_connection_engine(app):
     db_name = os.getenv("DB_NAME")
     db_host = os.getenv("DB_HOST")
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{db_user}:{db_password}@{db_host}/{db_name}"
-    # app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://root:Hien2003!!@127.0.0.1:3306/patient_mgmt"
+    # app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{db_user}:{db_password}@{db_host}/{db_name}"
+    app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://root:Hien2003!!@127.0.0.1:3306/patient_mgmt"
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     db.init_app(app)
