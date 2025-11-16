@@ -55,7 +55,7 @@
                     <div class="summary-item">
                         <div class="summary-label">Amount Due</div>
                          {% if billing %}
-                        <div class="summary-value">{{ "%.2f"|format(billing.billing_amount) if billing else "0.00" }}</div>
+                        <div class="summary-value">${{ "%.2f"|format(billing.billing_amount) if billing else "0.00" }}</div>
                         <div class="summary-label">{{ billing.billing_date.strftime('%b %d, %Y') if billing.billing_date else 'No payment history' }}</div>
                          {% else %}
                         <div class="summary-value">$0.00</div>

@@ -387,6 +387,41 @@ def patient_info():
     else:
         flash("You must be logged in as a patient to view this page.", "danger")
         return redirect(url_for('auth.login'))
+
+@patient_bp.route("/update-contact-info", methods=["POST"])
+@login_required
+def update_contact_info():
+    if not (current_user.is_authenticated and isinstance(current_user, Patient_Login)):
+        return jsonify({"success": False, "message": "Authentication error."}), 403
+    
+    try:
+        patient = current_user.patient
+        phone_number = request.form.get("phone_number", "").strip()
+        email = request.form.get("email", "").strip()
+        address = request.form.get("address", "").strip()
+        
+        if not address:
+            return jsonify({"success": False, "message": "Address is required."}), 400
+        
+        patient.phone_number = phone_number if phone_number else None
+        patient.email = email if email else None
+        patient.address = address
+        
+        db.session.commit()
+        
+        log_event(
+            "patient_contact_updated",
+            f"Patient {current_user.id} updated contact information",
+            target_type="patient",
+            target_id=patient.patient_id
+        )
+        
+        return jsonify({"success": True, "message": "Contact information updated successfully."})
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error updating contact info: {e}")
+        return jsonify({"success": False, "message": f"Server error: {str(e)}"}), 500
+    
     
 @patient_bp.route("/request_refill", methods=["POST"])
 @login_required

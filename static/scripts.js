@@ -121,6 +121,17 @@ window.onclick = function(event) {
     }
 }
 
+function openEditContactModal() {
+    document.getElementById('editContactModal').setAttribute('aria-hidden', 'false');
+}
+
+function closeEditContactModal() {
+    document.getElementById('editContactModal').setAttribute('aria-hidden', 'true');
+}
+
+function updateContactInfo() {
+    openEditContactModal();
+}
 // Schedule Appointment Modal Functions
 function openScheduleModal() {
     const modal = document.getElementById('schedule-appointment-modal');
@@ -695,6 +706,55 @@ function closeReschedulePickerModal() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Contact info form handler
+    const editContactForm = document.getElementById('editContactForm');
+    if (editContactForm) {
+        editContactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const phone = document.getElementById('edit-phone').value.trim();
+            const email = document.getElementById('edit-email').value.trim();
+            const address = document.getElementById('edit-address').value.trim();
+
+            if (!address) {
+                alert('Address is required.');
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitEditBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Saving...';
+
+            fetch('/patient/update-contact-info', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `phone_number=${encodeURIComponent(phone)}&email=${encodeURIComponent(email)}&address=${encodeURIComponent(address)}`
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('HTTP error ' + response.status);
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    alert('Contact information updated successfully!');
+                    closeEditContactModal();
+                    window.location.reload();
+                } else {
+                    alert('Error: ' + (data.message || 'Unknown error'));
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Save Changes';
+                }
+            })
+            .catch(err => {
+                console.error('Error updating contact info:', err);
+                alert('An error occurred while updating contact information.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Save Changes';
+            });
+        });
+    }
+
     // Cancel modal buttons
     const closeCancel = document.getElementById('close-cancel-modal');
     const cancelCloseBtn = document.getElementById('cancel-cancel-btn');

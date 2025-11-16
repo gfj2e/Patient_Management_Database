@@ -34,7 +34,7 @@
                 </ul>
             </div>
 
-            <div class="content">
+            <div class="content" style="margin:0 4%">
                 <div class="health-header">
                     <div class="patient-profile">
                         <div class="patient-avatar">👤</div>
@@ -183,19 +183,46 @@
             </div>
         </div>
 
+        <!-- Edit Contact Info Modal -->
+        <div id="editContactModal" class="modal" aria-hidden="true">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Update Contact Information</h2>
+                    <span class="close" onclick="closeEditContactModal()">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <form id="editContactForm">
+                        <div class="form-group mb-3">
+                            <label for="edit-phone">Phone Number</label>
+                            <input type="tel" id="edit-phone" name="phone_number" class="form-select" value="{{ patient.phone_number or '' }}">
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="edit-email">Email Address</label>
+                            <input type="email" id="edit-email" name="email" class="form-select" value="{{ patient.email or '' }}">
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="edit-address">Home Address</label>
+                            <textarea id="edit-address" name="address" class="form-select" rows="3">{{ patient.address }}</textarea>
+                        </div>
+
+                        <div class="modal-actions">
+                            <button type="submit" class="btn-primary" id="submitEditBtn">Save Changes</button>
+                            <button type="button" class="btn-secondary" onclick="closeEditContactModal()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
         <script>
             function requestRefill() {
                 alert('Redirecting to prescription refill page...');
                 window.location.href = "{{ url_for('patient.prescriptions') }}";
             }
-
-            function updateContactInfo() {
-                alert('This feature would open a form to update contact information.');
-            }
-
-            document.addEventListener('DOMContentLoaded', function() {
-                console.log('Patient info page loaded');
-            });
         </script>
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+
     </body>
 </html>

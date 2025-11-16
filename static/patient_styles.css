@@ -1895,3 +1895,69 @@ body {
     margin-top: 3px;
     display: block;
 }
+/* Contact Info Modal Styling */
+#editContactModal .modal-content {
+    background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+#editContactModal .modal-header {
+    color: white;
+    border-radius: 10px 10px 0 0;
+    border-bottom: none;
+    padding: 20px;
+    margin: -20px -20px 20px -20px;
+}
+
+#editContactModal .modal-header h2 {
+    margin: 0;
+    font-size: 20px;
+    color: rgb(7, 7, 7);
+}
+
+#editContactModal .modal-header .close {
+    color: white;
+    font-size: 28px;
+}
+
+#editContactModal .modal-header .close:hover {
+    color: #e0e0e0;
+}
+
+#editContactModal .form-group {
+    margin-bottom: 16px;
+}
+
+#editContactModal .form-group label {
+    font-weight: 600;
+    color: #380069;
+    margin-bottom: 8px;
+    margin-left: 0;
+}
+
+#editContactModal .form-select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    margin-left: 0;
+    background-color: #fff;
+}
+
+#editContactModal .form-select:focus {
+    outline: none;
+    border-color: #6c63ff;
+    box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.1);
+}
+
+#editContactModal textarea.form-select {
+    resize: vertical;
+    min-height: 100px;
+    font-family: inherit;
+}
+
+
+
+
