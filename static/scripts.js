@@ -611,19 +611,13 @@ if (userIsPatient) {
     `;
 
 msgGroup.appendChild(msgDiv);
+// scroll to bottom
+msgGroup.scrollTop = msgGroup.scrollHeight;
 
-// most recent 5 messages only
-const msgs = msgGroup.querySelectorAll(".message");
-if (msgs.length > 5) {
-    //hide older ones, show last 5
-    msgs.forEach((m, i) => {
-        if (i < msgs.length - 5) {
-            m.style.display = "none";   // older messages hidden but  scrollable
-        } else {
-            m.style.display = "flex";
-        }
-    });
-}
+
+msgGroup.querySelectorAll(".message").forEach(m => {
+    m.style.display = "flex";
+});
 
 // auto-open group if it's collapsed
 const wrapper = document.getElementById(`chat-${doctor_id}`);
@@ -632,12 +626,11 @@ const arrow = document.getElementById(`arrow-${doctor_id}`);
 if (msgGroup.style.display === "none") {
     msgGroup.style.display = "block";
     if (arrow) arrow.textContent = "▼";
+
+    setTimeout(() => {
+        msgGroup.scrollTop = msgGroup.scrollHeight;
+    }, 50);
 }
-
-    chatBox.prepend(doctorWrapper);
-
-// scroll to bottom
-msgGroup.scrollTop = msgGroup.scrollHeight;
 
 }
 
@@ -681,6 +674,10 @@ messageList.scrollTop = messageList.scrollHeight;
         messageList.style.display = "block";
         document.getElementById(`arrow-${pid}`).textContent = "▼";
     }
+
+    setTimeout(() => {
+        messageList.scrollTop = messageList.scrollHeight;
+    }, 50);
 });
 
 

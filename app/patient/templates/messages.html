@@ -40,7 +40,7 @@
                     <div class="profile-icon"> 
                         <img id="admin-profile-icon" src="{{ url_for('static', filename='images/woman-patient.png') }}" alt="admin profile icon">
                     </div>
-                        <a href="{{ url_for('auth.login') }}">
+                        <a href="{{ url_for('auth.logout') }}">
                             <button class="logout-btn">Logout</button>
                         </a>
                     </div>
@@ -183,8 +183,8 @@
             </div>
         </div>
 
-        <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-<script src="{{ url_for('static', filename='scripts.js') }}"></script>
+        <!-- <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<script src="{{ url_for('static', filename='scripts.js') }}"></script> -->
 
 <script>
     function toggleDoctorMessages(did) {
@@ -203,9 +203,18 @@
             arrow.textContent = "►";
         }
     }
-    const room = `room_${doctorId}_${patientId}`;
-    joinRoom(room);
+    // const room = `room_${doctorId}_${patientId}`;
+    // joinRoom(room);
 </script>
+
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<script src="{{ url_for('static', filename='scripts.js') }}"></script>
+<script>
+    if (roomId){
+        joinRoom(roomId)
+    }
+</script>
+
 
     </body>
 </html>
