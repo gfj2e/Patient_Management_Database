@@ -571,113 +571,115 @@ socket.on("receive_message", (data) => {
     const { message, sender_type, patient_id, doctor_id } = data;
 
     // patientside
-if (userIsPatient) {
+    if (userIsPatient) {
 
-    const doctorGroup = document.getElementById(`group-${doctor_id}`);
-    const doctorWrapper = document.getElementById(`chat-${doctor_id}`);
+        const doctorGroup = document.getElementById(`group-${doctor_id}`);
+        const doctorWrapper = document.getElementById(`chat-${doctor_id}`);
 
-    //create group if it doesnt exist
-    if (!doctorWrapper) {
+        //create group if it doesnt exist
+        if (!doctorWrapper) {
 
-        const newGroup = document.createElement("div");
-        newGroup.className = "doctor-message-group";
-        newGroup.id = `chat-${doctor_id}`;
+            const newGroup = document.createElement("div");
+            newGroup.className = "doctor-message-group";
+            newGroup.id = `chat-${doctor_id}`;
 
-        newGroup.innerHTML = `
-            <h3 class="doctor-name" onclick="toggleDoctorMessages('${doctor_id}')">
-                <span class="arrow" id="arrow-${doctor_id}">▼</span>
-                ${doctorNameFromDropdown(doctor_id)}
-            </h3>
+            newGroup.innerHTML = `
+                <h3 class="doctor-name" onclick="toggleDoctorMessages('${doctor_id}')">
+                    <span class="arrow" id="arrow-${doctor_id}">▼</span>
+                    ${doctorNameFromDropdown(doctor_id)}
+                </h3>
 
-            <div class="message-list" id="group-${doctor_id}" style="display:block;"></div>
-        `;
-        const chatBox = document.getElementById("chat-box");
+                <div class="message-list" id="group-${doctor_id}" style="display:block;"></div>
+            `;
+            const chatBox = document.getElementById("chat-box");
 
-        chatBox.prepend(newGroup);
-    }
+            chatBox.prepend(newGroup);
+        }
 
-    // add that msg to group
-    const msgGroup = document.getElementById(`group-${doctor_id}`);
+        // add that msg to group
+        const msgGroup = document.getElementById(`group-${doctor_id}`);
 
-    const msgDiv = document.createElement("div");
-    msgDiv.className = `message ${sender_type === "doctor" ? "received" : "sent"}`;
-    
-    msgDiv.innerHTML = `
-        <div class="bubble">
-            <span class="label">${sender_type === "doctor" ? "Doctor" : "You"}</span>
-            ${message}
-            <div class="timestamp">${formattedTime}</div>
-        </div>
-    `;
-
-msgGroup.appendChild(msgDiv);
-// scroll to bottom
-msgGroup.scrollTop = msgGroup.scrollHeight;
-
-
-msgGroup.querySelectorAll(".message").forEach(m => {
-    m.style.display = "flex";
-});
-
-// auto-open group if it's collapsed
-const wrapper = document.getElementById(`chat-${doctor_id}`);
-const arrow = document.getElementById(`arrow-${doctor_id}`);
-
-if (msgGroup.style.display === "none") {
-    msgGroup.style.display = "block";
-    if (arrow) arrow.textContent = "▼";
-
-    setTimeout(() => {
-        msgGroup.scrollTop = msgGroup.scrollHeight;
-    }, 50);
-}
-
-}
-
-    // doctor side 
-    const pid = patient_id;
-    let groupWrapper = document.getElementById(`chat-${pid}`);
-
-    if (!groupWrapper) {
-        const patientName = document.querySelector(`#patient_id option[value="${pid}"]`).textContent;
-
-        groupWrapper = document.createElement("div");
-        groupWrapper.className = "patient-message-group";
-        groupWrapper.id = `chat-${pid}`;
-
-        groupWrapper.innerHTML = `
-            <h3 class="patient-name" onclick="toggleMessages('${pid}')">
-                <span class="arrow" id="arrow-${pid}">►</span>
-                ${patientName}
-            </h3>
-            <div class="message-list" id="group-${pid}" style="display:none;"></div>
+        const msgDiv = document.createElement("div");
+        msgDiv.className = `message ${sender_type === "doctor" ? "received" : "sent"}`;
+        
+        msgDiv.innerHTML = `
+            <div class="bubble">
+                <span class="label">${sender_type === "doctor" ? "Doctor" : "You"}</span>
+                ${message}
+                <div class="timestamp">${formattedTime}</div>
+            </div>
         `;
 
-        document.querySelector(".messages-container").prepend(groupWrapper);
+    msgGroup.appendChild(msgDiv);
+    // scroll to bottom
+    msgGroup.scrollTop = msgGroup.scrollHeight;
+
+
+    msgGroup.querySelectorAll(".message").forEach(m => {
+        m.style.display = "flex";
+    });
+
+    // auto-open group if it's collapsed
+    const wrapper = document.getElementById(`chat-${doctor_id}`);
+    const arrow = document.getElementById(`arrow-${doctor_id}`);
+
+    if (msgGroup.style.display === "none") {
+        msgGroup.style.display = "block";
+        if (arrow) arrow.textContent = "▼";
+
+        setTimeout(() => {
+            msgGroup.scrollTop = msgGroup.scrollHeight;
+        }, 50);
     }
 
-    const messageList = document.getElementById(`group-${pid}`);
-    const msgDiv = document.createElement("div");
-
-    msgDiv.className = `message ${sender_type === "doctor" ? "sent" : "received"}`;
-    msgDiv.innerHTML = `
-        <div class="bubble">
-            <span class="label">${sender_type === "doctor" ? "Sent" : "Received"}</span>
-            ${message}
-            <div class="timestamp">${formattedTime}</div>
-        </div>
-    `;
-    messageList.appendChild(msgDiv);
-messageList.scrollTop = messageList.scrollHeight;
-
-    if (messageList.style.display === "none") {
-        messageList.style.display = "block";
-        document.getElementById(`arrow-${pid}`).textContent = "▼";
     }
 
-    setTimeout(() => {
-        messageList.scrollTop = messageList.scrollHeight;
-    }, 50);
+        // doctor side 
+    if (userIsDoctor) {
+        const pid = patient_id;
+        let groupWrapper = document.getElementById(`chat-${pid}`);
+
+        if (!groupWrapper) {
+            const patientName = document.querySelector(`#patient_id option[value="${pid}"]`).textContent;
+
+            groupWrapper = document.createElement("div");
+            groupWrapper.className = "patient-message-group";
+            groupWrapper.id = `chat-${pid}`;
+
+            groupWrapper.innerHTML = `
+                <h3 class="patient-name" onclick="toggleMessages('${pid}')">
+                    <span class="arrow" id="arrow-${pid}">►</span>
+                    ${patientName}
+                </h3>
+                <div class="message-list" id="group-${pid}" style="display:none;"></div>
+            `;
+
+            document.querySelector(".messages-container").prepend(groupWrapper);
+        }
+
+        const messageList = document.getElementById(`group-${pid}`);
+        const msgDiv = document.createElement("div");
+
+        msgDiv.className = `message ${sender_type === "doctor" ? "sent" : "received"}`;
+        msgDiv.innerHTML = `
+            <div class="bubble">
+                <span class="label">${sender_type === "doctor" ? "Sent" : "Received"}</span>
+                ${message}
+                <div class="timestamp">${formattedTime}</div>
+            </div>
+        `;
+        messageList.appendChild(msgDiv);
+    messageList.scrollTop = messageList.scrollHeight;
+
+        if (messageList.style.display === "none") {
+            messageList.style.display = "block";
+            document.getElementById(`arrow-${pid}`).textContent = "▼";
+        }
+
+        setTimeout(() => {
+            messageList.scrollTop = messageList.scrollHeight;
+        }, 50);
+    }
 });
 
 
