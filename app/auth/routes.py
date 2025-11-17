@@ -52,11 +52,11 @@ def register():
                    address, zip_code, city, dob_str, sex]
 
         if not all(required_fields):
-            flash("All fields are required.", "danger")
+            # flash("All fields are required.", "danger")
             return redirect(url_for('auth.register'))
 
         if not doctor_id or doctor_id == "":
-            flash("Please select a doctor.", "danger")
+            # flash("Please select a doctor.", "danger")
             return redirect(url_for('auth.register'))
 
 
@@ -104,13 +104,13 @@ def register():
             db.session.commit()
 
             login_user(new_user)
-            flash("Registration successful! Welcome to CuraCloud.", "success")
+            # flash("Registration successful! Welcome to CuraCloud.", "success")
             return redirect(url_for('patient.patient_home'))
 
         except Exception as e:
             db.session.rollback()
             print("REGISTRATION ERROR:", e)
-            flash("Registration failed.", "danger")
+            # flash("Registration failed.", "danger")
             return redirect(url_for('auth.register'))
 
     return render_template('register.html', doctors=doctors, title="Register")
@@ -137,7 +137,7 @@ def login():
         password = request.form.get("password")
         
         if not username or not password:
-            flash('Please enter both username and password.', 'danger')
+            # flash('Please enter both username and password.', 'danger')
             return redirect(url_for('auth.login', role=role))
         
         user = None
@@ -148,7 +148,7 @@ def login():
         elif role == "admin":
             user = db.session.execute(select(Admin_Login).where(Admin_Login.user_name == username)).scalar()
         else:
-            flash("Invalid role selected", "danger")
+            # flash("Invalid role selected", "danger")
             return redirect(url_for('auth.login'))
         
         if user and bcrypt.check_password_hash(user.password, password):
@@ -170,7 +170,7 @@ def login():
             else:
                 return redirect(url_for('admin.admin_home'))
         else:
-            flash("Invalid username or password!", "danger")
+            # flash("Invalid username or password!", "danger")
             return redirect(url_for('auth.login', role=role))
 
     return render_template("login.html", role=role, title="Login")
@@ -192,7 +192,7 @@ def reset_password():
         user = db.session.execute(select(Patient_Login).where(Patient_Login.user_name == username)).scalar()
         
         if not user:
-            flash("No patient found with that username.", "error")
+            # flash("No patient found with that username.", "error")
             return redirect(url_for('auth.reset_password', role='patient'))
         
         token = secrets.token_urlsafe(36)
@@ -205,13 +205,13 @@ def reset_password():
         try:
             email_sent = send_reset_email(user.patient.email, reset_link)
             if email_sent:
-                flash("Password email sent", "success")
+                # flash("Password email sent", "success")
                 print(f"Reset email sent to {user.email}")
             else:
-                flash("Failed to send reset email. Try again later", "error")
+                # flash("Failed to send reset email. Try again later", "error")
                 print(f"Failed to send reset to {user.email}")
         except Exception as e:
-            flash("Error sending email.", "error")
+            # flash("Error sending email.", "error")
             print(f"Exception in sending an email: {e}")
         
         return redirect(url_for('auth.login', role='patient'))
@@ -229,7 +229,7 @@ def reset_with_token(token):
         # else:
         #     return redirect(url_for('main.index'))
         else:
-            flash("Only patients can reset their password.", "error")
+            # flash("Only patients can reset their password.", "error")
             return redirect(url_for('auth.login'))
         
     # role = request.args.get("role")
@@ -239,12 +239,12 @@ def reset_with_token(token):
 
     user = db.session.execute(select(Patient_Login).where(Patient_Login.reset_token == token)).scalar()
     if not user:
-        flash("Invalid or expired token", "error")
+        # flash("Invalid or expired token", "error")
         return redirect(url_for('auth.reset_password'))
     
     current_time = datetime.now(timezone.utc)
     if user.reset_token_expires is None or user.reset_token_expires.replace(tzinfo=timezone.utc) < current_time:
-        flash("This reset link has expired. Please request a new one.", "error")
+        # flash("This reset link has expired. Please request a new one.", "error")
         
         user.reset_token = None
         user.reset_token_expires = None
@@ -256,16 +256,16 @@ def reset_with_token(token):
         confirm_password = request.form.get("confirm_password")
 
         if not new_password:
-            flash("Password is required", "error")
+            # flash("Password is required", "error")
             return render_template('reset_with_token.html', token=token)
             
         if len(new_password) < 6:
-            flash("Password must be at least 6 characters long", "error")
+            # flash("Password must be at least 6 characters long", "error")
             return render_template('reset_with_token.html', token=token)
             
         # confirm password validation
         if confirm_password and new_password != confirm_password:
-            flash("Passwords do not match", "error")
+            # flash("Passwords do not match", "error")
             return render_template('reset_with_token.html', token=token)
         
         user.password = bcrypt.generate_password_hash(new_password).decode("utf-8")
@@ -289,5 +289,5 @@ def logout():
 )
         
     logout_user()
-    flash("You have been logged out successfully.", "info")
+    # flash("You have been logged out successfully.", "info")
     return redirect(url_for("main.index"))
