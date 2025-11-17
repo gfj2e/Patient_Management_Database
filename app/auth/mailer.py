@@ -32,8 +32,7 @@ def send_email(subject, body, to_email):
     
 # send_email("Hello World", "Hello World", "test-fj61d5oxd@srv1.mail-tester.com")
 
-def send_reset_email(user_email, reset_token):
-    reset_link = url_for("reset_with_token", token=reset_token, _external=True)
+def send_reset_email(user_email, reset_link):
     subject = "Reset your CuraCloud password"
     body = f"""Hello,
 

@@ -249,7 +249,7 @@ class Patient_Login(User_Login):
     __tablename__ = "patient_login"
     
     id: Mapped[int] = mapped_column(ForeignKey("user_login.id"), primary_key=True)
-    reset_token: Mapped[str] = mapped_column(String(36), nullable=True, unique=True)
+    reset_token: Mapped[str] = mapped_column(String(100), nullable=True, unique=True)
     reset_token_expires: Mapped[datetime] = mapped_column(DateTime, nullable=True)
     patient_id: Mapped[int] = mapped_column(ForeignKey("patients.patient_id"), nullable=False)
     
@@ -263,7 +263,7 @@ class Doctor_Login(User_Login):
     __tablename__ = "doctor_login"
     
     id: Mapped[int] = mapped_column(ForeignKey("user_login.id"), primary_key=True)
-    reset_token: Mapped[str] = mapped_column(String(36), nullable=True, unique=True)
+    reset_token: Mapped[str] = mapped_column(String(100), nullable=True, unique=True)
     doctor_id: Mapped[int] = mapped_column(ForeignKey("doctors.doctor_id"))
     
     doctor = relationship("Doctor", back_populates="login", uselist=False)

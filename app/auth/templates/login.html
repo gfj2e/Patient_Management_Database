@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% if role %}{{ role|title }} Login - {% endif %}CuraCloud</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='login_styles.css') }}">
-  <style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='login_styles.css') }}">  
+    <style>
     body{
         background: rgb(244, 241, 246);
     }
@@ -141,6 +141,12 @@
                     </div>
                     
                     <button type="submit" class="submit-btn">Sign In</button>
+
+                     <div class="forgot-password">
+                        <a a href="{{ url_for('auth.reset_password') }}"> 
+                            <i class="fas fa-question-circle"></i> Forgot Password?
+                        </a>
+                    </div>
                     
                     <a href="{{ url_for('auth.login') }}" class="back-link">
                         ← Back to Role Selection

@@ -161,7 +161,7 @@ def login():
                 target_id=user.id
             )
 
-            flash(f"Welcome back, {username}!", "success")
+            # flash(f"Welcome back, {username}!", "success")
             
             if role == "patient":
                 return redirect(url_for('patient.patient_home'))
@@ -185,18 +185,14 @@ def reset_password():
         else:
             return redirect(url_for('main.index'))
     
-    role = request.args.get("role")
-    if role != "patient":
-        flash("Must be a patient to reset password", "error")
-        return redirect(url_for('auth.login'))
-    
+
     if request.method == "POST":
-        username = request.form.get["username"]
+        username = request.form.get("username")
         
-        user = db.session.execute(select(Patient_Login).where(username == Patient_Login.user_name)).scalar()
+        user = db.session.execute(select(Patient_Login).where(Patient_Login.user_name == username)).scalar()
         
         if not user:
-            flash("Error.", "error")
+            flash("No patient found with that username.", "error")
             return redirect(url_for('auth.reset_password', role='patient'))
         
         token = secrets.token_urlsafe(36)
@@ -228,36 +224,56 @@ def reset_with_token(token):
     if current_user.is_authenticated:
         if isinstance(current_user, Patient_Login):
             return redirect(url_for('patient.patient_home'))
-        elif isinstance(current_user, Doctor_Login):
-            return redirect(url_for('doctor.doctor_home'))
+        # elif isinstance(current_user, Doctor_Login):
+        #     return redirect(url_for('doctor.doctor_home'))
+        # else:
+        #     return redirect(url_for('main.index'))
         else:
-            return redirect(url_for('main.index'))
+            flash("Only patients can reset their password.", "error")
+            return redirect(url_for('auth.login'))
         
-    role = request.args.get("role")
-    if role != "patient":
-        flash("Must be a patient to reset password", "error")
-        return redirect(url_for('auth.login'))
+    # role = request.args.get("role")
+    # if role != "patient":
+    #     flash("Must be a patient to reset password", "error")
+    #     return redirect(url_for('auth.login'))
 
     user = db.session.execute(select(Patient_Login).where(Patient_Login.reset_token == token)).scalar()
     if not user:
         flash("Invalid or expired token", "error")
         return redirect(url_for('auth.reset_password'))
     
-    if user.reset_token_expires is None or user.reset_token_expires < datetime.now(timezone.utc):
+    current_time = datetime.now(timezone.utc)
+    if user.reset_token_expires is None or user.reset_token_expires.replace(tzinfo=timezone.utc) < current_time:
         flash("This reset link has expired. Please request a new one.", "error")
+        
         user.reset_token = None
         user.reset_token_expires = None
         db.session.commit()
         return redirect(url_for('auth.reset_password', role='patient'))
     
     if request.method == "POST":
-        new_password = request.form.get["password"]
+        new_password = request.form.get("password")
+        confirm_password = request.form.get("confirm_password")
+
+        if not new_password:
+            flash("Password is required", "error")
+            return render_template('reset_with_token.html', token=token)
+            
+        if len(new_password) < 6:
+            flash("Password must be at least 6 characters long", "error")
+            return render_template('reset_with_token.html', token=token)
+            
+        # confirm password validation
+        if confirm_password and new_password != confirm_password:
+            flash("Passwords do not match", "error")
+            return render_template('reset_with_token.html', token=token)
+        
         user.password = bcrypt.generate_password_hash(new_password).decode("utf-8")
         user.reset_token = None
         user.reset_token_expires = None
         db.session.commit()
-        flash("Password has been reset", "success")
-        return redirect(url_for('auth.login'))
+        
+        return redirect(url_for('auth.login', role='patient'))
     
     return render_template('reset_with_token.html')
 
