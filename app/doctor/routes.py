@@ -240,7 +240,7 @@ def handle_refill(request_id):
         refill.status = RefillStatus.APPROVED
         refill.notes = (
             f"Approved by Dr. {doctor_name} on {datetime.now().strftime('%b %d, %Y %I:%M %p')}."
-            f"<br><strong>Message:</strong> {custom_notes}"
+            f"Message: {custom_notes}"
         )        
         flash("Refill approved successfully!", "success")
 
