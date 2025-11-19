@@ -1,6 +1,6 @@
 from .connection import db
 from sqlalchemy import (func, String, Text, ForeignKey, Boolean, Date, 
-                        Enum as SQLEnum, DECIMAL, DateTime, SmallInteger, Table, Column)
+                        Enum as SQLEnum, DECIMAL, DateTime, SmallInteger, Integer, Column)
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from sqlalchemy.orm import Mapped
@@ -284,15 +284,14 @@ class Admin_Login(User_Login):
 class ActivityLog(db.Model):
     __tablename__ = "activity_logs"
 
-    id = db.Column(db.Integer, primary_key=True)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    timestamp: Mapped[datetime] = mapped_column(DateTime, default=datetime.now())  
+    actor_role: Mapped[str] = mapped_column(String(20), nullable = False)          # admin, doctor, patient, system
+    actor_id: Mapped[int] = mapped_column(Integer, nullable=True) # user ID
 
-    actor_role = db.Column(db.String(20), nullable=False)   # admin, doctor, patient, system
-    actor_id = db.Column(db.Integer, nullable=True)         # user ID
-
-    action_type = db.Column(db.String(50), nullable=False)  # login, add_patient, delete_patient, send_message, refill_request
-    target_type = db.Column(db.String(50), nullable=True)   # patient, doctor, billing, refill, message
-    target_id = db.Column(db.Integer, nullable=True)
+    action_type: Mapped[str] = mapped_column(String(50), nullable=False) # login, add_patient, delete_patient, send_message, refill_request
+    target_type: Mapped[str] = mapped_column(String(50), nullable=True) # patient, doctor, billing, refill, message
+    target_id: Mapped[int] = mapped_column(Integer, nullable=True)
 
     # description with no private data
-    description = db.Column(db.String(255), nullable=False)
+    description: Mapped[str] = mapped_column(String(255), nullable=False)
