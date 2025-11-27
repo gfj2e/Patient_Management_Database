@@ -58,7 +58,7 @@ def patient_home():
                                lab_results=lab_results,
                                patient_prescriptions=patient_prescriptions)
     else:
-        flash("You must be logged in as a patient to view this page.", "danger")
+        # flash("You must be logged in as a patient to view this page.", "danger")
         return redirect(url_for('auth.login'))
 
 @patient_bp.route("/appointments")
@@ -90,7 +90,7 @@ def appointments():
                            past_appointments=past_appointments,
                            doctors=doctors)  
     else:
-        flash("You must be logged in to view this page")
+        # flash("You must be logged in to view this page")
         return redirect(url_for('auth.login'))
     
 @patient_bp.route("/patient/api/available-slots")
@@ -385,7 +385,7 @@ def patient_info():
                                 patient=patient,
                                 patient_name=patient_name)
     else:
-        flash("You must be logged in as a patient to view this page.", "danger")
+        # flash("You must be logged in as a patient to view this page.", "danger")
         return redirect(url_for('auth.login'))
 
 @patient_bp.route("/update-contact-info", methods=["POST"])
@@ -511,7 +511,7 @@ def download_lab_report(test_id):
     ).scalar()
     
     if not test_result:
-        flash("Lab result not found", "danger")
+        # flash("Lab result not found", "danger")
         return redirect(url_for("patient.lab_results"))
     
     # Create PDF

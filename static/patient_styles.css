@@ -433,79 +433,79 @@ body {
     justify-items: center;
 }
 
-        .flip-card-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            transition: transform 0.8s;
-            transform-style: preserve-3d;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            border-radius: 12px;
-        }
+.flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.8s;
+    transform-style: preserve-3d;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+}
 
-        .flip-card-front, .flip-card-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            border-radius: 12px;
-            padding: 20px;
-            background: white;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            text-align: center;
-        }
+.flip-card-front, .flip-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 12px;
+    padding: 20px;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
 
-        .flip-card-front {
-            color: #250046;
-        }
+.flip-card-front {
+    color: #250046;
+}
 
-        .flip-card-front h3 {
-            margin-bottom: 10px;
-            font-size: 20px;
-        }
+.flip-card-front h3 {
+    margin-bottom: 10px;
+    font-size: 20px;
+}
 
-        .flip-card-front p {
-            color: #555;
-        }
+.flip-card-front p {
+    color: #555;
+}
 
-        .flip-card-back {
-            transform: rotateY(180deg);
-            background: linear-gradient(135deg, #4a00a3 0%, #6a11cb 100%);
-            color: white !important;
-        }
+.flip-card-back {
+    transform: rotateY(180deg);
+    background: linear-gradient(135deg, #4a00a3 0%, #6a11cb 100%);
+    color: white !important;
+}
 
-        .flip-card-back p {
-            margin: 6px 0;
-            font-size: 14px;
-        }
+.flip-card-back p {
+    margin: 6px 0;
+    font-size: 14px;
+}
 
-        .flip-card-back button {
-            background: white;
-            color: #250046;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-top: 8px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
+.flip-card-back button {
+    background: white;
+    color: #250046;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
 
-        .flip-card-back button:hover {
-            background: #f0f0f0;
-        }
+.flip-card-back button:hover {
+    background: #f0f0f0;
+}
 
-        .card-section-header {
-            background: linear-gradient(135deg, #4a00a3 0%, #6a11cb 100%);
-            color: white;
-            padding: 15px 20px;
-            border-radius: 12px;
-            font-size: 20px;
-            font-weight: 600;
-            margin-top: 20px;
-        }
+.card-section-header {
+    background: linear-gradient(135deg, #4a00a3 0%, #6a11cb 100%);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 12px;
+    font-size: 20px;
+    font-weight: 600;
+    margin-top: 20px;
+}
 
 
 .flip-card-back,
@@ -552,52 +552,52 @@ body {
   border-radius: 12px;
 }
 
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 25px;
-            background-color: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 25px;
+    background-color: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
 
-        .data-table th, .data-table td {
-            text-align: left;
-            padding: 14px 18px;
-        }
+.data-table th, .data-table td {
+    text-align: left;
+    padding: 14px 18px;
+}
 
-        .data-table th {
-            background: #f8f9ff;
-            padding: 15px;
-            text-align: left;
-            font-weight: 600;
-            color: #250046;
-            border-bottom: 2px solid #e0e0e0;
-        }
+.data-table th {
+    background: #f8f9ff;
+    padding: 15px;
+    text-align: left;
+    font-weight: 600;
+    color: #250046;
+    border-bottom: 2px solid #e0e0e0;
+}
 
-        .data-table tr:nth-child(even) {
-            background-color: #f8f6ff;
-        }
+.data-table tr:nth-child(even) {
+    background-color: #f8f6ff;
+}
 
-        .data-table tr:hover {
-            background-color: #eee4ff;
-            transition: 0.2s;
-        }
+.data-table tr:hover {
+    background-color: #eee4ff;
+    transition: 0.2s;
+}
 
-        .card-section-header {
-            background: linear-gradient(135deg, #4a00a3 0%, #6a11cb 100%);
-            color: white;
-            padding: 15px 20px;
-            border-radius: 12px;
-            font-size: 20px;
-            font-weight: 600;
-            margin-top: 20px;
-        }
+.card-section-header {
+    background: linear-gradient(135deg, #4a00a3 0%, #6a11cb 100%);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 12px;
+    font-size: 20px;
+    font-weight: 600;
+    margin-top: 20px;
+}
 
-        .content {
-            padding-right: 20px;
-        }
+.content {
+    padding-right: 20px;
+}
 
 /* message stuff */
 .patient-name {
