@@ -34,97 +34,97 @@
 
 /* // stuffs for patient list */
 /* https://www.w3schools.com/howto/howto_css_flip_card.asp */
- .patient-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 25px;
-      margin-top: 30px;
-    }
-
-    .flip-card {
-      background-color: transparent;
-      width: 100%;
-      height: 260px;
-      perspective: 1000px;
-      cursor: pointer;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-
-    .flip-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 25px rgba(0, 22, 70, 0.15);
-    }
-
-    .flip-card-inner {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
-      transform-style: preserve-3d;
-    }
-
-    /*fat card fix*/
-    .flip-card,
-    .appointment-card,
-    .refill-card {
-        width: 320px;
-        height: 300px;
-        margin: 0 auto;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-    }
-
-    .flip-card:hover .flip-card-inner {
-      transform: rotateY(180deg);
-    }
-
-    .flip-card-front, .flip-card-back {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      border-radius: 12px;
-      backface-visibility: hidden;
-      overflow: hidden;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-    }
-
-    .flip-card-front {
-      background: #ffffff;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-    }
-
-    .flip-card-back {
-      background: linear-gradient(135deg, #1a45bd 0%, #304897 100%);
-      color: white;
-      transform: rotateY(180deg);
-      padding: 20px;
-      overflow-y: auto;
-    }
-
-    .flip-card h3 {
-      color: #250046;
-      margin-bottom: 10px;
-    }
-
-    .flip-card p {
-      margin: 6px 0;
-      color: #555;
-      text-align: center;
-    }
-
-    .appointments-grid {
+.patient-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
-    justify-items: start; 
-    align-items: start;
-    margin-top: 15px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+    margin-top: 30px;
+}
+
+.flip-card {
+    background-color: transparent;
+    width: 100%;
+    height: 260px;
+    perspective: 1000px;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+
+.flip-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 22, 70, 0.15);
+}
+
+.flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
+    transform-style: preserve-3d;
+}
+
+/*fat card fix*/
+.flip-card,
+.appointment-card,
+.refill-card {
+    width: 320px;
+    height: 300px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.flip-card:hover .flip-card-inner {
+    transform: rotateY(180deg);
+}
+
+.flip-card-front, .flip-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    backface-visibility: hidden;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.flip-card-front {
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.flip-card-back {
+    background: linear-gradient(135deg, #1a45bd 0%, #304897 100%);
+    color: white;
+    transform: rotateY(180deg);
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.flip-card h3 {
+    color: #250046;
+    margin-bottom: 10px;
+}
+
+.flip-card p {
+    margin: 6px 0;
+    color: #555;
+    text-align: center;
+}
+
+.appointments-grid {
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+gap: 20px;
+justify-items: start; 
+align-items: start;
+margin-top: 15px;
 }
 
 .appt-time {

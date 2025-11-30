@@ -7,6 +7,7 @@
     <title>Patient Portal</title>
 </head>
 <body>
+    <!--Top navigation bar-->
     <header class="navbar">
         <div class="logo">CuraCloud</div>
         <div class="nav-buttons">
@@ -22,6 +23,7 @@
     </header>
     
     <div class="container">
+        <!--navigation menu-->
         <div class="side-menu">
             <ul>
                 <li><a href="{{ url_for('patient.patient_home') }}" class="active">Home</a></li>
@@ -46,6 +48,7 @@
                     <div class="dashboard-card">
                         <div class="card-header">
                             <div class="card-icon-patient">🩺</div> 
+                            <!-- Shows user quick overview of appointments-->
                             <h3>Appointments</h3>
                         </div>
                         <div class="card-content">
@@ -70,6 +73,7 @@
                     
                     <div class="dashboard-card">
                         <div class="card-header">
+                            <!--Shows user unread messages-->
                             <div class="card-icon-patient">🗨️</div>
                             <h3>Messages</h3>
                         </div>
@@ -87,6 +91,7 @@
                     
                     <div class="dashboard-card">
                         <div class="card-header">
+                            <!--Shows overview of billing-->
                             <div class="card-icon-patient">💲</div>
                             <h3>Billing Summary</h3>
                         </div>
@@ -107,6 +112,7 @@
                     
                     <div class="dashboard-card">
                         <div class="card-header">
+                            <!--Shows a quick overview of patient lab results-->
                             <div class="card-icon-patient">🧬</div>
                             <h3>Lab Results</h3>
                         </div>
@@ -129,6 +135,7 @@
 
                     <div class="dashboard-card">
                         <div class="card-header">
+                        <!-- Uses a quick overview of patient prescriptions-->
                             <div class="card-icon-patient">💊</div>
                             <h3>Prescriptions</h3>
                         </div>
@@ -154,6 +161,7 @@
                     </div>
                 </div>
                 
+                <!--Quick action buttons-->
                 <div class="quick-actions">
                     <div class="action-card" onclick="navigateToAppointments()">
                         <div class="action-icon">📅</div>
@@ -182,7 +190,7 @@
     </div>
 
     <script>
-        // Navigation functions that use Flask URLs
+        // Navigates to the appropriate pages
         function navigateToAppointments() {
             window.location.href = "{{ url_for('patient.appointments') }}";
         }
